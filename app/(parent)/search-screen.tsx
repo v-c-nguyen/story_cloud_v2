@@ -16,6 +16,7 @@ import {
     View,
 } from "react-native";
 
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 export default function SearchScreen() {
     const router = useRouter();
     const [searchText, setSearchText] = useState("");
@@ -131,10 +132,7 @@ export default function SearchScreen() {
                             <View style={styles.headerTitleContainer}>
                                 <View>
                                     <View style={[styles.avatarImgContainer, { width: 60, height: 60, justifyContent: "center", alignItems: "center", marginBottom: 10, margin: 18 }]}>
-                                        <Image
-                                            source={require("@/assets/images/avatars/dano_badger.png")}
-                                            style={[styles.avatarImg]}
-                                        />
+
                                     </View>
                                     <ThemedText style={[styles.sectionTitle, styles.selectionTitleLarge]}>{`${searchText} Characters`}</ThemedText>
                                     <ThemedText style={[styles.sectionTitle, styles.selectionTitleSmall]}>{"Kids' favorite story characters"}</ThemedText>
@@ -142,9 +140,10 @@ export default function SearchScreen() {
                                 <TouchableOpacity
                                     onPress={() => { }}
                                 >
-                                    <Image
-                                        source={require("@/assets/images/kid/arrow-right.png")}
-                                        style={styles.arrow}
+                                    <IconAvatarRight
+                                        width={24}
+                                        height={24}
+                                        color={"#053B4A"}
                                     />
                                 </TouchableOpacity>
                             </View>

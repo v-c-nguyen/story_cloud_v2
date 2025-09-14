@@ -164,6 +164,7 @@ function SectionHeader({
             height: 50,
             justifyContent: "center",
             alignItems: "center",
+            flexDirection: "row",
             margin: 18,
             marginBottom: 5,
             marginTop: 60,

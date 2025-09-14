@@ -6,14 +6,9 @@ import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { Image, SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 
-
-
-const refeshIcon = require('@/assets/images/parent/icon-refresh.png');
-const checkCircleIcon = require('@/assets/images/parent/check-circle-icon.png')
-const trashIcon = require('@/assets/images/parent/trash-icon.png')
-const plusIcon = require('@/assets/images/parent/icon-plus.png')
-const stripeIcon = require('@/assets/images/parent/stripe.png')
-const backIcon = require('@/assets/images/parent/icon-left.png')
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import IconRefresh from "@/assets/images/icons/icon-refresh.svg";
+import IconCard from "@/assets/images/icons/icon-card.svg";
 
 export default function newMethod() {
     const router = useRouter();
@@ -51,7 +46,7 @@ export default function newMethod() {
                         <TouchableOpacity
                             style={styles.backBtn}
                             onPress={handleBackBtn}>
-                            <Image source={backIcon} style={styles.backBtnIcon}></Image>
+                            <IconArrowLeft width={24} height={24} />
                             <ThemedText style={styles.backBtnText}>To Payment Method</ThemedText>
                         </TouchableOpacity>
 
@@ -89,8 +84,7 @@ export default function newMethod() {
                                                     style={[styles.input2, {flex: 1}]}
                                                 />
 
-                                                <Image
-                                                    source={require('@/assets/images/parent/icon-paymentCard.png')}
+                                                <IconCard width={30} height={30}
                                                     style={styles.cardIcon}
                                                 />
                                             </ThemedView>
@@ -137,7 +131,7 @@ export default function newMethod() {
                                     {/* Save Button */}
                                     <TouchableOpacity onPress={handleSubmit}>
                                         <ThemedView style={styles.button} >
-                                            <Image source={refeshIcon}></Image>
+                                            <IconRefresh width={24} height={24} />
                                             <ThemedText style={styles.buttonText}> Save</ThemedText>
                                         </ThemedView>
                                     </TouchableOpacity>

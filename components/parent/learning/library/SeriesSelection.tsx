@@ -19,6 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import IconArrowDown from "@/assets/images/icons/arrow-down.svg"
 import IconCheck from "@/assets/images/parent/icon-check.svg"
+
 interface Props {
   currentSeries: any;
   setCurrentSeries?: (c: any) => void;

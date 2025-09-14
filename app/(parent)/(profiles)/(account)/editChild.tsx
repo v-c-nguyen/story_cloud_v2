@@ -17,14 +17,11 @@ import {
     TouchableOpacity
 } from 'react-native';
 import IconProfile from "@/assets/images/parent/footer/icon-profile.svg";
-
-const downloadIcon = require('@/assets/images/parent/icon-download.png')
-const editIcon = require('@/assets/images/parent/icon-edit.png')
-const information_circle = require('@/assets/images/parent/information_circle.png')
-const tickIcon = require('@/assets/images/parent/icon-tick.png')
-const trashIcon = require('@/assets/images/parent/trash-icon.png')
-const miaAvatar = require('@/assets/images/parent/mia_120.png')
-const cancelIcon = require('@/assets/images/parent/icon-cancel.png')
+import IconInformation from "@/assets/images/parent/icon-information.svg";
+import IconTick from "@/assets/images/icons/icon-tick.svg";
+import IconCancel from "@/assets/images/parent/icon-cancel.svg";
+import IconTrash from "@/assets/images/icons/icon-trash.svg";
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 const EditChild = () => {
     const router = useRouter();
@@ -167,10 +164,14 @@ const EditChild = () => {
                                 <ThemedText style={styles.sectionTitle}>{firstName}</ThemedText>
 
                                 <ThemedView style={styles.avatarWrapper}>
-                                    <Image
-                                        source={avatar ? { uri: avatar } : require('@/assets/images/parent/avatar-parent-2.png')}
-                                        style={styles.avatar}
-                                    />
+                                    
+                                    {
+                                        avatar ?
+                                            <Image source={{ uri: avatar }} style={styles.avatar}/>
+                                            :
+                                            <IconDefaultAvatar width={160} height={160} />
+                                   
+                                    }
                                 </ThemedView>
                                 <ThemedView style={{ flexDirection: 'row', justifyContent: 'center' }}>
                                     <AvatarUploader
@@ -211,7 +212,7 @@ const EditChild = () => {
                             {/* All Kids */}
                             <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                 <ThemedText style={[styles.inputLabel, { marginBottom: 0 }]}>Learning Mode</ThemedText>
-                                <Image source={information_circle} style={styles.modeIcon}></Image>
+                                <IconInformation width={16} height={16} color={"#053B4A"}/>
                             </ThemedView>
                             <ThemedView>
                                 <ThemedView style={styles.modesStyle}>
@@ -221,18 +222,18 @@ const EditChild = () => {
 
                             <ThemedView style={[styles.flexRow, { marginTop: 20 }]}>
                                 <TouchableOpacity style={styles.addButton} onPress={handleCancelButton}>
-                                    <Image source={cancelIcon} style={{ width: 16, height: 16 }} />
+                                    <IconCancel width={16} height={16} />
                                     <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Cancel</ThemedText>
                                 </TouchableOpacity>
 
                                 {isDirty ?
                                     <TouchableOpacity style={[styles.addButton,{backgroundColor: "#F4A672", borderWidth: 0}]} onPress={handleSaveButton}>
-                                        <Image source={tickIcon} style={{ width: 22, height: 22 }} />
+                                        <IconTick width={22} height={22} />
                                         <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Save Child</ThemedText>
                                     </TouchableOpacity>
                                     :
                                     <TouchableOpacity style={styles.addButton} onPress={handleRemoveButton}>
-                                        <Image source={trashIcon} style={{ width: 22, height: 22 }} />
+                                        <IconTrash width={22} height={22}/>
                                         <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Remove Child</ThemedText>
                                     </TouchableOpacity>
                                 }

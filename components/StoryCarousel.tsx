@@ -12,7 +12,7 @@ import { StoryCard3 } from "./Cards";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useListenStore } from "@/store/listenStore";
-
+import IconCheck from "@/assets/images/parent/icon-check.svg"
 const { width } = Dimensions.get("window");
 
 export default function AdventureStoryCarousel({
@@ -63,9 +63,10 @@ export default function AdventureStoryCarousel({
                         ]}
                       >
                         {isCompleted ? (
-                          <Image
-                            source={require("@/assets/images/icons/check.png")}
-                            style={styles.checkIcon}
+                          <IconCheck
+                            width={14}
+                            height={14}
+                            color={"#F4A672"}
                           />
                         ) : (
                           <ThemedText

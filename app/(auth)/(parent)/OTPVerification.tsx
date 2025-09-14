@@ -7,6 +7,9 @@ import { ThemedView } from '@/components/ThemedView';
 import { Link, Stack, useRouter } from 'expo-router';
 import React from 'react';
 
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+
 export default function ForgotPassword() {
   const router = useRouter();
   const [email, setEmail] = React.useState('');
@@ -63,9 +66,10 @@ export default function ForgotPassword() {
               <TouchableOpacity style={styles.loginBtn} onPress={ForgotPassword}>
                 <ThemedText style={styles.loginText}>Reset Password</ThemedText>
                 {/* Arrow Icon */}
-                <Image
-                  source={require("@/assets/images/icons/arrow-right.png")}
-                  style={{ width: 24, height: 24, tintColor: "#053B4A" }}
+                <IconAvatarRight
+                  width={24}
+                  height={24}
+                  color={"#053B4A"}
                 />
               </TouchableOpacity>
             </ThemedView>
@@ -81,9 +85,10 @@ export default function ForgotPassword() {
               <Link href="../" asChild>
                 <TouchableOpacity style={styles.backBtn}>
                   {/* Back Icon */}
-                  <Image
-                    source={require("@/assets/images/icons/arrow-left.png")}
-                    style={{ tintColor: "#fcfcfc", width: 24, height: 24 }}
+                  <IconArrowLeft
+                    width={24}
+                    height={24}
+                    color={"#fcfcfc"}
                   />
                   <ThemedText style={styles.backText}>Back</ThemedText>
                 </TouchableOpacity>

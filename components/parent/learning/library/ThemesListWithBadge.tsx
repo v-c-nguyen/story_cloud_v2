@@ -13,6 +13,8 @@ import { useThemesStore } from "@/store/themesStore";
 import ThemesSelection from "./ThemesSelection";
 
 import IconArrowRightGradient from "@/assets/images/icons/arrow-right-gradient.svg"
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+
 interface ThemesListWithBadgeProps {
   themesCategories: any[];
   loading: boolean;
@@ -121,9 +123,10 @@ const ThemesListWithBadge: React.FC<ThemesListWithBadgeProps> = ({
                 categories={themesCategories}
               />
               <TouchableOpacity onPress={() => handleStoryItem(category)}>
-                <Image
-                  source={require("@/assets/images/kid/arrow-right.png")}
-                  style={styles.arrowIcon}
+                <IconAvatarRight
+                  width={24}
+                  height={24}
+                  color={"#053B4A"}
                 />
               </TouchableOpacity>
             </ThemedView>

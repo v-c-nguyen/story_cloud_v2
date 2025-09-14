@@ -15,6 +15,8 @@ import StoryItems from "./StoryItems";
 import { useStoryStore } from "@/store/storyStore";
 import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
+import IconCheck from "@/assets/images/parent/icon-check.svg"
+
 
 interface Props {
   currentCharacter: any;
@@ -111,10 +113,8 @@ export default function CharacterSelection({
           <TouchableOpacity onPress={() => setSelectedItem("all")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "all" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
+                <IconCheck
                   style={styles.statsIcon}
-                  contentFit="contain"
                 />
               )}
               <ThemedText
@@ -132,10 +132,10 @@ export default function CharacterSelection({
           <TouchableOpacity onPress={() => setSelectedItem("series")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "series" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText
@@ -153,10 +153,10 @@ export default function CharacterSelection({
           <TouchableOpacity onPress={() => setSelectedItem("stories")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "stories" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText

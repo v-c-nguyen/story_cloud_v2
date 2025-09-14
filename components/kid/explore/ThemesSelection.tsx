@@ -16,6 +16,9 @@ import { useStoryStore } from "@/store/storyStore";
 import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
 
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import IconArrowDown from "@/assets/images/icons/arrow-down.svg";
+
 interface Props {
   currentTheme: any;
   setCurrentTheme?: (c: any) => void;
@@ -77,9 +80,10 @@ export default function ThemesSelection({
             style={styles.closeButton}
             onPress={() => setCurrentTheme && setCurrentTheme(null)}
           >
-            <Image
-              source={require("@/assets/images/kid/arrow-down.png")}
-              style={styles.closeArrow}
+            <IconArrowDown
+              width={24}
+              height={24}
+              color={"#F4A672"}
             />
           </TouchableOpacity>
         </View>
@@ -87,7 +91,7 @@ export default function ThemesSelection({
         {/* Filters */}
         <View style={styles.statsContainer}>
           <ThemedText style={[styles.statsText]}>
-            {currentTheme.stories ? currentTheme.stories.length : 0 } STORIES
+            {currentTheme.stories ? currentTheme.stories.length : 0} STORIES
           </ThemedText>
         </View>
       </View>
@@ -95,9 +99,10 @@ export default function ThemesSelection({
       <TouchableOpacity style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", margin: 20 }}
         onPress={handleBackToExplore}
       >
-        <Image
-          source={require("@/assets/images/kid/arrow-left.png")}
-          style={[styles.closeArrow, { width: 20, height: 20, tintColor: "#053B4A" }]}
+        <IconArrowLeft
+          width={24}
+          height={24}
+          color={"#fcfcfc"}
         />
         <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Explore"}</ThemedText>
       </TouchableOpacity>

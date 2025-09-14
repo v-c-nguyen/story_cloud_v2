@@ -5,13 +5,15 @@ import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 import { Child } from '@/store/childrenStore';
 import { useEffect, useState } from 'react';
+import IconFoot from "@/assets/images/parent/icon-step.svg"
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 function FootIcon({ color }: { color: string }) {
   return (
-    <Image
-      source={require('@/assets/images/kid/foot-line.png')}
-      style={{ width: 24, height: 24 }}
-    ></Image>
+    <IconFoot
+      width={24}
+      height={24}
+    />
   );
 }
 
@@ -35,10 +37,15 @@ export default function PathwayProgressBar({ total, current = 1, child }: { tota
             <ThemedView style={progressStyles.nameAvatarWrap}>
               <ThemedView style={progressStyles.nameBadge}>
                 <ThemedText style={progressStyles.nameText}>{child?.name}</ThemedText>
-                <Image
-                  source={child?.avatar_url ? { uri: child.avatar_url } : require('@/assets/images/kid/avatars/jesse.png')}
-                  style={progressStyles.avatar}
-                />
+                {
+                  child?.avatar_url ?
+                    <Image
+                      source={{ uri: child.avatar_url }}
+                      style={progressStyles.avatar}
+                    />
+                    :
+                    <IconDefaultAvatar width={35} height={35} />
+                }
               </ThemedView>
             </ThemedView>
 

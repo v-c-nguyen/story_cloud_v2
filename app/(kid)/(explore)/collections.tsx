@@ -23,6 +23,8 @@ import {
 
 import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
 const cardsData = [
   { color: '#FFFFFF', icon: require('@/assets/images/parent/series.png'), text: 'Series' },
@@ -33,6 +35,7 @@ const cardsData = [
 ];
 
 export default function Collections() {
+  const { child } = useUser();
   const [categories, setCategory] = React.useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,18 +108,7 @@ export default function Collections() {
             style={styles.topBackPattern}
             resizeMode="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+          <Header role="kid" mode={child?.mode} />
 
           {/* Header */}
           <ThemedText style={styles.headerTitle}>StoryCloud Collections</ThemedText>

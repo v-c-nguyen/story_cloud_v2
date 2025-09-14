@@ -14,10 +14,7 @@ import { tabData } from '@/data/parent/dashboardData';
 
 import IconRefresh from "@/assets/images/icons/icon-refresh.svg";
 import IconStar from "@/assets/images/icons/icon-star.svg";
-const refeshIcon = require('@/assets/images/parent/icon-refresh.png');
-const eyeIcon = require('@/assets/images/parent/icon-eye.png');
-const passIcon = require('@/assets/images/parent/icon-passwordItem.png');
-const starIcon = require('@/assets/images/parent/star.png');
+import IconEyeClose from "@/assets/images/auth/icon-eye-close.svg";
 
 export default function LoginCredential() {
   const router = useRouter();
@@ -166,9 +163,10 @@ export default function LoginCredential() {
                       autoCorrect={false}
                     />
                     <TouchableOpacity onPress={() => setShowStars(!showStars)}>
-                      <Image
-                        source={require("@/assets/images/auth/icon-eye-close.png")}
-                        style={{ width: 24, height: 24, tintColor: 'rgb(2, 38, 48)' }}
+                      <IconEyeClose
+                        width={24}
+                        height={24}
+                        color={"#053B4A"}
                       />
                     </TouchableOpacity>
                   </ThemedView>

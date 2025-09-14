@@ -38,7 +38,7 @@ export default function RecentLearning({ activeChild, mode = "parent", watched =
             {loading ? (
                 <ActivityIndicator color={mode == "parent" ? "#ffffff" : "#053B4A"} style={{
                     zIndex: 999,
-                    marginBottom: 50,
+                    marginVertical: 50,
                 }} />
             ) :
                 recents.length > 0 ?

@@ -6,6 +6,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Stack, useRouter } from 'expo-router';
 import React from 'react';
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+import IconEyeClose from "@/assets/images/auth/icon-eye-close.svg";
 
 export default function NewPassword() {
   const router = useRouter();
@@ -108,9 +110,9 @@ export default function NewPassword() {
                   onPress={() => setSecure(!secure)}
                   hitSlop={10}
                 >
-                  <Image
-                    source={require("@/assets/images/auth/icon-eye-close.png")}
-                    style={{ width: 20, height: 20 }}
+                  <IconEyeClose
+                    width={20}
+                    height={20}
                   />
                 </TouchableOpacity>
               </ThemedView>
@@ -119,9 +121,10 @@ export default function NewPassword() {
               <TouchableOpacity style={styles.loginBtn} onPress={signInWithEmail}>
                 <ThemedText style={styles.loginText}>Continue</ThemedText>
                 {/* Arrow Icon */}
-                <Image
-                  source={require("@/assets/images/icons/arrow-right.png")}
-                  style={{ width: 24, height: 24, tintColor: "#053B4A" }}
+                <IconAvatarRight
+                  width={24}
+                  height={24}
+                  color={"#053B4A"}
                 />
               </TouchableOpacity>
             </ThemedView>

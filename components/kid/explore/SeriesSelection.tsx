@@ -16,6 +16,9 @@ import { useStoryStore } from "@/store/storyStore";
 import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
 
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import IconHeart from "@/assets/images/parent/footer/icon-heart.svg"
+
 interface Props {
   currentSeries: any;
   setCurrentSeries?: (c: any | null) => void;
@@ -41,9 +44,10 @@ export default function SeriesSelection({
 
   return (
     <ThemedView style={{ paddingBottom: 80, alignItems: "center", paddingLeft: 20 }}>
-      <Image
-        source={require("@/assets/images/kid/icon-heart.png")}
-        tintColor={"#053B4A"}
+      <IconHeart
+        color={"#053B4A"}
+        width={26}
+        height={24}
         style={{ marginTop: 20, width: 26, height: 24 }}
       />
       <ThemedText style={[styles.sectionTitle, { marginTop: 10, color: "#048F99" }]}>{"SERIES"}</ThemedText>
@@ -53,9 +57,10 @@ export default function SeriesSelection({
       <TouchableOpacity style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", margin: 20 }}
         onPress={handleBackToExplore}
       >
-        <Image
-          source={require("@/assets/images/kid/arrow-left.png")}
-          style={[styles.closeArrow, { width: 20, height: 20, tintColor: "#053B4A" }]}
+        <IconArrowLeft
+          width={24}
+          height={24}
+          color={"#fcfcfc"}
         />
         <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Explore"}</ThemedText>
       </TouchableOpacity>

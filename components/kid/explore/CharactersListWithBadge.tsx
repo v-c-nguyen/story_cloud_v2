@@ -10,6 +10,8 @@ import normalize from "@/app/lib/normalize";
 import { useCharactersStore } from "@/store/charactersStore";
 import CharacterSelection from "./CharacterSelection";
 
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+
 interface CharactersListWithBadgeProps {
   charactersCategories: any[];
   mode: string;
@@ -32,12 +34,12 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
   const setCurrentCharacter = useCharactersStore((s) => s.setCurrentKidCharacter);
 
   useEffect(() => {
-        const targets = charactersCategories.filter((category) =>
-          category.stories && category.stories.length > 0 || category.series && category.series.length > 0
-        );
+    const targets = charactersCategories.filter((category) =>
+      category.stories && category.stories.length > 0 || category.series && category.series.length > 0
+    );
 
-        setCategoriesWithStories(targets);
-        setDisplayedCategories(targets);
+    setCategoriesWithStories(targets);
+    setDisplayedCategories(targets);
   }, [charactersCategories]);
 
   useEffect(() => {
@@ -158,9 +160,11 @@ function SectionHeader({
       <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
         <TouchableOpacity onPress={() => { handleSelectedItem(title) }}>
-          <Image
-            source={require("@/assets/images/kid/arrow-right.png")}
-            style={styles.arrowIcon}
+
+          <IconAvatarRight
+            width={24}
+            height={24}
+            color={"#053B4A"}
           />
         </TouchableOpacity>
       </ThemedView>

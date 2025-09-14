@@ -16,6 +16,10 @@ import { useStoryStore } from "@/store/storyStore";
 import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
 
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import IconCheck from "@/assets/images/parent/icon-check.svg"
+
+
 interface Props {
   currentCharacter: any;
   setCurrentCharacter?: (c: any) => void;
@@ -88,10 +92,10 @@ export default function CharacterSelection({
           <TouchableOpacity onPress={() => setSelectedItem("all")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "all" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText
@@ -109,10 +113,10 @@ export default function CharacterSelection({
           <TouchableOpacity onPress={() => setSelectedItem("series")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "series" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText
@@ -130,10 +134,10 @@ export default function CharacterSelection({
           <TouchableOpacity onPress={() => setSelectedItem("stories")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "stories" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText
@@ -151,10 +155,11 @@ export default function CharacterSelection({
         <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 10 }}
           onPress={() => setCurrentCharacter && setCurrentCharacter(null)}
         >
-          <Image
-            source={require("@/assets/images/kid/arrow-left.png")}
-            style={[styles.closeArrow, { width: 20, height: 20, tintColor: "#053B4A" }]}
-          />
+                  <IconArrowLeft
+                    width={24}
+                    height={24}
+                    color={"#053B4A"}
+                  />
           <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Storyland Map"}</ThemedText>
         </TouchableOpacity>
       </View>

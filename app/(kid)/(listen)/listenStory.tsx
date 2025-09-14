@@ -1,4 +1,5 @@
 import { getSeriesByStoryId } from "@/api/series";
+import { useUser } from "@/app/lib/UserContext";
 import BottomNavBar from "@/components/BottomNavBar";
 import Header from "@/components/Header";
 import MediaPlayerCard from "@/components/MediaPlayerCard";
@@ -22,21 +23,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const parentIcons = {
-  learning: require("@/assets/images/parent/learning.png"),
-  heart: require("@/assets/images/parent/heart.png"),
-  star: require("@/assets/images/parent/star.png"),
-  information_circle: require("@/assets/images/parent/information_circle.png"),
-  // add more as needed
-};
-
-const insightIcons = {
-  duration: require("@/assets/images/parent/duration.png"),
-  steps: require("@/assets/images/parent/steps.png"),
-  finished: require("@/assets/images/parent/finished.png"),
-};
-
-const musicIcon = require("@/assets/images/parent/music.png");
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import IconMusic from "@/assets/images/icons/music.svg";
 
 export default function ListenStory() {
   const router = useRouter();
@@ -53,6 +41,7 @@ export default function ListenStory() {
   const setStories = useStoryStore((state) => state.setStories);
   const stories = useStoryStore((state) => state.stories);
   const setActiveTrack = useTrackStore((state) => state.setActiveTrack);
+  const { child } = useUser();
 
   React.useEffect(() => {
     async function fetchSeries() {
@@ -134,20 +123,32 @@ export default function ListenStory() {
             />
 
             {/* Main Content */}
-            <Header role="parent" theme="dark"></Header>
+            <Header role="kid" theme="dark" mode={child?.mode}></Header>
             {/* Header */}
 
             <ThemedView style={styles.container}>
               {/* Dots */}
               <ThemedView style={styles.cardFooter}>
                 <TouchableOpacity onPress={() => router.push("./")}>
-                  <Image
-                    source={require("@/assets/images/icons/arrow-left.png")}
+                  <IconArrowLeft
+                    color={"white"}
+                    width={24}
+                    height={24}
                     style={styles.leftBtn}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity>
-                  <Image source={musicIcon} style={styles.rightBtn} />
+                <TouchableOpacity style={{ position: 'relative', width: 32 }} >
+                  <IconMusic width={24} height={24} style={styles.rightBtn} />
+                  <ThemedView style={{
+                    position: 'absolute',
+                    width: 20,
+                    height: 20,
+                    borderRadius: 50,
+                    backgroundColor: '#ADD7DA',
+                    zIndex: -1,
+                    right: 0
+                  }}></ThemedView>
+
                 </TouchableOpacity>
               </ThemedView>
 
@@ -197,18 +198,6 @@ export default function ListenStory() {
     </>
   );
 }
-
-type SectionHeaderProps = {
-  title: string;
-  avatar: keyof typeof parentIcons;
-  avatar1?: keyof typeof parentIcons;
-};
-
-type InsightItemProps = {
-  value: number;
-  what: string;
-  avatar: keyof typeof insightIcons;
-};
 
 const styles = StyleSheet.create({
   cardFooter: {

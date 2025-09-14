@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 // Data arrays for each section
-
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 export default function FocusModeHome() {
 
   const router = useRouter();
@@ -57,6 +57,7 @@ export default function FocusModeHome() {
           console.error('Error fetching favorites:', error.message);
         } else if (data) {
           // Save to favorites store
+          console.log(data)
           setFavoriteStories(data.stories || []);
           setFavoriteSeries(data.series || []);
         }
@@ -89,9 +90,10 @@ function SectionHeader({ title, link }: { title: string; link: string }) {
     <ThemedView style={styles.sectionHeader}>
       <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
       <TouchableOpacity onPress={() => router.push(getRoute() as RelativePathString)}>
-        <Image
-          source={require("@/assets/images/kid/arrow-right.png")}
-          style={styles.sectionArrow}
+        <IconAvatarRight
+          width={24}
+          height={24}
+          color={"#053B4A"}
         />
       </TouchableOpacity>
     </ThemedView>

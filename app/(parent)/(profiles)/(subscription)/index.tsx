@@ -23,8 +23,6 @@ import { tabData } from '@/data/parent/dashboardData';
 import IconTickBox from "@/assets/images/icons/icon-box-tick.svg"
 import IconCancel from "@/assets/images/parent/icon-cancel.svg"
 
-const checkIcon = require('@/assets/images/parent/icon-checkmark.png')
-const cancelIcon = require('@/assets/images/parent/icon-cancel.png')
 const starIcon = require('@/assets/images/parent/icon-star.png')
 
 const { width } = Dimensions.get('window');

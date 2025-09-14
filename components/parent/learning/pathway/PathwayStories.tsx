@@ -4,9 +4,9 @@ import { ThemedView } from '../../../ThemedView';
 import { ThemedText } from '../../../ThemedText';
 import GradientText from '../../../ui/GradientText';
 
-const stepIcon = require('@/assets/images/parent/icon-step.png');
-const cancelIcon = require('@/assets/images/parent/icon-cancel.png');
-const plusIcon = require('@/assets/images/parent/icon-plus.png');
+import IconStep from "@/assets/images/parent/icon-step.svg"
+import IconCancel from "@/assets/images/parent/icon-cancel.svg"
+import IconPlus from "@/assets/images/parent/icon-plus.svg"
 
 export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
     const [selectedStep, setSelectedStep] = React.useState(0);
@@ -51,7 +51,7 @@ export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
                                 />
                                 <ThemedView style={{ padding: 12, width: '70%' }}>
                                     <ThemedView style={{ backgroundColor: '#003b4f', borderColor: '#fcfcfc2f', borderWidth: 1, borderRadius: 20, padding: 10, alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginBottom: 4 }}>
-                                        <Image source={stepIcon} style={{ width: 24, height: 24 }} />
+                                        <IconStep width={24}height={24} />
                                         <ThemedText style={{ color: '#fcfcfc2f' }}>|</ThemedText>
                                         <ThemedText style={{ color: '#ffffffff', fontSize: 18, fontWeight: 'bold' }}>1</ThemedText>
                                     </ThemedView>
@@ -74,13 +74,13 @@ export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
                                 <ThemedView style={{ padding: 12, width: '70%' }}>
                                     <ThemedView style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                         <ThemedView style={{ backgroundColor: '#003b4f', borderColor: '#fcfcfc2f', borderWidth: 1, borderRadius: 20, padding: 10, alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginBottom: 4 }}>
-                                            <Image source={stepIcon} style={{ width: 24, height: 24 }} />
+                                            <IconStep width={24} height={24} />
                                             <ThemedText style={{ color: '#fcfcfc2f' }}>|</ThemedText>
                                             <ThemedText style={{ color: '#ffffffff', fontSize: 18, fontWeight: 'bold' }}>1</ThemedText>
                                         </ThemedView>
                                         <TouchableOpacity>
                                             <ThemedView style={{ backgroundColor: '#003b4f', borderColor: '#fcfcfc2f', borderWidth: 1, borderRadius: 20, padding: 10, alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginBottom: 4 }}>
-                                                <Image source={cancelIcon} style={{ width: 18, height: 18, tintColor: '#7AC1C6' }} />
+                                                <IconCancel width={18} height={18} color={"#7AC1C6"}/>
                                             </ThemedView>
                                         </TouchableOpacity>
                                     </ThemedView>
@@ -106,7 +106,7 @@ export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
                 <TouchableOpacity>
                     <ThemedView style={[{ width: 320, height: 220, backgroundColor: '#003b4f', borderRadius: 12, borderWidth: 1, borderColor: '#add7da42', overflow: 'hidden', flexDirection: 'row', zIndex: -1 }, { borderStyle: 'dashed', borderWidth: 3 }]}>
                         <ThemedView style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 10 }}>
-                            <Image source={plusIcon} style={{ width: 24, height: 24, tintColor: '#2AEBEB' }} />
+                            <IconPlus width={24} height={24} color={"#2AEBEB"}  />
                             <GradientText text="Add New Story" style={{ fontSize: 24, fontWeight: 'bold' }} />
                         </ThemedView>
                     </ThemedView>

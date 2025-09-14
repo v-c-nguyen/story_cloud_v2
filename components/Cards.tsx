@@ -1,3 +1,4 @@
+
 import { Image } from "expo-image";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -18,10 +19,10 @@ import IconFilledBallon from "@/assets/images/icons/FilledBallon.svg"
 import IconPlus from "@/assets/images/parent/icon-plus.svg";
 import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
+import IconHeart from "@/assets/images/parent/footer/icon-heart.svg"
 import IconPlay from "@/assets/images/icons/play.svg"
 import GradientText from "./ui/GradientText";
-
-const { width } = Dimensions.get("window");
+import IconCheck from "@/assets/images/parent/icon-check.svg"
 
 interface RecentProps {
   stories: {
@@ -72,7 +73,7 @@ const cardStyles = [
     ballonColor3: "rgba(223, 178, 255, 1)",
   },
   {
-    bgColor: "rgb(173, 215, 218)",
+    bgColor: "#ADD7DA",
     textColor: "#053B4A",
     subTextColor: "rgba(4, 143, 153, 1)",
     progressColor: "#F8ECAE",
@@ -205,12 +206,10 @@ export function StoryCard({
               }]}
             >
               {
-                <Image
-                  source={require("@/assets/images/kid/icon-heart.png")}
-                  style={[
-                    styles.storyFavIcon,
-                    { tintColor: `${style.textColor}` },
-                  ]}
+                <IconHeart
+                  width={20}
+                  height={20}
+                  color={`${style.textColor}`}
                 />
               }
             </TouchableOpacity>
@@ -237,8 +236,9 @@ export function StoryCard({
             style={styles.storyPlayBtn}
             onPress={() => onPlay && onPlay(recent.stories.storyId)}
           >
-            <Image
-              source={require("@/assets/images/kid/play-btn.png")}
+            <IconPlay
+              width={90}
+              height={90}
               style={styles.storyPlayIcon}
             />
           </TouchableOpacity>
@@ -247,31 +247,29 @@ export function StoryCard({
               position: "absolute",
               width: 48,
               height: 48,
-              backgroundColor: style.subTextColor,
+              backgroundColor: style.bgColor == "rgb(173, 215, 218)" ? "#F8ECAE" : "rgb(173, 215, 218)",
               top: -24,
               left: "50%",
               transform: "translate(-24px, 0)",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: 'center',
               borderRadius: 24,
             }}
           >
-            <Image
-              source={
-                style.isBallonYellow
-                  ? require("@/assets/images/kid/yellow-ballon.png")
-                  : require("@/assets/images/kid/blue-ballon.png")
-              }
-              style={{ width: 48, height: 48 }}
-              contentFit="cover"
+            <IconFilledBallon
+              width={25}
+              height={35}
             />
           </ThemedView>
         </ThemedView>
         <ThemedView>
           {recent.watched ? (
             <ThemedView style={styles.progressRow}>
-              <Image
-                source={require("@/assets/images/kid/icon-check.png")}
-                contentFit="cover"
-                style={[styles.checkIcon, { tintColor: `${style.textColor}` }]}
+              <IconCheck
+                width={20}
+                height={20}
+                color={style.textColor}
               />
               <ThemedText
                 style={[styles.storyTime, { color: style.textColor }]}
@@ -341,9 +339,9 @@ interface StoryCard3Props {
   storyId: string;
   seriesCategory: string;
   storyTitle: string;
-  image: string;
-  isFavourite: boolean;
-  track: {
+  image?: string;
+  isFavourite?: boolean;
+  track?: {
     duration?: number;
     played?: number;
     watched?: boolean;
@@ -358,9 +356,19 @@ export function StoryCard3({
   story: StoryCard3Props;
   onPlay?: (id: string) => void;
 }) {
+  const [isFavorite, setIsFavorite] = useState(false)
+  const favoritesStories = useFavoritesStore((s) => s.stories)
+  const addStory = useFavoritesStore((s) => s.addStory)
+  const removeStory = useFavoritesStore((s) => s.removeStory)
   // Use a consistent style based on the story index
   const styleIdx = num % cardStyles.length;
   const style = cardStyles[styleIdx];
+
+  useEffect(() => {
+    const fav = favoritesStories.find((item) => item.storyId == story.storyId)
+    if (fav) setIsFavorite(true)
+    else setIsFavorite(false)
+  }, [favoritesStories])
 
   function FromSec(seconds: number): string {
     const min = Math.floor(seconds / 60);
@@ -368,6 +376,63 @@ export function StoryCard3({
     return `${min}:${sec}`;
   }
 
+  function ToFavorites(id: string) {
+    const child_id = useChildrenStore.getState().activeChild?.id;
+
+    // Get the JWT token if needed for Authorization header
+    supabase.auth.getSession().then((sessionResult) => {
+      const jwt = sessionResult?.data?.session?.access_token;
+
+      if (!isFavorite) {
+        fetch("https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+          },
+          body: JSON.stringify({ story_id: id, child_id: child_id, style: "story" }),
+        })
+          .then(async (res) => {
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              throw new Error(err.message || "Failed to add favorite");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            // Optionally update your local favorites store here
+            addStory(data)
+          })
+          .catch((error) => {
+            console.error("Failed to add favorite:", error);
+          });
+      }
+      else {
+        fetch(`https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/favorites/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+          },
+          body: JSON.stringify({ child_id: child_id, style: "story" }),
+        })
+          .then(async (res) => {
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              throw new Error(err.message || "Failed to remove favorite");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            // Optionally update your local favorites store here
+            removeStory(data)
+          })
+          .catch((error) => {
+            console.error("Failed to add favorite:", error);
+          });
+      }
+    });
+  }
   const imageGen = (img: string) => {
     switch (img) {
       case "1":
@@ -393,19 +458,23 @@ export function StoryCard3({
             <ThemedText style={[styles.storyLabel, { color: style.textColor }]}>
               Story
             </ThemedText>
-            {
-              <Image
-                source={
-                  story.isFavourite
-                    ? require("@/assets/images/kid/icon-heart.png")
-                    : require("@/assets/images/kid/icon-heart.png")
-                }
-                style={[
-                  styles.storyFavIcon,
-                  { tintColor: `${style.textColor}` },
-                ]}
-              />
-            }
+
+            <TouchableOpacity
+              onPress={() => ToFavorites(story.storyId)}
+              style={[{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+              isFavorite && {
+                backgroundColor: style.bgColor == "rgb(244, 166, 114)" ? "white" : "rgb(244, 166, 114)",
+                borderRadius: 20, width: 20, height: 20
+              }]}
+            >
+              {
+                <IconHeart
+                  width={20}
+                  height={20}
+                  color={`${style.textColor}`}
+                />
+              }
+            </TouchableOpacity>
           </ThemedView>
           <ThemedText
             style={[styles.storySeries, { color: style.subTextColor }]}
@@ -429,9 +498,9 @@ export function StoryCard3({
             style={styles.storyPlayBtn}
             onPress={() => onPlay && onPlay(story.storyId)}
           >
-            <Image
-              source={require("@/assets/images/kid/play-btn.png")}
-              style={styles.storyPlayIcon}
+            <IconPlay
+              width={90}
+              height={90}
             />
           </TouchableOpacity>
           <ThemedView
@@ -439,21 +508,19 @@ export function StoryCard3({
               position: "absolute",
               width: 48,
               height: 48,
-              backgroundColor: style.subTextColor,
+              backgroundColor: style.bgColor == "rgb(173, 215, 218)" ? "#F8ECAE" : "rgb(173, 215, 218)",
               top: -24,
               left: "50%",
               transform: "translate(-24px, 0)",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: 'center',
               borderRadius: 24,
             }}
           >
-            <Image
-              source={
-                style.isBallonYellow
-                  ? require("@/assets/images/kid/yellow-ballon.png")
-                  : require("@/assets/images/kid/blue-ballon.png")
-              }
-              style={{ width: 48, height: 48 }}
-              contentFit="cover"
+            <IconFilledBallon
+              width={25.3}
+              height={35.12}
             />
           </ThemedView>
         </ThemedView>
@@ -461,13 +528,10 @@ export function StoryCard3({
           <ThemedView>
             {story.track.watched ? (
               <ThemedView style={styles.progressRow}>
-                <Image
-                  source={require("@/assets/images/kid/icon-check.png")}
-                  contentFit="cover"
-                  style={[
-                    styles.checkIcon,
-                    { tintColor: `${style.textColor}` },
-                  ]}
+                <IconCheck
+                  width={20}
+                  height={20}
+                  color={style.textColor}
                 />
                 <ThemedText
                   style={[styles.storyTime, { color: style.textColor }]}
@@ -620,9 +684,9 @@ export function StoryCard1({
   return (
     <ThemedView style={[styles.storyCard, style.bgColor == "rgb(5, 59, 74)" && { borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.2)" }, { backgroundColor: style.bgColor }]}>
       <TouchableOpacity
-      // onPress={() =>
-      //   router.push("/(parent)/(learning)/(library)/detailed-screen")
-      // }
+      onPress={() =>
+        router.push(`/(parent)/(learning)/(library)/storyDetail?id=${story.storyId}`)
+      }
       >
         <ThemedView>
           <ThemedView style={{ height: 50 }}>
@@ -918,8 +982,8 @@ export function StoryCard1({
                       style={[
                         styles.dot,
                         currentCardIndex === idx && styles.dotActive,
-                        style.bgColor == "#053B4A" && { borderColor: "white" },
-                        style.bgColor == "#053B4A" &&
+                        style.bgColor == "rgb(5, 59, 74)" && { borderColor: "white" },
+                        style.bgColor == "rgb(5, 59, 74)" &&
                         currentCardIndex === idx && {
                           backgroundColor: "white",
                         },
@@ -1001,14 +1065,14 @@ export function StoryCard2({
           Story
         </ThemedText>
         {
-          <Image
-            source={
-              isFavorite
-                ? require("@/assets/images/kid/icon-heart.png")
-                : require("@/assets/images/kid/icon-heart.png")
-            }
-            style={[styles.storyFavIcon, { tintColor: `${textColor}` }]}
+
+          <IconHeart
+            width={20}
+            height={20}
+            color={`${textColor}`}
+            style={[styles.storyFavIcon]}
           />
+
         }
       </ThemedView>
       <ThemedText style={[styles.storySeries, { color: subTextColor }]}>
@@ -1020,9 +1084,9 @@ export function StoryCard2({
       <ThemedView style={styles.storyImageWrap}>
         {image && <Image source={imageGen(image)} style={styles.storyImage} />}
         <TouchableOpacity style={styles.storyPlayBtn}>
-          <Image
-            source={require("@/assets/images/kid/play-btn.png")}
-            style={styles.storyPlayIcon}
+          <IconPlay
+            width={90}
+            height={90}
           />
         </TouchableOpacity>
         <ThemedView
@@ -1037,23 +1101,18 @@ export function StoryCard2({
             borderRadius: 24,
           }}
         >
-          <Image
-            source={
-              isBallonYellow
-                ? require("@/assets/images/kid/yellow-ballon.png")
-                : require("@/assets/images/kid/blue-ballon.png")
-            }
-            style={{ width: 48, height: 48 }}
-            contentFit="cover"
+          <IconFilledBallon
+            width={48}
+            height={48}
           />
         </ThemedView>
       </ThemedView>
       {watched ? (
         <ThemedView style={styles.progressRow}>
-          <Image
-            source={require("@/assets/images/kid/icon-check.png")}
-            contentFit="cover"
-            style={[styles.checkIcon, { tintColor: `${textColor}` }]}
+          <IconCheck
+            width={20}
+            height={20}
+            color={textColor}
           />
           <ThemedText style={[styles.storyTime, { color: textColor }]}>
             Watched
@@ -1141,8 +1200,9 @@ export function SeriesCard({
     <ThemedView style={styles.seriesCard}>
       <ThemedView style={styles.favActiveCircle}></ThemedView>
       {isFavorite && (
-        <Image
-          source={require("@/assets/images/kid/icon-heart.png")}
+        <IconHeart
+          width={20}
+          height={20}
           style={[
             styles.storyFavIcon,
             { position: "absolute", top: 20, right: 22 },
@@ -1193,8 +1253,9 @@ export function SeriesCard2({
     <ThemedView style={styles.seriesCard}>
       <ThemedView style={styles.favActiveCircle}></ThemedView>
       {isFavorite && (
-        <Image
-          source={require("@/assets/images/kid/icon-heart.png")}
+        <IconHeart
+          width={20}
+          height={20}
           style={[
             styles.storyFavIcon,
             { position: "absolute", top: 20, right: 22 },
@@ -1298,9 +1359,9 @@ export function SeriesCard_Parent({
       ]}
     >
       <TouchableOpacity
-      // onPress={() =>
-      //   router.push("/(parent)/(learning)/(library)/detailed-screen")
-      // }
+      onPress={() =>
+        router.push(`/(parent)/(learning)/(library)/seriesDetail?id=${series.id}`)
+      }
       >
         <ThemedView>
           <ThemedView style={{ height: 50 }}>
@@ -1324,10 +1385,9 @@ export function SeriesCard_Parent({
                     },
                   ]}
                 >
-                  <Image
-                    source={require("@/assets/images/kid/ballon.png")}
-                    style={{ width: 25.333, height: 35.12 }}
-                    contentFit="cover"
+                  <IconFilledBallon
+                    width={25.3}
+                    height={35.12}
                   />
                 </ThemedView>
               )}

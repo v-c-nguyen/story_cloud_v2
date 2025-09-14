@@ -7,6 +7,7 @@ import { Image } from "expo-image";
 import { RelativePathString, Stack, useRouter } from "expo-router";
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 
 interface ParentKids {
     id: string;
@@ -49,17 +50,17 @@ export default function PathwayList({ pathway }: { pathway: PathwayProps }) {
             <SectionHeader title={pathway.name} description={pathway.description} link="continue" />
             {
                 pathway?.stories && pathway.stories.length > 0 ?
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.cardScrollContainer}
-                >
-                    {pathway?.stories.map((item, idx) => (
-                        <StoryCard2 key={idx} {...item} />
-                    ))}
-                </ScrollView>
-                :
-                <ThemedText style={{color: '#053B4A', width: '100%', textAlign:'center', marginTop: 20}}>no stories</ThemedText>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.cardScrollContainer}
+                    >
+                        {pathway?.stories.map((item, idx) => (
+                            <StoryCard2 key={idx} {...item} />
+                        ))}
+                    </ScrollView>
+                    :
+                    <ThemedText style={{ color: '#053B4A', width: '100%', textAlign: 'center', marginTop: 20 }}>no stories</ThemedText>
             }
         </ThemedView>
     )
@@ -83,11 +84,13 @@ function SectionHeader({ title, description, link }: { title: string, descriptio
             <ThemedView style={{ paddingHorizontal: 16 }}>
                 <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
                 <ThemedView style={styles.sectionHeaderLink}>
-                    <ThemedText style={[styles.sectionSubTitle, {width: '80%'}]}>{description}</ThemedText>
+                    <ThemedText style={[styles.sectionSubTitle, { width: '80%' }]}>{description}</ThemedText>
                     <TouchableOpacity onPress={() => router.push(getRoute() as RelativePathString)}>
-                        <Image
-                            source={require("@/assets/images/kid/arrow-right.png")}
-                            style={styles.sectionArrow}
+
+                        <IconAvatarRight
+                            width={24}
+                            height={24}
+                            color={"#053B4A"}
                         />
                     </TouchableOpacity>
                 </ThemedView>

@@ -13,6 +13,8 @@ import { useCollectionsStore } from "@/store/collectionsStore";
 import CollectionSelection from "./CollectionSelection";
 
 import IconArrowRightGradient from "@/assets/images/icons/arrow-right-gradient.svg"
+import IconCheck from "@/assets/images/parent/icon-check.svg"
+
 interface CollectionsListWithBadgeProps {
   collectionsCategories: any[];
   loading: boolean;
@@ -133,10 +135,10 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
                   <TouchableOpacity onPress={() => setSelectedItem("all")}>
                     <ThemedView style={styles.statsIconContainer}>
                       {selectedItem === "all" && (
-                        <Image
-                          source={require("@/assets/images/kid/check.png")}
-                          style={styles.statsIcon}
-                          contentFit="contain"
+                        <IconCheck
+                          width={14}
+                          height={14}
+                          color="#F4A672"
                         />
                       )}
                       <ThemedText
@@ -154,10 +156,10 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
                   <TouchableOpacity onPress={() => setSelectedItem("series")}>
                     <ThemedView style={styles.statsIconContainer}>
                       {selectedItem === "series" && (
-                        <Image
-                          source={require("@/assets/images/kid/check.png")}
-                          style={styles.statsIcon}
-                          contentFit="contain"
+                        <IconCheck
+                          width={14}
+                          height={14}
+                          color="#F4A672"
                         />
                       )}
                       <ThemedText
@@ -177,10 +179,10 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
                   >
                     <ThemedView style={styles.statsIconContainer}>
                       {selectedItem === "stories" && (
-                        <Image
-                          source={require("@/assets/images/kid/check.png")}
-                          style={styles.statsIcon}
-                          contentFit="contain"
+                        <IconCheck
+                          width={14}
+                          height={14}
+                          color="#F4A672"
                         />
                       )}
                       <ThemedText
@@ -197,7 +199,7 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
                 </ThemedView>
 
                 <TouchableOpacity onPress={() => handleStoryItem(category)}>
-                  <IconArrowRightGradient width={24} height={24} style={{marginBottom: 20}} />
+                  <IconArrowRightGradient width={24} height={24} style={{ marginBottom: 20 }} />
                 </TouchableOpacity>
               </ThemedView>
             </ThemedView>

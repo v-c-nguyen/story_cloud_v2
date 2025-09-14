@@ -15,7 +15,9 @@ import { ThemedView } from "@/components/ThemedView";
 import { Link, Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 
-const defaultAvatar = require("@/assets/images/parent/avatar-parent-2.png");
+import IconKidVector from "@/assets/images/auth/kong-vector.svg";
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 
 const { width, height } = Dimensions.get("window");
 
@@ -51,12 +53,12 @@ export default function WhoAreYouScreen() {
       setChild({
         id: result.data[0].id ?? "",
         name: result.data[0].name,
-        avatar_url: result.data[0].avatar_url || defaultAvatar,
+        avatar_url: result.data[0].avatar_url || "",
         mode: result.data[0].mode || "free",
         age: result.data[0].age || 0,
       });
       router.push(`./success?childName=${result.data[0].name}`);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   useEffect(() => {
@@ -122,19 +124,22 @@ export default function WhoAreYouScreen() {
                     onPress={(e) => handleChildSelect(child.id)}
                   >
                     <ThemedView style={styles.childCard}>
-                      <Image
-                        source={
-                          child.avatar_url
-                            ? { uri: child.avatar_url }
-                            : defaultAvatar
-                        }
-                        style={styles.childImage}
-                      />
+                      {
+
+                        child.avatar_url
+                          ? <Image
+                            source={{ uri: child.avatar_url }}
+                            style={styles.childImage}
+                          />
+                          :
+                          <IconDefaultAvatar width={120} height={120} />
+                      }
                       <ThemedText style={styles.childName}>
                         {child.name}
                       </ThemedText>
-                      <Image
-                        source={require("@/assets/images/auth/kid-vector.png")}
+                      <IconKidVector
+                        width={106}
+                        height={62}
                         style={styles.childAccent}
                       />
                     </ThemedView>
@@ -166,9 +171,10 @@ export default function WhoAreYouScreen() {
             </ThemedText>
             <Link href="../" asChild>
               <TouchableOpacity style={styles.backButton}>
-                <Image
-                  source={require("@/assets/images/icons/arrow-left.png")}
-                  style={{ width: 24, height: 24, tintColor: "#fcfcfc" }}
+                <IconArrowLeft
+                  width={24}
+                  height={24}
+                  color={"#FCFCFC"}
                 />
                 <ThemedText style={styles.backText}>Back</ThemedText>
               </TouchableOpacity>

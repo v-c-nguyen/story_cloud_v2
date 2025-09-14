@@ -18,11 +18,7 @@ import {
 
 // Data arrays for each section
 
-
-const learningIcon = require("@/assets/images/parent/learning.png")
-const backIcon = require('@/assets/images/parent/icon-left.png')
-const searchIcon = require("@/assets/images/parent/icon-search.png")
-const listIcon = require("@/assets/images/parent/icon-list.png")
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
 
 const HIGHLIGHT_INDEX = 0;
 export default function EditFocus() {
@@ -99,7 +95,7 @@ export default function EditFocus() {
                             <TouchableOpacity
                                 style={styles.backBtn}
                                 onPress={handleBackBtn}>
-                                <Image source={backIcon} style={styles.backBtnIcon}></Image>
+                                <IconArrowLeft width={20} height={20} color={"#7AC1C6"} />
                                 <ThemedText style={styles.backBtnText}>Back to Learning</ThemedText>
                             </TouchableOpacity>
                         </ThemedView>

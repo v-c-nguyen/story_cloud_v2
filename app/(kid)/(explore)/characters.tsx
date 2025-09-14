@@ -10,7 +10,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { useCharactersStore } from "@/store/charactersStore";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -23,6 +23,9 @@ import {
 
 import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
 const cardsData = [
   { color: '#FFFFFF', icon: require('@/assets/images/parent/series.png'), text: 'Series' },
@@ -33,6 +36,7 @@ const cardsData = [
 ];
 
 export default function Characters() {
+  const { child } = useUser();
   const [categories, setCategory] = React.useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
@@ -69,9 +73,10 @@ export default function Characters() {
         <ThemedView style={styles.sectionHeader}>
           <ThemedText style={[styles.sectiondesc, { flex: 1 }]}>{desc}</ThemedText>
           <TouchableOpacity onPress={() => { setSelectedCharacter(title) }}>
-            <Image
-              source={require("@/assets/images/kid/arrow-right.png")}
-              style={styles.imgArrowLeft}
+            <IconAvatarRight
+              width={24}
+              height={24}
+              color={"#053B4A"}
             />
           </TouchableOpacity>
         </ThemedView>
@@ -139,18 +144,7 @@ export default function Characters() {
             style={styles.topBackPattern}
             resizeMode="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+          <Header role="kid" mode={child?.mode} />
 
           {/* Header */}
           <ThemedText style={styles.headerTitle}>StoryCloud Characters</ThemedText>

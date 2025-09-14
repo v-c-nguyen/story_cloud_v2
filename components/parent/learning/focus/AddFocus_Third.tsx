@@ -8,8 +8,8 @@ import { FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
 import StepIndicator_Focus from "./StepIndecator";
 import GradientText from '@/components/ui/GradientText';
 
-const docIcon = require('@/assets/images/parent/custom_pathway.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
+import IconDoc from "@/assets/images/parent/icon-doc.svg"
+import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 
 interface Child {
     id: string,
@@ -31,7 +31,7 @@ export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: n
             setLoading(true);
             try {
                 const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
-                const { data, error } = await supabase.functions.invoke('children', {
+                const { data, error } = await supabase.functions.invoke('children/focus', {
                     method: 'GET',
                     headers: {
                         Authorization: jwt ? `Bearer ${jwt}` : '',
@@ -39,7 +39,8 @@ export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: n
                 });
                 if (error) {
                     console.error('Error fetching children:', error.message);
-                } else if (data && Array.isArray(data.data)) {
+                } else if (data && Array.isArray(data.chidlrenForFocus)) {
+                    console.log("data:", data)
                     setChildren(data.data);
                 }
             } catch (e) {
@@ -73,7 +74,9 @@ export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: n
                 <ThemedText style={[styles.subtitle]}>Assign Focus</ThemedText>
                 {/* Form */}
                 <ThemedView style={styles.label}>
-                    <ThemedView style={styles.iconContainer}><Image source={docIcon} style={styles.labelIcon}></Image></ThemedView>
+                    <ThemedView style={styles.iconContainer}>
+                        <IconDoc width={21} height={21} style={styles.labelIcon} />
+                    </ThemedView>
                     <GradientText text="Children" />
                     <ThemedText style={styles.labelText}>| {activeChildren.length} Child</ThemedText>
                 </ThemedView>
@@ -100,7 +103,7 @@ export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: n
                     onPress={() => onPress(activeChildren)}
                 >
                     <ThemedText style={styles.buttonText}>Next</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowRight width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
 
             </ThemedView>

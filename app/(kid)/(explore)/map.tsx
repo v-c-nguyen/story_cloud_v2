@@ -20,6 +20,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
 
 const cardsData = [
@@ -31,7 +33,7 @@ const cardsData = [
 ];
 
 export default function Map() {
-
+    const {child} = useUser();
     const [collections, setCollections] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedCollection, setSelectedCollection] = useState<any | null>(null);
@@ -100,19 +102,7 @@ export default function Map() {
                             style={styles.topBackPattern}
                             resizeMode="cover"
                         />
-                        <ThemedView style={styles.headingWrap}>
-                            <Image
-                                source={require("@/assets/images/kid/logo-ballon.png")}
-                                style={styles.logoBallon}
-                                resizeMode="cover"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/logo-baby.png")}
-                                style={styles.logoBallon}
-                                resizeMode="cover"
-                            />
-                        </ThemedView>
-
+                        <Header role="kid" mode={child?.mode} />
                         {/* Header */}
                         <ThemedText style={styles.headerTitle}>StoryCloud Map</ThemedText>
 
@@ -214,7 +204,7 @@ export default function Map() {
     function SectionHeader({ title, desc, link, onPress }: { title: string; desc: string, link: string, onPress: any }) {
         return (
             <TouchableOpacity onPress={onPress}>
-                <Image source={require('@/assets/images/avatars/dog.png')} style={styles.avatar} />
+                {/* <Image source={require('@/assets/images/avatars/dog.png')} style={styles.avatar} /> */}
                 <ThemedText style={styles.title}>{title}</ThemedText>
                 <ThemedView style={styles.sectionContainer}>
 

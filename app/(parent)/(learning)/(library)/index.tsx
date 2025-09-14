@@ -22,9 +22,8 @@ import {
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
 import IconSearch from "@/assets/images/icons/icon-search.svg";
 import IconSwap from "@/assets/images/icons/icon-swap.svg";
-
-const listIcon = require("@/assets/images/parent/icon-list.png");
-const downIcon = require("@/assets/images/parent/down.png");
+import IconList from "@/assets/images/icons/icon-list.svg"
+import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
 
 export default function LearningLibrary() {
   const [categories, setCategory] = useState<any[]>([]);
@@ -151,12 +150,13 @@ export default function LearningLibrary() {
                     onPress={() => setDropdownVisible(!dropdownVisible)}
                   >
                     <ThemedView style={styles.ActiveItemStyle}>
-                      <Image source={listIcon} tintColor={"rgba(5, 59, 74, 1)"} />
+
+                      <IconList width={21} height={21} />
                     </ThemedView>
                     <ThemedText style={styles.dropdownText}>
                       {activeItem}
                     </ThemedText>
-                    <Image source={downIcon} tintColor={"rgba(122, 193, 198, 1)"} />
+                    <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
                   </TouchableOpacity>
                 </ThemedView>
 
@@ -185,9 +185,8 @@ export default function LearningLibrary() {
                               option === activeItem && styles.ActiveItemStyle,
                             ]}
                           >
-                            <Image
-                              source={listIcon}
-                              tintColor={
+                            <IconList
+                              color={
                                 option === activeItem
                                   ? "rgba(5, 59, 74, 1)"
                                   : "rgba(122, 193, 198, 1)"
@@ -239,7 +238,7 @@ export default function LearningLibrary() {
 
               <ThemedView style={[styles.bottomPadding, { height: '80%' }]}>
                 {/* Continue Watching */}
-                <ItemListWidthBadge seriesCategories={categories} loading={loading}/>
+                <ItemListWidthBadge seriesCategories={categories} loading={loading} />
               </ThemedView>
             </ThemedView>
           </ScrollView>

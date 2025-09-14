@@ -3,11 +3,11 @@ import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from 'r
 import { ThemedText } from '../ThemedText';
 import { ThemedView } from '../ThemedView';
 
-const learningIcon = require("@/assets/images/parent/footer/icon-learning.png")
-const cancelIcon = require("@/assets/images/parent/icon-cancel.png")
-const focusIcon = require("@/assets/images/parent/dashboard/mode-focus.png")
-const freeIcon = require("@/assets/images/parent/dashboard/mode-free.png")
-const pathwayIcon = require("@/assets/images/parent/dashboard/mode-pathway.png")
+import IconLearning from "@/assets/images/parent/footer/icon-learning.svg"
+import IconCancel from "@/assets/images/parent/icon-cancel.svg"
+import IconFree from "@/assets/images/icons/icon-free-mode.svg"
+import IconFocus from "@/assets/images/icons/icon-focus-mode.svg"
+import IconPathway from "@/assets/images/icons/icon-pathway-mode.svg"
 const orangeCircle = require("@/assets/images/parent/dashboard/orange-circle.png")
 
 const LearningModeScreen = ({ onCancel }: { onCancel: (() => void) }) => {
@@ -17,11 +17,11 @@ const LearningModeScreen = ({ onCancel }: { onCancel: (() => void) }) => {
                 {/* Header */}
                 <ThemedView style={styles.header}>
                     <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
-                        <Image source={learningIcon} style={styles.learningIcon} />
+                        <IconLearning width={24} height={24} color={"rgba(122, 193, 198, 1)"} />
                         <ThemedText style={styles.headerText}>Learning Mode</ThemedText>
                     </ThemedView>
                     <TouchableOpacity onPress={onCancel} >
-                        <Image source={cancelIcon} style={styles.cancelIcon} />
+                        <IconCancel style={styles.cancelIcon} width={24} height={24} color={'rgba(122, 193, 198, 1)'} />
                     </TouchableOpacity>
                 </ThemedView>
 
@@ -29,8 +29,10 @@ const LearningModeScreen = ({ onCancel }: { onCancel: (() => void) }) => {
                     {/* Free Mode */}
                     <ThemedView style={styles.modeBlock}>
                         <ThemedView style={styles.iconBox}>
-                            <Image
-                                source={freeIcon} // Replace with your own image path
+                            <IconFree
+                                width={60}
+                                height={60}
+                                color={"white"}
                                 style={styles.icon}
                             />
                             <Image
@@ -49,8 +51,10 @@ const LearningModeScreen = ({ onCancel }: { onCancel: (() => void) }) => {
                     {/* Focus Mode */}
                     <ThemedView style={styles.modeBlock}>
                         <ThemedView style={styles.iconBox}>
-                            <Image
-                                source={focusIcon} // Replace with your own image path
+                            <IconFocus
+                                width={60}
+                                height={60}
+                                color={"white"}
                                 style={styles.icon}
                             />
                             <Image
@@ -68,8 +72,10 @@ const LearningModeScreen = ({ onCancel }: { onCancel: (() => void) }) => {
                     {/* Pathway Mode */}
                     <ThemedView style={styles.modeBlock}>
                         <ThemedView style={styles.iconBox}>
-                            <Image
-                                source={pathwayIcon} // Replace with your own image path
+                            <IconPathway
+                                width={60}
+                                height={60}
+                                color={"white"}
                                 style={styles.icon}
                             />
                             <Image

@@ -12,8 +12,6 @@ interface AvatarUploaderProps {
 }
 
 
-const downloadIcon = require('@/assets/images/parent/icon-download.png')
-
 import IconDownload from "@/assets/images/icons/icon-download.svg"
 
 const AvatarUploader: React.FC<AvatarUploaderProps> = ({ user, onUpload, setUser }) => {

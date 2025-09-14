@@ -12,11 +12,8 @@ import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
-const pathwayIcon = require('@/assets/images/parent/icon-pathway.png')
-const backIcon = require('@/assets/images/parent/icon-left.png')
-const quickIcon = require('@/assets/images/parent/quick_pathway.png')
-const customIcon = require('@/assets/images/parent/custom_pathway.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
+import IconPathway from "@/assets/images/parent/icon-pathway.svg";
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
 
 interface Child {
     id: number,
@@ -135,13 +132,13 @@ export default function AddPathway() {
                     <TouchableOpacity
                         style={styles.backBtn}
                         onPress={handleBackBtn}>
-                        <Image source={backIcon} style={styles.backBtnIcon}></Image>
+                        <IconArrowLeft width={21} height={21} color={"rgba(122, 193, 198, 1)"} />
                         <ThemedText style={styles.backBtnText}>Back to Learning</ThemedText>
                     </TouchableOpacity>
 
                     <ThemedView style={styles.mainContainer}>
                         <ThemedView style={styles.titleContainer}>
-                            <Image source={pathwayIcon} style={styles.titleIcon}></Image>
+                            <IconPathway width={24} height={24}/>
                             <ThemedText style={styles.title}>New Pathway</ThemedText>
                         </ThemedView>
 

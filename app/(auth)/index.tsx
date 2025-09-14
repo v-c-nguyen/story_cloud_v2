@@ -9,6 +9,7 @@ import React from "react";
 import IconFamily from "@/assets/images/auth/auth-family.svg";
 import IconParent from "@/assets/images/auth/auth-parent-avatar.svg";
 import IconKid from "@/assets/images/auth/auth-kid-avatar.svg";
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg";
 
 const { width, height } = Dimensions.get("window");
 
@@ -18,13 +19,19 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
+
       <Stack.Screen options={{ headerShown: false }} />
 
       <ThemedView style={styles.root}>
+
+        <Image
+          source={require("@/assets/images/auth/back-pattern.png")}
+          style={styles.backPattern}
+          contentFit="cover"
+        />
         {/* Background pattern (optional, can use SVG or ImageBackground) */}
         <IconFamily
-          style={styles.familyBg}
-          pointerEvents="none"
+          style={[styles.familyBg, { pointerEvents: "none" }]}
         />
 
         {/* Title */}
@@ -75,10 +82,12 @@ export default function HomeScreen() {
         {/* Learn more */}
         <TouchableOpacity style={styles.learnMoreWrap}>
           <ThemedText style={styles.learnMoreText}>Learn more</ThemedText>
-          <Image
-            source={require("@/assets/images/icons/arrow-right.png")}
+          <IconAvatarRight
+            width={24}
+            height={24}
+            color={"#053B4A"}
             style={styles.learnMoreIcon}
-          ></Image>
+          />
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>

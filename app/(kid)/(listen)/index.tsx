@@ -14,20 +14,6 @@ import { Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
-const parentIcons = {
-  learning: require("@/assets/images/parent/learning.png"),
-  heart: require("@/assets/images/parent/heart.png"),
-  star: require("@/assets/images/parent/star.png"),
-  information_circle: require("@/assets/images/parent/information_circle.png"),
-  // add more as needed
-};
-
-const insightIcons = {
-  duration: require("@/assets/images/parent/duration.png"),
-  steps: require("@/assets/images/parent/steps.png"),
-  finished: require("@/assets/images/parent/finished.png"),
-};
-
 export default function ParentListen() {
   const children = useChildrenStore((state: any) => state.children);
   const setChildren = useChildrenStore((state: any) => state.setChildren);
@@ -59,7 +45,7 @@ export default function ParentListen() {
             />
 
             {/* Main Content */}
-            <Header role="parent" theme="dark"></Header>
+            <Header role="kid" theme="dark" mode={child?.mode}></Header>
             {/* Header */}
 
             <ThemedView style={styles.container}>
@@ -100,18 +86,6 @@ export default function ParentListen() {
     </>
   );
 }
-
-type SectionHeaderProps = {
-  title: string;
-  avatar: keyof typeof parentIcons;
-  avatar1?: keyof typeof parentIcons;
-};
-
-type InsightItemProps = {
-  value: number;
-  what: string;
-  avatar: keyof typeof insightIcons;
-};
 
 const styles = StyleSheet.create({
   myText: {

@@ -2,12 +2,14 @@ import supabase from "@/app/lib/supabase";
 import { StoryCard, StoryCard1, StoryCard3 } from "@/components/Cards";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useStoryStore } from "@/store/storyStore";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 
 export default function Recommend({ activeChild, mode = "parent" }: { activeChild: any, mode?: string }) {
     const router = useRouter();
+    const setFeaturedStories = useStoryStore((state) => state.setFeaturedStories);
     const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
     const [storiesData, setStoriesData] = React.useState<any[]>([])
     const [loading, setLoading] = React.useState(false);
@@ -31,6 +33,7 @@ export default function Recommend({ activeChild, mode = "parent" }: { activeChil
                 return;
             }
             if (data && Array.isArray(data.stories)) {
+                setFeaturedStories(data.stories);
                 setStoriesData(data.stories.slice(0, 3));
             }
         }
@@ -44,7 +47,7 @@ export default function Recommend({ activeChild, mode = "parent" }: { activeChil
                 loading ? (
                     <ActivityIndicator color={mode == "parent" ? "#ffffff" : "#053B4A"} style={{
                         zIndex: 999,
-                        marginBottom: 50,
+                        marginVertical: 50,
                     }} />
                 ) :
                     storiesData.length > 0 ?

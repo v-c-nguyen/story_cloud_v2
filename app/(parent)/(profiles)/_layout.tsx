@@ -6,10 +6,6 @@ import { StyleSheet } from 'react-native';
 
 export default function AuthLayout() {
   const colorScheme = useColorScheme();
-  const tabs = [
-    { id: 'account', label: 'Account', icon: require("@/assets/images/parent/icon-profile.png") },
-    { id: 'content', label: 'Content', icon: require("@/assets/images/parent/icon-content.png") }
-  ];
   const [activeTab, setActiveTab] = React.useState('account');
   const handleTabPress = (tabId: string) => {
     setActiveTab(tabId);

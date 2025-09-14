@@ -1,120 +1,35 @@
 import BottomNavBar from "@/components/BottomNavBar";
-import { StoryCard2 } from "@/components/Cards";
+import { StoryCard, StoryCard2 } from "@/components/Cards";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Link, Stack } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet
 } from "react-native";
-
-const storiesData = [
-  {
-    bgColor: "#F4A672",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: true,
-    number: "#1",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: false,
-    number: "#2",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "Underwater Adventures",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#048F99",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#3",
-    storyTitle: "Muddy Mystery at the Pond",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: true,
-    number: "#4",
-    storyTitle: "Seeds of Surprise",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F4A672",
-    isBallonYellow: true,
-    number: "#5",
-    storyTitle: "The Great Garden Clean-Up",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: true,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#7",
-    storyTitle: "A Night with Nocturnal Neighbours",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: false,
-    isFavorite: false,
-    watched: true,
-  },
-];
+import { Image } from "expo-image";
+import { useStoryStore } from "@/store/storyStore";
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
 export default function JustWatchedScreen() {
+  const recentStories = useStoryStore((state) => state.recentStories);
+  const [storiesData, setStoriesData] = useState<any>([]);
+  const { child } = useUser();
+
+  useEffect(() => {
+    if (recentStories && recentStories.length > 0) {
+      setStoriesData(recentStories.filter(((recent: any) => recent?.watched == true)));
+    }
+  }, [recentStories])
   return (
     <>
       <Stack.Screen options={{
-        headerShown: false}} />
+        headerShown: false
+      }} />
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           style={styles.rootContainer}
@@ -122,22 +37,11 @@ export default function JustWatchedScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/top-back-pattern.png")}
+            source={require("@/assets/images/kid/back-pattern.png")}
             style={styles.topBackPattern}
-            resizeMode="cover"
+            contentFit="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+          <Header role="kid" mode={child?.mode} />
           {/* Header */}
           <ThemedText style={styles.headerTitle}>Just Watched</ThemedText>
 
@@ -146,23 +50,26 @@ export default function JustWatchedScreen() {
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
-            <ThemedView style={styles.backWrap}>
-              <Link href="../">
-                <Image
-                  source={require("@/assets/images/kid/arrow-left.png")}
-                  style={styles.imgArrowLeft}
-                  resizeMode="cover"
-                />
-              </Link>
-              <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-            </ThemedView>
+
+            <Link href="../">
+              <ThemedView style={[styles.backWrap]}>
+                  <IconArrowLeft
+                    width={24}
+                    height={24}
+                    color={"#fcfcfc"}
+                  />
+                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+              </ThemedView>
+
+            </Link>
+
           </ThemedView>
           {/* Story List */}
           <ThemedView
@@ -176,11 +83,15 @@ export default function JustWatchedScreen() {
             }}
           >
             <ThemedView style={{ paddingLeft: 16 }}>
-              {storiesData.length > 0 && storiesData.map((item, index) => (
+              {storiesData.length > 0 && storiesData.map((item: any, index: number) => (
                 <ThemedView key={index} style={styles.cardWrap}>
-                  <StoryCard2 {...item} />
+                  <StoryCard num={index + 1} recent={item} />
                 </ThemedView>
               ))}
+              {
+                storiesData.length <= 0 &&
+                <ThemedText style={{ color: '#053B4A', textAlign: 'center', marginTop: 60 }}>no recent data</ThemedText>
+              }
             </ThemedView>
           </ThemedView>
         </ScrollView>
@@ -210,8 +121,7 @@ const styles = StyleSheet.create({
   },
   topBackPattern: {
     width: "100%",
-    height: "100%",
-    maxHeight: 1200,
+    height: 400,
     position: "absolute",
   },
   headingWrap: {

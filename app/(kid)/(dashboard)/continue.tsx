@@ -1,21 +1,25 @@
 import BottomNavBar from "@/components/BottomNavBar";
-import { StoryCard2 } from "@/components/Cards";
+import { StoryCard, StoryCard2 } from "@/components/Cards";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useStoryStore } from "@/store/storyStore";
 import { Link, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet
 } from "react-native";
+import { Image } from "expo-image";
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 
 export default function ContinueScreen() {
   const recentStories = useStoryStore((state) => state.recentStories);
   const [storiesData, setStoriesData] = useState<any>([]);
+  const { child } = useUser();
 
   useEffect(() => {
     if (recentStories && recentStories.length > 0) {
@@ -34,22 +38,11 @@ export default function ContinueScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/top-back-pattern.png")}
+            source={require("@/assets/images/kid/back-pattern.png")}
             style={styles.topBackPattern}
-            resizeMode="cover"
+            contentFit="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+          <Header role="kid" mode={child?.mode}></Header>
           {/* Header */}
           <ThemedText style={styles.headerTitle}>Continue Watching</ThemedText>
 
@@ -58,12 +51,12 @@ export default function ContinueScreen() {
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
 
             <ThemedText style={styles.headerSubtitle}>Stories</ThemedText>
@@ -82,21 +75,24 @@ export default function ContinueScreen() {
               flex: 1,
             }}
           >
-            <ThemedView style={styles.backWrap}>
-              <Link href="../">
-                <Image
-                  source={require("@/assets/images/kid/arrow-left.png")}
-                  style={styles.imgArrowLeft}
-                  resizeMode="cover"
-                />
-              </Link>
-              <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-            </ThemedView>
+
+            <Link href="../">
+              <ThemedView style={[styles.backWrap]}>
+                  <IconArrowLeft
+                    width={21}
+                    height={21}
+                    color={"#053B4A"}
+                  />
+                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+              </ThemedView>
+
+            </Link>
+
 
             <ThemedView style={{ paddingLeft: 16 }}>
               {storiesData.length > 0 && storiesData.map((item: any, index: number) => (
                 <ThemedView key={index} style={styles.cardWrap}>
-                  <StoryCard2 {...item} />
+                  <StoryCard num={index + 1} recent={item} />
                 </ThemedView>
               ))}
               {
@@ -132,11 +128,8 @@ const styles = StyleSheet.create({
   },
   topBackPattern: {
     width: "100%",
-    height: "100%",
-    maxHeight: 1200,
+    height: 400,
     position: "absolute",
-    top: 0,
-    left: 0,
   },
   headingWrap: {
     flexDirection: "row",
@@ -179,6 +172,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 10,
     marginBottom: 28,
   },

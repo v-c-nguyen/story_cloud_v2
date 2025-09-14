@@ -4,8 +4,10 @@ export interface Story {
   storyId: string;
   seriesCategory: string;
   storyTitle: string;
+  descriptionParent?: string;
   image?: string;
   isFavourite?: boolean;
+  learning_categories?: string[];
   characters?: object;
   themes?: any;
   collections?: string;
@@ -24,8 +26,10 @@ interface StoryStoreState {
   stories: Story[];
   recentStories: Story[];
   setRecentStories: (stories: Story[]) => void;
+  featuredStories: Story[];
+  setFeaturedStories: (stories: Story[]) => void;
   listeningStory: Story | null; // Currently listening story
-  setCurrentStory: (story: Story) => void; // Optional setter for current story
+  setCurrentStory: (story: Story | null) => void; // Optional setter for current story
   currentIndex: number; // Optional current index
   setCurrentIndex: (index: number) => void; // Optional setter for current index
   setStories: (stories: Story[]) => void;
@@ -40,6 +44,8 @@ export const useStoryStore = create<StoryStoreState>((set, get) => ({
   currentIndex: 0, // Initialize with no current index
   recentStories: [],
   setRecentStories: (stories) => set({ recentStories: stories }),
+  featuredStories: [],
+  setFeaturedStories: (stories) => set({ featuredStories: stories }),
   setCurrentIndex: (index) => set({ currentIndex: index }),
   listeningStory: null, // Initialize with no story being listened to
   setStories: (stories) => set({ stories }),

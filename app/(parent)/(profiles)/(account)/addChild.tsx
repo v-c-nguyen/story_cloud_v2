@@ -18,11 +18,10 @@ import {
     TouchableOpacity
 } from 'react-native';
 import IconProfile from "@/assets/images/parent/footer/icon-profile.svg";
-const downloadIcon = require('@/assets/images/parent/icon-download.png')
-const editIcon = require('@/assets/images/parent/icon-edit.png')
-const information_circle = require('@/assets/images/parent/information_circle.png')
-const tickIcon = require('@/assets/images/parent/icon-tick.png')
-const cancelIcon = require('@/assets/images/parent/icon-cancel.png')
+import IconInformation from "@/assets/images/parent/icon-information.svg";
+import IconTick from "@/assets/images/icons/icon-tick.svg";
+import IconCancel from "@/assets/images/parent/icon-cancel.svg";
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 interface Child {
     name?: string;
@@ -131,10 +130,13 @@ const AddChild = () => {
                                 <ThemedText style={styles.sectionTitle}>Add New Kid</ThemedText>
 
                                 <ThemedView style={styles.avatarWrapper}>
-                                    <Image
-                                        source={avatar || child.avatar_url ? { uri: avatar || child.avatar_url } : require('@/assets/images/parent/avatar-parent-2.png')}
-                                        style={styles.avatar}
-                                    />
+                                    {
+                                        avatar || child.avatar_url ?
+                                            <Image source={{ uri: avatar || child.avatar_url }} style={styles.avatar}/>
+                                            :
+                                            <IconDefaultAvatar width={160} height={160} />
+                                   
+                                    }
                                 </ThemedView>
 
                                 <ThemedView style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -174,7 +176,7 @@ const AddChild = () => {
                             {/* All Kids */}
                             <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                 <ThemedText style={[styles.inputLabel, { marginBottom: 0 }]}>Learning Mode</ThemedText>
-                                <Image source={information_circle} style={styles.modeIcon}></Image>
+                                <IconInformation width={16} height={16} color={"#053B4A"} style={styles.modeIcon} />
                             </ThemedView>
                             <ThemedView>
                                 <ThemedView style={styles.modesStyle}>
@@ -185,11 +187,11 @@ const AddChild = () => {
 
                             <ThemedView style={[styles.flexRow, { marginTop: 20 }]}>
                                 <TouchableOpacity style={styles.addButton} onPress={handleSaveButton}>
-                                    <Image source={tickIcon} />
+                                    <IconTick width={18} height={18} />
                                     <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Save </ThemedText>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.addButton} onPress={handleCancelButton}>
-                                    <Image source={cancelIcon} />
+                                    <IconCancel width={18} height={18} />
                                     <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Cancel </ThemedText>
                                 </TouchableOpacity>
                                 <MyModal

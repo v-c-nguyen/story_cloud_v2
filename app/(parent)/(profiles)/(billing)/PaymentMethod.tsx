@@ -102,8 +102,9 @@ export default function PaymentMethod() {
                                 <ThemedView style={[styles.card, styles.flexCol, styles.justifyBetween]}>
                                     <ThemedView style={styles.cardRow}>
                                         <ThemedView style={styles.flexRow}>
-                                            <Image
-                                                source={require('@/assets/images/parent/icon-paymentCard.png')}
+                                            <IconCard
+                                                width={52}
+                                                height={52}
                                                 style={styles.cardIcon}
                                             />
                                             <ThemedText style={styles.cardText}>**** 3425</ThemedText>

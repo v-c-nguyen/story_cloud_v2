@@ -26,13 +26,13 @@ export interface TabItem {
 export const childrenData: ChildItem[] = [
     {
         name: 'Mia',
-        avatar: require("@/assets/images/parent/dashboard/Mia_60x60.png"),
+        avatar: "",
         mode: 'focus'
 
     },
     {
         name: 'Jesse',
-        avatar: require("@/assets/images/parent/dashboard/Jesse_60x60.png"),
+        avatar: "",
         mode: 'pathway'
     }
 ]

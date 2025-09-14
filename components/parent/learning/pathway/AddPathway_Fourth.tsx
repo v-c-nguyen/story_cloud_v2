@@ -6,11 +6,12 @@ import React from "react";
 import { Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import StepIndicator_Pathway from "./StepIndecator";
 import GradientText from "@/components/ui/GradientText";
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
+import IconDoc from "@/assets/images/parent/icon-doc.svg"
+import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 
 const itemIcon = require('@/assets/images/parent/item.png')
 const activeItemIcon = require('@/assets/images/parent/activeItem.png')
-const docIcon = require('@/assets/images/parent/icon-happy.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
 
 interface Child {
     id: number,
@@ -69,7 +70,7 @@ export default function AddPathway_Fourth({ mode, currentStep, onPress }: { mode
                 <ThemedText style={[styles.subtitle]}>Assign Pathway</ThemedText>
                 {/* Form */}
                 <ThemedView style={styles.label}>
-                    <ThemedView style={styles.iconContainer}><Image source={docIcon} style={styles.labelIcon}></Image></ThemedView>
+                    <ThemedView style={styles.iconContainer}><IconDoc width={21} height={21}/></ThemedView>
                     <GradientText text="Children" />
                     <ThemedText style={styles.labelText}>| {activeChildren.length} Child</ThemedText>
                 </ThemedView>
@@ -94,7 +95,7 @@ export default function AddPathway_Fourth({ mode, currentStep, onPress }: { mode
                                         <Image source={itemIcon} style={styles.itemIcon} />
                                 }
                                 <ThemedView style={styles.item}>
-                                    <Image source={require('@/assets/images/parent/avatar-parent-2.png')} style={styles.childIcon} />
+                                    <IconDefaultAvatar width={56} height={56} />
                                     <ThemedText style={[styles.childText, activeChildren.includes(child) && { color: 'rgba(5, 59, 74, 1)' }]}>{child.name}</ThemedText>
                                 </ThemedView>
                             </TouchableOpacity>
@@ -107,7 +108,7 @@ export default function AddPathway_Fourth({ mode, currentStep, onPress }: { mode
                     onPress={() => onPress(activeChildren)}
                 >
                     <ThemedText style={styles.buttonText}>Next</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowRight width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
             </ThemedView>
         </ThemedView>

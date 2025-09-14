@@ -3,13 +3,17 @@ import { SeriesCard } from "@/components/Cards";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Link, Stack } from "expo-router";
-import React from "react";
+import React, { use } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet
 } from "react-native";
+import { Image } from "expo-image";
+
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
 const seriesData = [
   {
@@ -45,6 +49,7 @@ const seriesData = [
 ];
 
 export default function WatchNextScreen() {
+  const { child } = useUser();
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -55,22 +60,11 @@ export default function WatchNextScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/top-back-pattern.png")}
+            source={require("@/assets/images/kid/back-pattern.png")}
             style={styles.topBackPattern}
-            resizeMode="cover"
+            contentFit="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+          <Header role="kid" mode={child?.mode} />
           {/* Header */}
           <ThemedText style={styles.headerTitle}>Watch Next</ThemedText>
 
@@ -79,23 +73,26 @@ export default function WatchNextScreen() {
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
-            <ThemedView style={styles.backWrap}>
-              <Link href="../">
-                <Image
-                  source={require("@/assets/images/kid/arrow-left.png")}
-                  style={styles.imgArrowLeft}
-                  resizeMode="cover"
-                />
-              </Link>
-              <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-            </ThemedView>
+
+            <Link href="../">
+              <ThemedView style={[styles.backWrap]}>
+                  <IconArrowLeft
+                    width={24}
+                    height={24}
+                    color={"#fcfcfc"}
+                  />
+                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+              </ThemedView>
+
+            </Link>
+
           </ThemedView>
           {/* Story List */}
           <ThemedView
@@ -143,8 +140,7 @@ const styles = StyleSheet.create({
   },
   topBackPattern: {
     width: "100%",
-    height: "100%",
-    maxHeight: 1200,
+    height: 400,
     position: "absolute",
   },
   headingWrap: {

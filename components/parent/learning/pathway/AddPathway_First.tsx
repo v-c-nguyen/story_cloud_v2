@@ -3,14 +3,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { useRouter } from "expo-router";
 import { Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
-const pathwayIcon = require('@/assets/images/parent/icon-pathway.png')
-const backIcon = require('@/assets/images/parent/icon-left.png')
-const quickIcon = require('@/assets/images/parent/quick_pathway.png')
-const customIcon = require('@/assets/images/parent/custom_pathway.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
+import IconCustom from "@/assets/images/parent/custom_pathway.svg"
+import IconQuick from "@/assets/images/parent/quick_pathway.svg"
+import IconArrowBottom from "@/assets/images/icons/arrow-down.svg"
 
 
-export default function AddPathway_First({ onPress } : { onPress: (mode: number) => void }) {
+export default function AddPathway_First({ onPress }: { onPress: (mode: number) => void }) {
     const router = useRouter();
 
     return (
@@ -21,8 +19,9 @@ export default function AddPathway_First({ onPress } : { onPress: (mode: number)
         >
             {/* Quick Pathway Card */}
             <ThemedView style={styles.card}>
-                <Image
-                    source={quickIcon} // Replace with your icon image
+                <IconQuick // Replace with your icon image
+                    width={80}
+                    height={80}
                     style={styles.icon}
                 />
                 <ThemedText style={[styles.title, { textAlign: 'center', marginTop: 30 }]}>Quick Pathway</ThemedText>
@@ -31,19 +30,20 @@ export default function AddPathway_First({ onPress } : { onPress: (mode: number)
                     Choose a learning goal and a duration or length you want the pathway to be and we’ll build a fun story-filled
                     learning pathway for you – no prep needed. It’s the fastest way to start learning with StoryCloud.
                 </ThemedText>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.button}
                     onPress={() => onPress(0)}
-                    >
+                >
                     <ThemedText style={styles.buttonText}>Generate Quick Pathway</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowBottom width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
             </ThemedView>
 
             {/* Custom Pathway Card */}
             <ThemedView style={styles.card}>
-                <Image
-                    source={customIcon} // Replace with your icon image
+                <IconCustom // Replace with your icon image
+                    width={80}
+                    height={80}
                     style={styles.icon}
                 />
                 <ThemedText style={[styles.title, { textAlign: 'center', marginTop: 30 }]}>Custom Pathway</ThemedText>
@@ -52,12 +52,12 @@ export default function AddPathway_First({ onPress } : { onPress: (mode: number)
                     Hand-pick specific series and stories from the Learning Library to create a pathway tailored exactly to your child’s
                     interests or needs. Perfect for parents or educators who want full control over the learning experience.
                 </ThemedText>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.button}
                     onPress={() => onPress(1)}
                 >
                     <ThemedText style={styles.buttonText}>Create Custom Pathway</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowBottom width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
             </ThemedView>
         </ScrollView>

@@ -17,8 +17,7 @@ import {
 import { Image } from 'expo-image';
 import IconProfile from "@/assets/images/parent/footer/icon-profile.svg";
 import { tabData } from '@/data/parent/dashboardData';
-const checkIcon = require('@/assets/images/parent/icon-checkmark.png')
-const cancelIcon = require('@/assets/images/parent/icon-cancel.png')
+
 const starIcon = require('@/assets/images/parent/icon-star.png')
 
 const { width } = Dimensions.get('window');

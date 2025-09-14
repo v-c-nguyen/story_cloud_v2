@@ -8,8 +8,8 @@ import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import StepIndicator_Focus from "./StepIndecator";
 import GradientText from "@/components/ui/GradientText";
 
-const checkIcon = require('@/assets/images/parent/dashboard/selected.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
+import IconCheck from "@/assets/images/parent/icon-check.svg"
+import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 
 const steps = [1, 2, 3, 4, 5];
 
@@ -53,17 +53,18 @@ export default function AddFocus_Final({
                     </ThemedView>
                     <ThemedView style={{ flexDirection: 'column', gap: 5 }}>
                         {
-                            data.targets?.length > 0 && data.targets.map((target:any, index) => (
-                                <ThemedView key={index} style={{flexDirection: 'row'}}>
+                            data.targets?.length > 0 && data.targets.map((target: any, index) => (
+                                <ThemedView key={index} style={{ flexDirection: 'row' }}>
                                     <ThemedView style={styles.value}>
                                         <ThemedText style={styles.valueText}>
                                             {target.name} |
                                         </ThemedText>
                                         <ThemedView style={[styles.circle, styles.checkCircle]}>
-                                            <Image
-                                                source={checkIcon}
-                                                style={{ width: 24, height: 24 }}
-                                            ></Image>
+                                            <IconCheck
+                                                color={"#F4A672"}
+                                                width={24}
+                                                height={24}
+                                            />
                                         </ThemedView>
                                     </ThemedView>
                                 </ThemedView>
@@ -85,10 +86,11 @@ export default function AddFocus_Final({
                                 |
                             </ThemedText>
                             <ThemedView style={[styles.circle, styles.checkCircle]}>
-                                <Image
-                                    source={checkIcon}
-                                    style={{ width: 24, height: 24 }}
-                                ></Image>
+                                <IconCheck
+                                    color={"#F4A672"}
+                                    width={24}
+                                    height={24}
+                                />
                             </ThemedView>
                         </ThemedView>
                     </ThemedView>
@@ -112,13 +114,12 @@ export default function AddFocus_Final({
                     onPress={() => onPress()}
                 >
                     <ThemedText style={styles.buttonText}>Next</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowRight width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
             </ThemedView>
         </ThemedView>
     )
 }
-
 
 const styles = StyleSheet.create({
     indicatorsContainer: {

@@ -10,6 +10,8 @@ import { Series, useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
 import SeriesSelection from "./SeriesSelection";
 
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+
 interface ItemListWithBadgeProps {
   seriesCategories: any[];
 }
@@ -30,11 +32,11 @@ const ItemListWidthBadge: React.FC<ItemListWithBadgeProps> = ({
   const setCurrentKidSeries = useSeriesStore((s) => s.setCurrentKidSeries);
 
   useEffect(() => {
-        const targets = seriesCategories.filter((category) =>
-          category.stories && category.stories.length > 0
-        );
-        setCategoriesWithStories(targets);
-        setDisplayedCategories(targets);
+    const targets = seriesCategories.filter((category) =>
+      category.stories && category.stories.length > 0
+    );
+    setCategoriesWithStories(targets);
+    setDisplayedCategories(targets);
   }, [seriesCategories]);
 
   useEffect(() => {
@@ -76,7 +78,7 @@ const ItemListWidthBadge: React.FC<ItemListWithBadgeProps> = ({
                 <SectionHeader
                   title={category?.name}
                   desc={category?.description}
-                  categories = {seriesCategories}
+                  categories={seriesCategories}
                   link="continue"
                 />
               </ThemedView>
@@ -129,9 +131,11 @@ function SectionHeader({
       <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
         <TouchableOpacity onPress={() => { handleSelectedItem(title) }}>
-          <Image
-            source={require("@/assets/images/kid/arrow-right.png")}
-            style={styles.arrowIcon}
+
+          <IconAvatarRight
+            width={24}
+            height={24}
+            color={"#053B4A"}
           />
         </TouchableOpacity>
       </ThemedView>

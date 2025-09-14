@@ -1,111 +1,28 @@
 import BottomNavBar from "@/components/BottomNavBar";
-import { StoryCard2 } from "@/components/Cards";
+import { StoryCard2, StoryCard3 } from "@/components/Cards";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Link, Stack } from "expo-router";
-import React from "react";
-import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import React, { use, useEffect, useState } from "react";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import { Image } from "expo-image";
+import { Story, useStoryStore } from "@/store/storyStore";
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
-const storiesData = [
-  {
-    bgColor: "#F4A672",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: true,
-    number: "#1",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: false,
-    number: "#2",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "Underwater Adventures",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#048F99",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#3",
-    storyTitle: "Muddy Mystery at the Pond",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: true,
-    number: "#4",
-    storyTitle: "Seeds of Surprise",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F4A672",
-    isBallonYellow: true,
-    number: "#5",
-    storyTitle: "The Great Garden Clean-Up",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: true,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#7",
-    storyTitle: "A Night with Nocturnal Neighbours",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: false,
-    isFavorite: false,
-    watched: true,
-  },
-];
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 
 export default function FeaturedAdventuresScreen() {
+  const featuredStories = useStoryStore((state) => state.featuredStories);
+  const [storiesData, setStoriesData] = useState<Story[]>([]);
+  const { child } = useUser();
+
+  useEffect(() => {
+    if (featuredStories && featuredStories.length > 0) {
+      setStoriesData(featuredStories);
+    }
+  }, [featuredStories])
+
   return (
     <>
       <Stack.Screen
@@ -120,22 +37,11 @@ export default function FeaturedAdventuresScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/top-back-pattern.png")}
+            source={require("@/assets/images/kid/back-pattern.png")}
             style={styles.topBackPattern}
-            resizeMode="cover"
+            contentFit="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+          <Header role="kid" mode={child?.mode}></Header>
           {/* Header */}
           <ThemedText style={styles.headerTitle}>
             Featured Adventures
@@ -146,23 +52,27 @@ export default function FeaturedAdventuresScreen() {
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
-            <ThemedView style={styles.backWrap}>
-              <Link href="../">
-                <Image
-                  source={require("@/assets/images/kid/arrow-left.png")}
+
+            <Link href="../">
+              <ThemedView style={[styles.backWrap]}>
+                <IconArrowLeft
+                  width={20}
+                  height={20}
+                  color={"#053B4A"}
                   style={styles.imgArrowLeft}
-                  resizeMode="cover"
                 />
-              </Link>
-              <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-            </ThemedView>
+                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+              </ThemedView>
+
+            </Link>
+
           </ThemedView>
           {/* Story List */}
           <ThemedView
@@ -179,7 +89,7 @@ export default function FeaturedAdventuresScreen() {
               {storiesData.length > 0 &&
                 storiesData.map((item, index) => (
                   <ThemedView key={index} style={styles.cardWrap}>
-                    <StoryCard2 {...item} />
+                    <StoryCard3 num={index + 1} story={item} />
                   </ThemedView>
                 ))}
             </ThemedView>
@@ -211,10 +121,8 @@ const styles = StyleSheet.create({
   },
   topBackPattern: {
     width: "100%",
-    height: 220,
+    height: 400,
     position: "absolute",
-    top: 0,
-    left: 0,
   },
   headingWrap: {
     flexDirection: "row",

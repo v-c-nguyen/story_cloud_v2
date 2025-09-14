@@ -18,10 +18,13 @@ import normalize from "@/app/lib/normalize";
 import { Ionicons } from "@expo/vector-icons";
 
 import IconArrowDown from "@/assets/images/icons/arrow-down.svg"
+import IconCheck from "@/assets/images/parent/icon-check.svg"
+
 interface Props {
   currentCollection: any;
   setCurrentCollection?: (c: any) => void;
 }
+
 
 export default function CollectionSelection({
   currentCollection,
@@ -47,12 +50,12 @@ export default function CollectionSelection({
     <ThemedView style={styles.selectionContainer}>
       <View style={styles.detailsSection}>
         <View style={styles.selectionHeaderRow}>
-          <View style={{marginHorizontal: "auto"}}>
+          <View style={{ marginHorizontal: "auto" }}>
             <TouchableOpacity
               style={styles.closeButtonCenter}
               onPress={() => setCurrentCollection && setCurrentCollection(null)}
             >
-              <IconArrowDown width={24} height={24} color={"#F4A672"}  />
+              <IconArrowDown width={24} height={24} color={"#F4A672"} />
             </TouchableOpacity>
             <ThemedText
               style={[
@@ -77,10 +80,10 @@ export default function CollectionSelection({
           <TouchableOpacity onPress={() => setSelectedItem("all")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "all" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText
@@ -98,10 +101,10 @@ export default function CollectionSelection({
           <TouchableOpacity onPress={() => setSelectedItem("series")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "series" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText
@@ -110,7 +113,7 @@ export default function CollectionSelection({
                   selectedItem === "series" && styles.statsTextOrange,
                 ]}
               >
-                {currentCollection.series? currentCollection.series.length : '0'} SERIES
+                {currentCollection.series ? currentCollection.series.length : '0'} SERIES
               </ThemedText>
             </View>
           </TouchableOpacity>
@@ -119,10 +122,10 @@ export default function CollectionSelection({
           <TouchableOpacity onPress={() => setSelectedItem("stories")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "stories" && (
-                <Image
-                  source={require("@/assets/images/kid/check.png")}
-                  style={styles.statsIcon}
-                  contentFit="contain"
+                <IconCheck
+                  width={14}
+                  height={14}
+                  color={"#F4A672"}
                 />
               )}
               <ThemedText
@@ -131,14 +134,14 @@ export default function CollectionSelection({
                   selectedItem === "stories" && styles.statsTextOrange,
                 ]}
               >
-                {currentCollection.stories? currentCollection.stories.length : '0'} STORIES
+                {currentCollection.stories ? currentCollection.stories.length : '0'} STORIES
               </ThemedText>
             </View>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {}}
+          onPress={() => { }}
           activeOpacity={0.7}
         >
           <Ionicons

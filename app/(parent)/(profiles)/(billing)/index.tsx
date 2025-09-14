@@ -46,11 +46,6 @@ const billingData = [
     },
 ];
 
-const refreshIcon = require('@/assets/images/parent/icon-refresh.png')
-const downloadIcon = require('@/assets/images/parent/icon-download.png')
-const tickIcon = require('@/assets/images/parent/icon-tick.png')
-const swapIcon = require('@/assets/images/parent/icon-swap.png')
-const stripeIcon = require('@/assets/images/parent/stripe.png')
 const tabs = tabData;
 
 const Billing = () => {
@@ -165,12 +160,11 @@ const Billing = () => {
                                 {/* Payment Method */}
                                 <ThemedView style={[styles.flexRow]}>
                                     <ThemedText style={styles.sectionTitle}>Payment Method</ThemedText>
-                                    <Image source={stripeIcon} style={[styles.icon24, { marginBottom: 30 }]}></Image>
+                                    <IconStripe width={24} height={24} style={[ { marginBottom: 30 }]} />
                                 </ThemedView>
                                 <ThemedView style={styles.card}>
                                     <ThemedView style={styles.cardRow}>
-                                        <Image
-                                            source={require('@/assets/images/parent/icon-paymentCard.png')}
+                                        <IconCard width={30} height={30}
                                             style={styles.cardIcon}
                                         />
                                         <ThemedView style={{ flexDirection: 'column', gap: 5 }}>

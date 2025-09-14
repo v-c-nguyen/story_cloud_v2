@@ -24,15 +24,12 @@ import {
 import CollectionsListWithBadge from "@/components/parent/learning/library/CollectionsListWithBadge";
 import normalize from "@/app/lib/normalize";
 
+import IconList from "@/assets/images/icons/icon-list.svg"
+import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
 import IconSearch from "@/assets/images/icons/icon-search.svg";
 import IconSwap from "@/assets/images/icons/icon-swap.svg";
 
-const learningIcon = require("@/assets/images/parent/learning.png");
-const searchIcon = require("@/assets/images/parent/icon-search.png");
-const listIcon = require("@/assets/images/parent/icon-list.png");
-const swapIcon = require("@/assets/images/parent/icon-swap.png");
-const downIcon = require("@/assets/images/parent/down.png");
 
 export default function CollectionsLibrary() {
   const [categories, setCategory] = React.useState<any[]>([]);
@@ -160,12 +157,12 @@ export default function CollectionsLibrary() {
                   onPress={() => setDropdownVisible(!dropdownVisible)}
                 >
                   <ThemedView style={styles.ActiveItemStyle}>
-                    <Image source={listIcon} tintColor={"rgba(5, 59, 74, 1)"} />
+                    <IconList width={21} height={21} />
                   </ThemedView>
                   <ThemedText style={styles.dropdownText}>
                     {activeItem}
                   </ThemedText>
-                  <Image source={downIcon} tintColor={"rgba(122, 193, 198, 1)"} />
+                  <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
                 </TouchableOpacity>
               </ThemedView>
 
@@ -226,9 +223,8 @@ export default function CollectionsLibrary() {
                             option === activeItem && styles.ActiveItemStyle,
                           ]}
                         >
-                          <Image
-                            source={listIcon}
-                            tintColor={
+                          <IconList
+                            color={
                               option === activeItem
                                 ? "rgba(5, 59, 74, 1)"
                                 : "rgba(122, 193, 198, 1)"

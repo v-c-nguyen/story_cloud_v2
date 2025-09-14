@@ -8,7 +8,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { storyOptionsData } from "@/data/libraryData";
 import { Stack, router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   FlatList,
   Image,
@@ -24,79 +24,51 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
 import IconSearch from "@/assets/images/icons/icon-search.svg";
 import IconSwap from "@/assets/images/icons/icon-swap.svg";
-
-const storiesData = [
-  {
-    bgColor: "#F4A672",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: true,
-    number: "#1",
-    storyTitle: "Forest Friends Adventure",
-    seriesTitle: "Enchanted Forest",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: false,
-    number: "#2",
-    storyTitle: "Underwater Discovery",
-    seriesTitle: "Ocean Kingdom",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-];
-const searchIcon = require("@/assets/images/parent/icon-search.png")
-const listIcon = require("@/assets/images/parent/icon-list.png")
-const swapIcon = require("@/assets/images/parent/icon-swap.png")
-const downIcon = require("@/assets/images/parent/down.png")
+import MapListWithBadge from "@/components/parent/learning/library/MapListWithBadge";
+import supabase from "@/app/lib/supabase";
+import { useCharactersStore } from "@/store/charactersStore";
+import normalize from "@/app/lib/normalize";
+import { useUser } from "@/app/lib/UserContext";
+import IconList from "@/assets/images/icons/icon-list.svg"
+import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
 
 export default function StorylandMapLibrary() {
-  const [mapRegions, setMapRegions] = React.useState<any[]>([]);
+  const { child } = useUser();
+  const [categories, setCategory] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(false);
   const storyOptions = storyOptionsData;
   const [activeItem, setActiveItem] = React.useState('Storyland Map');
+  const [activeTab, setActiveTab] = React.useState('characters');
   const [dropdownVisible, setDropdownVisible] = React.useState(false);
-  const [selectedSeries, setSelectedSeries] = React.useState<string | null>(null);
+  const currentCharacter = useCharactersStore((s) => s.currentCharacter);
+  const setCurrentCharacter = useCharactersStore((s) => s.setCurrentCharacter);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   async function fetchMapRegions() {
-  //     try {
-  //       const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
-  //       const { data, error } = await supabase.functions.invoke('map-regions', {
-  //         method: 'GET',
-  //         headers: {
-  //           Authorization: jwt ? `Bearer ${jwt}` : '',
-  //         },
-  //       });
-  //       if (error) {
-  //         console.error('Error fetching map regions:', error.message);
 
-  //       } else if (data && Array.isArray(data.data)) {
-  //         setMapRegions(data.data);
-  //       }
-  //     } catch (e) {
-  //       console.error('Error fetching map regions:', e);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  //   fetchMapRegions();
-  // }, []);
+  useEffect(() => {
+    setLoading(true);
+    async function fetchMapRegions() {
+      try {
+        const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+        const { data, error } = await supabase.functions.invoke('stories/characters', {
+          method: 'GET',
+          headers: {
+            Authorization: jwt ? `Bearer ${jwt}` : '',
+          },
+        });
+        if (error) {
+          console.error('Error fetching map regions:', error.message);
+
+        } else if (data && Array.isArray(data)) {
+          setCategory(data);
+        }
+      } catch (e) {
+        console.error('Error fetching map regions:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMapRegions();
+  }, []);
 
   function handleItemSelection(item: string) {
     setActiveItem(item)
@@ -129,7 +101,21 @@ export default function StorylandMapLibrary() {
   }
 
   function handleStoryItem(item: string) {
-    selectedSeries === item ? setSelectedSeries(null) : setSelectedSeries(item);
+    if (!setCurrentCharacter) return;
+    // Find matching character object
+    const found = categories.find(
+      (c: any) => (c.name || String(c)).trim() === item
+    );
+    if (
+      currentCharacter &&
+      normalize((currentCharacter as any).name) === normalize(item)
+    ) {
+      setCurrentCharacter(null);
+    } else if (found) {
+      setCurrentCharacter(found as any);
+    } else {
+      setCurrentCharacter({ id: item, name: item } as any);
+    }
   }
 
   return (
@@ -145,11 +131,11 @@ export default function StorylandMapLibrary() {
             contentContainerStyle={styles.scrollViewContent}
           >
             {/* Top background */}
-            {/* <Image
-                source={require("@/assets/images/kid/top-back-pattern.png")}
-                style={styles.topBackPattern}
-                resizeMode="cover"
-              /> */}
+            <Image
+              source={require("@/assets/images/kid/top-back-pattern.png")}
+              style={styles.topBackPattern}
+              resizeMode="cover"
+            />
 
             <Header icon={IconLearning} role="parent" title="Learning" theme="dark"></Header>
 
@@ -168,28 +154,13 @@ export default function StorylandMapLibrary() {
                 onPress={() => setDropdownVisible(!dropdownVisible)}
               >
                 <ThemedView style={styles.ActiveItemStyle} >
-                  <Image source={listIcon} tintColor={'rgba(5, 59, 74, 1)'} />
+                  <IconList width={21} height={21} />
                 </ThemedView>
                 <ThemedText style={styles.dropdownText}>{activeItem}</ThemedText>
-                <Image source={downIcon} tintColor={'rgba(122, 193, 198, 1)'} />
+                <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
               </TouchableOpacity>
             </ThemedView>
 
-            {/* Category pills */}
-            <FlatList
-              horizontal
-              data={mapRegions}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleStoryItem(item)}>
-                  <ThemedView style={[styles.categoryPill, selectedSeries === item ? styles.categoryPillActive : styles.categoryPillInactive]}>
-                    <ThemedText style={[styles.categoryText, selectedSeries === item ? { color: 'rgba(5, 59, 74, 1)' } : null]}>{item}</ThemedText>
-                  </ThemedView>
-                </TouchableOpacity>
-              )}
-              style={styles.categoryPillsContainer}
-              showsHorizontalScrollIndicator={false}
-            />
 
             {/* Dropdown modal */}
             <Modal
@@ -210,9 +181,12 @@ export default function StorylandMapLibrary() {
                       style={styles.dropdownItem}
                       onPress={() => handleItemSelection(option)} >
                       <ThemedView style={[{ padding: 3 }, option === activeItem && styles.ActiveItemStyle]} >
-                        <Image
-                          source={listIcon}
-                          tintColor={option === activeItem ? 'rgba(5, 59, 74, 1)' : 'rgba(122, 193, 198, 1)'}
+                        <IconList
+                          color={
+                            option === activeItem
+                              ? "rgba(5, 59, 74, 1)"
+                              : "rgba(122, 193, 198, 1)"
+                          }
                         />
                       </ThemedView>
                       <ThemedText style={styles.dropdownItemText}>{option}</ThemedText>
@@ -221,127 +195,78 @@ export default function StorylandMapLibrary() {
                 </ThemedView>
               </TouchableOpacity>
             </Modal>
-            {selectedSeries ? (
-              <ThemedView style={styles.selectionContainer}>
-                <View style={styles.detailsSection}>
-                  <View style={styles.selectionHeaderRow}>
-                    <View>
-                      <ThemedText style={[styles.sectionTitle, styles.selectionTitleLarge, { lineHeight: 40 }]}>{selectedSeries}</ThemedText>
-                      <ThemedText style={[styles.sectionTitle, styles.selectionTitleSmall]}>{"Brand new stories and fun"}</ThemedText>
-                    </View>
-                    <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedSeries(null)}>
-                      <Image
-                        source={require("@/assets/images/kid/arrow-down.png")}
-                        style={styles.closeArrow}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.statsContainer}>
-                    <ThemedText style={styles.statsText}>ALL</ThemedText>
-                    <View style={styles.divider} />
-                    <View style={styles.statsIconContainer}>
-                      <Image
-                        source={require("@/assets/images/kid/check.png")}
-                        style={styles.statsIcon}
-                        resizeMode="contain"
-                      />
-                      <ThemedText style={styles.statsTextOrange}>10 SERIES</ThemedText>
-                    </View>
-                    <View style={styles.divider} />
-                    <ThemedText style={styles.statsText}>101 STORIES</ThemedText>
-                  </View>
-                </View>
-                <ScrollView
-                  horizontal={false}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.cardScrollContent}
-                >
-                  {storiesData
-                    .filter((ele) => !ele.watched)
-                    .map((item, idx) => (
-                      <TouchableOpacity key={idx} activeOpacity={0.9} onPress={() => { router.push(`./details-screen?from=Storyland Map`) }}>
-                        <StoryCard2 {...item} />
-                      </TouchableOpacity>
-                    ))}
-                </ScrollView>
-              </ThemedView>
-            ) : (
 
-
-              <ThemedView style={styles.bottomPadding}>
-                <ThemedView style={{ marginBottom: 80 }}>
-                  <MapWrapper />
+            {!currentCharacter &&
+              (
+                <ThemedView style={styles.bottomPadding}>
+                  <ThemedView style={{ marginBottom: 80 }}>
+                    <MapWrapper />
+                  </ThemedView>
                 </ThemedView>
-                {/* Map Regions */}
-                <View style={styles.headerTitleContainer}>
-                  <SectionHeader title="Storyland Regions" desc="Explore different story worlds" link="continue" />
-                  <TouchableOpacity
-                    onPress={() => handleStoryItem("Storyland Regions")}
-                  >
-                    <Image
-                      source={require("@/assets/images/kid/arrow-right.png")}
-                      style={styles.arrowIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.cardScrollContainer}
-                >
-                  {mapRegions.map((item, idx) => (
-                    <SeriesCard key={idx} {...item} />
-                  ))}
-                </ScrollView>
+              )}
 
-                {/* Enchanted Forest Stories */}
-                <View style={styles.headerTitleContainer}>
-                  <SectionHeader title="Enchanted Forest" desc="Magical stories from the forest" link="continue" />
-                  <TouchableOpacity
-                    onPress={() => handleStoryItem("Enchanted Forest")}
+            {/* Category pills */}
+            <FlatList
+              horizontal
+              data={categories.map((ele) => ele)}
+              keyExtractor={(item) => item.name || item}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => handleStoryItem(item.name)}>
+                  <ThemedView
+                    style={[
+                      styles.categoryPill,
+                      currentCharacter &&
+                        (currentCharacter as any).name.trim() === item.name.trim()
+                        ? styles.categoryPillActive
+                        : styles.categoryPillInactive,
+                    ]}
                   >
-                    <Image
-                      source={require("@/assets/images/kid/arrow-right.png")}
-                      style={styles.arrowIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.cardScrollContainer}
-                >
-                  {storiesData.map((item, idx) => (
-                    <StoryCard2 key={idx} {...item} />
-                  ))}
-                </ScrollView>
+                    <View
+                      style={[
+                        styles.avatarImgContainer,
+                        currentCharacter &&
+                          (currentCharacter as any).name.trim() === item.name.trim()
+                          ? { backgroundColor: "#F4A672" }
+                          : null,
+                      ]}
+                    >
+                      <Image
+                        source={
+                          item?.avatar_url
+                            ? { uri: item.avatar_url }
+                            : require("@/assets/images/avatars/dano_badger.png")}
+                        style={[styles.avatarImg]}
+                      />
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                      <ThemedText
+                        style={[
+                          styles.categoryText,
+                          currentCharacter &&
+                            (currentCharacter as any).name.trim() === item.name.trim()
+                            ? { color: "rgba(5, 59, 74, 1)" }
+                            : null,
+                        ]}
+                      >
+                        {item.name.trim()}
+                      </ThemedText>
+                    </View>
+                  </ThemedView>
+                </TouchableOpacity>
+              )}
+              style={styles.categoryPillsContainer}
+              showsHorizontalScrollIndicator={false}
+            />
 
-                {/* All Regions */}
-                <View style={styles.headerTitleContainer}>
-                  <SectionHeader title="All Storyland Regions" desc="Complete map of story worlds" link="continue" />
-                  <TouchableOpacity
-                    onPress={() => handleStoryItem("All Storyland Regions")}
-                  >
-                    <Image
-                      source={require("@/assets/images/kid/arrow-right.png")}
-                      style={styles.arrowIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.cardScrollContainer}
-                >
-                  {mapRegions.map((item, idx) => (
-                    <SeriesCard key={idx} {...item} />
-                  ))}
-                </ScrollView>
-              </ThemedView>
-            )}
+            <ThemedView style={styles.bottomPadding}>
+              <MapListWithBadge
+                charactersCategories={categories}
+                loading={loading}
+                mode="parent"
+              />
+            </ThemedView>
+
           </ScrollView>
-
-
           {/* Sticky Bottom Navigation */}
           <ThemedView
             style={{
@@ -457,14 +382,16 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   categoryPill: {
-    backgroundColor: 'rgba(122, 193, 198, 0.2)',
-    paddingVertical: 20,
+    flexDirection: "row",
+    backgroundColor: "rgba(122, 193, 198, 0.2)",
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: 'rgba(173, 215, 218, 0.5)',
+    borderColor: "rgba(173, 215, 218, 0.5)",
     borderRadius: 20,
     marginTop: 12,
     marginRight: 8,
+    alignItems: "center",
   },
   categoryText: {
     fontSize: 16,
@@ -602,5 +529,21 @@ const styles = StyleSheet.create({
     tintColor: "#F4A672",
     marginRight: 16,
     marginBottom: 10
-  }
+  },
+  avatarImg: {
+    height: 48,
+    width: 48,
+  },
+  avatarImgContainer: {
+    width: 50,
+    height: 50,
+    borderColor: "#ffffff",
+    borderWidth: 1.5,
+    flexDirection: "row",
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    borderRadius: 50,
+    backgroundColor: "rgba(122, 193, 198, 1)",
+  },
 });

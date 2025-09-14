@@ -5,12 +5,13 @@ import { ThemedView } from "./ThemedView";
 
 
 
-export function LearningTargetCard({ target, isSelected, onPress, checkIcon: IconCheck, informationIcon: IconInformation }: {
+export function LearningTargetCard({ target, isSelected, onPress, checkIcon: IconCheck, informationIcon: IconInformation, handleInformationClicked }: {
     target: { id: string, name: string },
     isSelected: boolean,
     onPress: () => void,
     checkIcon: any,
-    informationIcon: any
+    informationIcon: any,
+    handleInformationClicked: (target: any) => () => void
 }) {
     return (
         <TouchableOpacity key={target.id} onPress={onPress}>
@@ -19,7 +20,7 @@ export function LearningTargetCard({ target, isSelected, onPress, checkIcon: Ico
                     <ThemedView style={[styles.circle, isSelected && styles.checkCircle]}>
                         {isSelected && (
                             <IconCheck
-                                style={[styles.checkMark] }
+                                style={[styles.checkMark]}
                             />
                         )}
                     </ThemedView>
@@ -27,7 +28,10 @@ export function LearningTargetCard({ target, isSelected, onPress, checkIcon: Ico
                 <ThemedText style={[styles.cardTitle, isSelected && { color: 'rgba(5, 59, 74, 1)' }]}>
                     {target.name.split('&')[0] + (target.name.includes('&') ? ' &\n' + target.name.split('&')[1] : '')}
                 </ThemedText>
-                <IconInformation style={[styles.cardInfoIcon, isSelected && { color: 'rgba(5, 59, 74, 1)' }]} />
+                <TouchableOpacity style={[styles.cardInfoIcon]} onPress={handleInformationClicked(target)}>
+
+                    <IconInformation style={[styles.cardInfoIcon]} color={isSelected ? 'rgba(5, 59, 74, 1)' : "#7AC1C6"} />
+                </TouchableOpacity>
             </ThemedView>
         </TouchableOpacity>
     );
@@ -203,8 +207,8 @@ const styles = StyleSheet.create({
     },
     cardInfoIcon: {
         position: 'absolute',
-        top: 10,
-        right: 10,
+        top: 5,
+        right: 5,
         width: 16,
         height: 16
     },

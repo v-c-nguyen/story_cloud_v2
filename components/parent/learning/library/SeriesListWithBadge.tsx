@@ -8,6 +8,7 @@ import React, { useEffect } from "react";
 import { ActivityIndicator, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import StoryItems from "./StoryItems";
 
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 import IconArrowRightGradient from "@/assets/images/icons/arrow-right-gradient.svg"
 import SeriesSelection from "./SeriesSelection";
 
@@ -31,11 +32,11 @@ const SeriesListWithBadge: React.FC<SeriesListWithBadgeProps> = ({
   const setCurrentSeries = useSeriesStore((s) => s.setCurrentSeries);
 
   useEffect(() => {
-        const targets = seriesCategories.filter((category) =>
-          category.series && category.series.length > 0
-        );
-        setCategoriesWithStories(targets);
-        setDisplayedCategories(targets);
+    const targets = seriesCategories.filter((category) =>
+      category.series && category.series.length > 0
+    );
+    setCategoriesWithStories(targets);
+    setDisplayedCategories(targets);
   }, [seriesCategories]);
 
   useEffect(() => {
@@ -114,9 +115,11 @@ const SeriesListWithBadge: React.FC<SeriesListWithBadgeProps> = ({
                 link="continue"
               />
               <TouchableOpacity onPress={() => handleStoryItem(category)}>
-                <Image
-                  source={require("@/assets/images/kid/arrow-right.png")}
-                  style={styles.arrowIcon}
+
+                <IconAvatarRight
+                  width={24}
+                  height={24}
+                  color={"#053B4A"}
                 />
               </TouchableOpacity>
             </ThemedView>

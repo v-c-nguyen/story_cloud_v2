@@ -12,11 +12,6 @@ import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 // Data arrays for each section
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
-const learningIcon = require("@/assets/images/parent/learning.png");
-const searchIcon = require("@/assets/images/parent/icon-search.png");
-const listIcon = require("@/assets/images/parent/icon-list.png");
-const swapIcon = require("@/assets/images/parent/icon-swap.png");
-const plusIcon = require("@/assets/images/parent/icon-plus.png");
 
 const HIGHLIGHT_INDEX = 0;
 export default function ViewPathway() {

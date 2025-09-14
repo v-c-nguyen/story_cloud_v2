@@ -23,30 +23,7 @@ import {
 } from "react-native";
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
-import IconPlay from "@/assets/images/icons/play.svg";
-import IconForward from "@/assets/images/icons/forward.svg";
-import IconBackward from "@/assets/images/icons/backward.svg";
-import IconPause from "@/assets/images/icons/pause.svg";
-import IconExpand from "@/assets/images/icons/expand.svg";
-import IconShrink from "@/assets/images/icons/shrink.svg";
-import IconVolume from "@/assets/images/icons/volume.svg";
 import IconMusic from "@/assets/images/icons/music.svg";
-
-const parentIcons = {
-  learning: require("@/assets/images/parent/learning.png"),
-  heart: require("@/assets/images/parent/heart.png"),
-  star: require("@/assets/images/parent/star.png"),
-  information_circle: require("@/assets/images/parent/information_circle.png"),
-  // add more as needed
-};
-
-const insightIcons = {
-  duration: require("@/assets/images/parent/duration.png"),
-  steps: require("@/assets/images/parent/steps.png"),
-  finished: require("@/assets/images/parent/finished.png"),
-};
-
-const musicIcon = require("@/assets/images/parent/music.png");
 
 export default function ListenStory() {
   const router = useRouter();
@@ -216,18 +193,6 @@ export default function ListenStory() {
     </>
   );
 }
-
-type SectionHeaderProps = {
-  title: string;
-  avatar: keyof typeof parentIcons;
-  avatar1?: keyof typeof parentIcons;
-};
-
-type InsightItemProps = {
-  value: number;
-  what: string;
-  avatar: keyof typeof insightIcons;
-};
 
 const styles = StyleSheet.create({
   cardFooter: {

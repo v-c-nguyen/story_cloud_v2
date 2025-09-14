@@ -8,9 +8,8 @@ import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import StepIndicator_Pathway from "./StepIndecator";
 import GradientText from "@/components/ui/GradientText";
 
-const pathwayIcon = require('@/assets/images/parent/icon-pathway.png')
-const checkIcon = require('@/assets/images/parent/dashboard/selected.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
+import IconCheck from "@/assets/images/parent/icon-check.svg"
+import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 
 const steps = [1, 2, 3, 4, 5];
 
@@ -57,10 +56,11 @@ export default function AddPathway_Fifth({ mode, data, currentStep, onPress }: {
                                 {data.length} |
                             </ThemedText>
                             <ThemedView style={[styles.circle, styles.checkCircle]}>
-                                <Image
-                                    source={checkIcon}
-                                    style={{ width: 24, height: 24 }}
-                                ></Image>
+                                            <IconCheck
+                                                color={"#F4A672"}
+                                                width={24}
+                                                height={24}
+                                            />
                             </ThemedView>
                         </ThemedView>
                     </ThemedView>
@@ -79,10 +79,11 @@ export default function AddPathway_Fifth({ mode, data, currentStep, onPress }: {
                                             { target?.name } |
                                         </ThemedText>
                                         <ThemedView style={[styles.circle, styles.checkCircle]}>
-                                            <Image
-                                                source={checkIcon}
-                                                style={{ width: 24, height: 24 }}
-                                            ></Image>
+                                            <IconCheck
+                                                color={"#F4A672"}
+                                                width={24}
+                                                height={24}
+                                            />
                                         </ThemedView>
                                     </ThemedView>
                                 </ThemedView>
@@ -109,7 +110,7 @@ export default function AddPathway_Fifth({ mode, data, currentStep, onPress }: {
                     onPress={() => onPress()}
                 >
                     <ThemedText style={styles.buttonText}>Next</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowRight width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
             </ThemedView>
         </ThemedView>

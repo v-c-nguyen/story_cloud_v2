@@ -17,9 +17,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import IconRocket from "@/assets/images/icons/icon-rocket.svg";
+import IconStar from "@/assets/images/icons/icon-mark-modal.svg";
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+
 // Data arrays for each section
-
-
 
 const seriesData = [
   {
@@ -104,8 +106,9 @@ export default function FocusModeHome() {
             {/* Header */}
             <ThemedView style={styles.headerWrap}>
               <ThemedText style={styles.headerTitle}>Hey, {name}</ThemedText>
-              <Image
-                source={require("@/assets/images/kid/star-with-circle.png")}
+              <IconStar
+                width={84}
+                height={90}
                 style={styles.headerStar}
               />
             </ThemedView>
@@ -113,10 +116,10 @@ export default function FocusModeHome() {
               Let’s watch something and have fun!
             </ThemedText>
             <ThemedView style={styles.headerRocketWrap}>
-              <Image
-                source={require("@/assets/images/kid/rocket.png")}
+              <IconRocket
+                width={224.54}
+                height={287}
                 style={styles.headerRocket}
-                resizeMode="cover"
               />
               {/* Clouds */}
               <Image
@@ -131,7 +134,7 @@ export default function FocusModeHome() {
               />
             </ThemedView>
 
-            <ThemedView style={{ backgroundColor: "#fcfcfc", marginTop: -26 }}>
+            <ThemedView style={{ backgroundColor: "#fcfcfc", marginTop: -26, paddingBottom: 100 }}>
               {/* Continue Watching */}
               <SectionHeader title="Continue Watching" link="continue" />
               <RecentLearning activeChild={child} mode="kid" />
@@ -185,9 +188,10 @@ function SectionHeader({ title, link }: { title: string; link: string }) {
     <ThemedView style={styles.sectionHeader}>
       <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
       <TouchableOpacity onPress={() => router.push(getRoute() as RelativePathString)}>
-        <Image
-          source={require("@/assets/images/kid/arrow-right.png")}
-          style={styles.sectionArrow}
+        <IconAvatarRight
+          width={24}
+          height={24}
+          color={"#053B4A"}
         />
       </TouchableOpacity>
     </ThemedView>
@@ -222,8 +226,6 @@ const styles = StyleSheet.create({
     lineHeight: 46.2,
   },
   headerStar: {
-    width: 32,
-    height: 34,
     marginLeft: 8,
   },
   headerSubtitle: {
@@ -261,7 +263,7 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     marginTop: 0,
-    marginBottom: 8,
+    marginBottom: 20,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",

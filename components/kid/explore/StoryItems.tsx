@@ -8,6 +8,7 @@ import React, { useEffect } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { Image } from "expo-image";
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 
 interface StoryItemsProps {
   seriesCategory: string;
@@ -44,7 +45,7 @@ const StoryItems: React.FC<StoryItemsProps> = ({
 
         {tag == "series" &&
           mode == "kid" &&
-            seriesData && seriesData.stories
+          seriesData && seriesData.stories
             .map((item: any, idx: number) => (
               <StoryCard1
                 key={idx}
@@ -175,10 +176,12 @@ function SectionHeader({
       <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
       <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
-          <Image
-            source={require("@/assets/images/kid/arrow-right.png")}
-            style={styles.sectionArrow}
-          />
+
+        <IconAvatarRight
+          width={24}
+          height={24}
+          color={"#053B4A"}
+        />
       </ThemedView>
     </ThemedView>
   );

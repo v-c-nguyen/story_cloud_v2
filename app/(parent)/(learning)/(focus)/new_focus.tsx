@@ -11,9 +11,9 @@ import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
-const focusIcon = require('@/assets/images/parent/icon-focus.png')
-const backIcon = require('@/assets/images/parent/icon-left.png')
-const information_circle = require("@/assets/images/parent/information_circle.png")
+import IconFocus from "@/assets/images/parent/icon-focus.svg"
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
+import IconInformation from "@/assets/images/parent/icon-information.svg"
 
 interface Child {
     id: string,
@@ -120,15 +120,15 @@ export default function AddFocus() {
                     <TouchableOpacity
                         style={styles.backBtn}
                         onPress={handleBackBtn}>
-                        <Image source={backIcon} style={styles.backBtnIcon}></Image>
+                        <IconArrowLeft width={20} height={20} color={"#7AC1C6"} />
                         <ThemedText style={styles.backBtnText}>Back to Learning</ThemedText>
                     </TouchableOpacity>
 
                     <ThemedView style={styles.mainContainer}>
                         <ThemedView style={styles.titleContainer}>
-                            <Image source={focusIcon} style={styles.titleIcon}></Image>
+                            <IconFocus width={21} height={21} />
                             <ThemedText style={styles.title}>New Focus Mode</ThemedText>
-                            <TouchableOpacity><Image source={information_circle} ></Image></TouchableOpacity>
+                            <TouchableOpacity><IconInformation width={21} height={21} color={"#7AC1C6"} /></TouchableOpacity>
                         </ThemedView>
 
                         {step == 1 && <AddFocus_First

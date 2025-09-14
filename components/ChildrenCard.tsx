@@ -2,6 +2,7 @@ import { Image } from "expo-image";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 
 const itemIcon = require('@/assets/images/parent/item.png')
@@ -35,7 +36,13 @@ export function ChildrenCard({
                 <Image source={itemIcon} style={styles.itemIcon} />
             }
             <ThemedView style={styles.item}>
-                <Image source={child.avatar_url || require('@/assets/images/parent/avatar-parent-2.png')} style={styles.childIcon} />
+                {
+                    child.avatar_url ?
+                        <Image source={{ uri: child.avatar_url }} style={styles.childIcon} />
+                        :
+                        <IconDefaultAvatar width={56} height={56} />
+
+                }
                 <ThemedText style={[styles.childText, isActive && { color: 'rgba(5, 59, 74, 1)' }]}>{child?.name}</ThemedText>
             </ThemedView>
         </TouchableOpacity>
@@ -48,7 +55,7 @@ const styles = StyleSheet.create({
     childIcon: {
         width: 56,
         height: 56,
-        borderRadius:50
+        borderRadius: 50
     },
     childText: {
         fontSize: 14,

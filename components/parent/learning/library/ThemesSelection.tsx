@@ -15,6 +15,7 @@ import StoryItems from "./StoryItems";
 import { useStoryStore } from "@/store/storyStore";
 import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
+
 import IconArrowDown from "@/assets/images/icons/arrow-down.svg"
 
 interface Props {

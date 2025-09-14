@@ -6,9 +6,9 @@ import { Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import StepIndicator_Pathway from "./StepIndecator";
 import GradientText from "@/components/ui/GradientText";
 
-const pathwayIcon = require('@/assets/images/parent/icon-pathway.png')
-const docIcon = require('@/assets/images/parent/icon-doc.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
+import IconPathway from "@/assets/images/parent/icon-pathway.svg"
+import IconDoc from "@/assets/images/parent/icon-doc.svg"
+import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 
 const steps = [1, 2, 3, 4, 5];
 
@@ -28,7 +28,7 @@ export default function AddPathway_Second( {mode, currentStep, onPress }: {mode:
                 {/* Form */}
                 <ThemedView style={styles.formInput}>
                     <ThemedView style={styles.label}>
-                        <ThemedView style={styles.iconContainer}><Image source={pathwayIcon} style={styles.labelIcon}></Image></ThemedView>
+                        <ThemedView style={styles.iconContainer}><IconPathway width={21} height={21} style={styles.labelIcon} /></ThemedView>
                         <GradientText text="Pathway Name" />
                     </ThemedView>
                     <TextInput
@@ -43,7 +43,7 @@ export default function AddPathway_Second( {mode, currentStep, onPress }: {mode:
 
                 <ThemedView style={styles.formInput}>
                     <ThemedView style={styles.label}>
-                        <ThemedView style={styles.iconContainer}><Image source={docIcon} style={styles.labelIcon}></Image></ThemedView>
+                        <ThemedView style={styles.iconContainer}><IconDoc width={21} height={21} style={styles.labelIcon} /></ThemedView>
                         <GradientText text="Description" />
                     </ThemedView>
                     <TextInput
@@ -63,7 +63,7 @@ export default function AddPathway_Second( {mode, currentStep, onPress }: {mode:
                     onPress={() => onPress(name, description)}
                 >
                     <ThemedText style={styles.buttonText}>Next</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowRight width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
             </ThemedView>
         </ThemedView>

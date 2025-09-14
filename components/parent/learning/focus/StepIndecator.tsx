@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet } from "react-native";
 
-const checkIcon = require('@/assets/images/parent/dashboard/selected.png')
+import IconCheck from "@/assets/images/parent/icon-check.svg"
 
 const steps = [1, 2, 3, 4, 5];
 
@@ -32,7 +32,7 @@ export default function StepIndicator_Focus({  currentStep }: { currentStep: num
                             >
                                 {
                                     isCompleted ?
-                                        <Image source={checkIcon} style={{ width: 24, height: 24 }} />
+                                        <IconCheck width={24} height={24} />
                                         :
                                         <ThemedText style={[
                                             styles.stepText,

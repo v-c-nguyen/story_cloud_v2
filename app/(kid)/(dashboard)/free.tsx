@@ -16,107 +16,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import IconStar from "@/assets/images/icons/icon-mark-modal.svg";
+import IconRocket from "@/assets/images/icons/icon-rocket.svg";
+import IconArrowRight from "@/assets/images/icons/arrow-right.svg";
+import Header from "@/components/Header";
 // Data arrays for each section
-
-
-const storiesData = [
-  {
-    bgColor: "#F4A672",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: true,
-    number: "#1",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: false,
-    number: "#2",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "Underwater Adventures",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#048F99",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#3",
-    storyTitle: "Muddy Mystery at the Pond",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: true,
-    number: "#4",
-    storyTitle: "Seeds of Surprise",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F4A672",
-    isBallonYellow: true,
-    number: "#5",
-    storyTitle: "The Great Garden Clean-Up",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: true,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#7",
-    storyTitle: "A Night with Nocturnal Neighbours",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: false,
-    isFavorite: false,
-    watched: true,
-  },
-];
 
 const seriesData = [
   {
@@ -164,12 +68,13 @@ export default function FreeModeHome() {
         headerShown: false
       }} />
       <SafeAreaView style={{ flex: 1, display: "flex", height: 500 }}>
-        <ThemedView style={{ flex: 1, display: "flex", position: "relative" }}>
+        <ThemedView style={{ flex: 1, display: "flex", position: "relative", height: "100%" }}>
           <ScrollView
             style={styles.rootContainer}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 55 }}
           >
+            
             {/* Top background */}
             <Image
               source={require("@/assets/images/kid/back-pattern.png")}
@@ -177,20 +82,7 @@ export default function FreeModeHome() {
               contentFit="cover"
             />
             <ThemedView style={showSignOut && { backgroundColor: "#fff" }}>
-              <ThemedView style={styles.headingWrap}>
-                <Image
-                  source={require("@/assets/images/kid/logo-ballon.png")}
-                  style={[styles.logoBallon, { tintColor: 'rgba(5, 59, 74, 1)' }]}
-                  contentFit="cover"
-                />
-                <TouchableOpacity onPress={() => { setShowSignOut(!showSignOut); }}>
-                  <Image
-                    source={require("@/assets/images/kid/logo-baby.png")}
-                    style={[styles.logoBallon,]}
-                    contentFit="cover"
-                  />
-                </TouchableOpacity>
-              </ThemedView>
+              <Header role="kid" mode={child?.mode}></Header>
             </ThemedView>
             {/* Header */}
             {
@@ -212,15 +104,16 @@ export default function FreeModeHome() {
                   <Image
                     source={require("@/assets/images/kid/cloud-group-bottom.png")}
                     style={[styles.imgCloudFar, { transform: [{ rotate: '180deg' }] }]}
-                    resizeMode="cover"
+                    contentFit="cover"
                   />
                 </ThemedView>
               </> :
                 <>
                   <ThemedView style={styles.headerWrap}>
                     <ThemedText style={styles.headerTitle}>Hey, {name}</ThemedText>
-                    <Image
-                      source={require("@/assets/images/kid/star-with-circle.png")}
+                    <IconStar
+                      width={84}
+                      height={90}
                       style={styles.headerStar}
                     />
                   </ThemedView>
@@ -230,25 +123,25 @@ export default function FreeModeHome() {
                 </>
             }
             <ThemedView style={styles.headerRocketWrap}>
-              <Image
-                source={require("@/assets/images/kid/rocket.png")}
+              <IconRocket
+                width={224.54}
+                height={287}
                 style={styles.headerRocket}
-                resizeMode="cover"
               />
               {/* Clouds */}
               <Image
                 source={require("@/assets/images/kid/cloud-group-far.png")}
                 style={styles.imgCloudFar}
-                resizeMode="cover"
+                contentFit="cover"
               />
               <Image
                 source={require("@/assets/images/kid/cloud-group-near.png")}
                 style={styles.imgCloudNear}
-                resizeMode="cover"
+                contentFit="cover"
               />
             </ThemedView>
 
-            <ThemedView style={{ backgroundColor: "#fcfcfc", marginTop: -26 }}>
+            <ThemedView style={{ backgroundColor: "#fcfcfc", marginTop: -26, paddingBottom: 100 }}>
               {/* Continue Watching */}
               <SectionHeader title="Continue Watching" link="continue" />
               <RecentLearning activeChild={child} mode="kid" />
@@ -306,8 +199,10 @@ function SectionHeader({ title, link }: { title: string; link: string }) {
     <ThemedView style={styles.sectionHeader}>
       <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
       <TouchableOpacity onPress={() => router.push(getRoute() as RelativePathString)}>
-        <Image
-          source={require("@/assets/images/kid/arrow-right.png")}
+        <IconArrowRight
+          width={24}
+          height={24}
+          color={"#048F99"}
           style={styles.sectionArrow}
         />
       </TouchableOpacity>
@@ -342,8 +237,6 @@ const styles = StyleSheet.create({
     lineHeight: 46.2,
   },
   headerStar: {
-    width: 32,
-    height: 34,
     marginLeft: 8,
   },
   headerSubtitle: {

@@ -20,6 +20,9 @@ import {
 } from "react-native";
 import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+import Header from "@/components/Header";
+import { useUser } from "@/app/lib/UserContext";
 
 const cardsData = [
   { color: '#FFFFFF', icon: require('@/assets/images/parent/series.png'), text: 'Series' },
@@ -30,6 +33,7 @@ const cardsData = [
 ];
 
 export default function Themes() {
+  const { child } = useUser();
   const [categories, setCategory] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
@@ -61,8 +65,10 @@ export default function Themes() {
         <ThemedView style={styles.sectionHeader}>
           <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
           <TouchableOpacity onPress={() => { setSelectedTheme(title) }}>
-            <Image
-              source={require("@/assets/images/kid/arrow-right.png")}
+            <IconAvatarRight
+              width={24}
+              height={24}
+              color={"#053B4A"}
             />
           </TouchableOpacity>
         </ThemedView>
@@ -130,18 +136,8 @@ export default function Themes() {
             style={styles.topBackPattern}
             resizeMode="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+
+          <Header role="kid" mode={child?.mode} />
 
           {/* Header */}
           <ThemedText style={styles.headerTitle}>StoryCloud Themes</ThemedText>

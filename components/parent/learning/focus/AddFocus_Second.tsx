@@ -4,22 +4,22 @@ import { LearningTargetCard } from '@/components/LearningTargetCard';
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import React from "react";
-import { Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, Modal, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import StepIndicator_Focus from "./StepIndecator";
 import GradientText from '@/components/ui/GradientText';
 
 import IconCheck from "@/assets/images/parent/icon-check.svg"
 import IconInformation from "@/assets/images/parent/icon-information.svg"
-const targetIcon = require('@/assets/images/parent/icon-target.png')
-const clockIcon = require('@/assets/images/parent/icon-clock.png')
-const checkIcon = require('@/assets/images/parent/dashboard/selected.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
-const informationIcon = require('@/assets/images/parent/information_circle.png')
+import LearningModuleModal from '@/components/Modals/LearningModuleMode';
+import IconTarget from "@/assets/images/parent/icon-target.svg"
+import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 
 export default function AddFocus_Second({ currentStep, onPress }: { currentStep: number, onPress: (targets: { id: string, name: string }[]) => void }) {
     const [learningTargets, setLearningTargets] = React.useState<{ id: string, name: string }[]>([]);
     const [selectedTargets, setSelectedTargets] = React.useState<{ id: string, name: string }[]>([]);
     const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
+    const [currentTarget, setCurrentTarget] = React.useState(null);
+    const [modalVisible, setModalVisible] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
     React.useEffect(() => {
@@ -57,8 +57,25 @@ export default function AddFocus_Second({ currentStep, onPress }: { currentStep:
             }
         });
     }
+    function handleInformationClicked(target: any) {
+        if (target) {
+            setCurrentTarget(target)
+            setModalVisible(true)
+        }
+    }
     return (
         <ThemedView style={styles.container}>
+
+            <Modal
+                visible={modalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <LearningModuleModal
+                    target={currentTarget}
+                    onCancel={() => setModalVisible(false)} />
+            </Modal>
             {/* Step Indicators */}
             <StepIndicator_Focus currentStep={currentStep} />
 
@@ -69,7 +86,7 @@ export default function AddFocus_Second({ currentStep, onPress }: { currentStep:
                 <ThemedView style={styles.section}>
                     <ThemedView style={styles.labelContainer}>
                         <ThemedView style={styles.iconContainer}>
-                            <Image source={targetIcon} style={{ width: 20, height: 20 }}></Image>
+                            <IconTarget width={21} height={21} />
                         </ThemedView>
                         <GradientText text='Learning target' />
                     </ThemedView>
@@ -100,6 +117,7 @@ export default function AddFocus_Second({ currentStep, onPress }: { currentStep:
                                     onPress={() => handleTargetSelected(target)}
                                     checkIcon={IconCheck}
                                     informationIcon={IconInformation}
+                                    handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
                                 />
                             );
                         })}
@@ -124,7 +142,7 @@ export default function AddFocus_Second({ currentStep, onPress }: { currentStep:
                     onPress={() => onPress(selectedTargets)}
                 >
                     <ThemedText style={styles.buttonText}>Next</ThemedText>
-                    <Image source={rightButton}></Image>
+                    <IconArrowRight width={24} height={24} color={"#053B4A"} />
                 </TouchableOpacity>
             </ThemedView>
         </ThemedView>

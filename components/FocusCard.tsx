@@ -2,7 +2,7 @@ import { useChildrenStore } from '@/store/childrenStore';
 import { useLearningCategoryStore } from '@/store/learningCategoryStore';
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { FlatList, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { FlatList, Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Image } from 'expo-image';
 import { ChildrenCard } from './ChildrenCard';
 import { LearningTargetCard } from './LearningTargetCard';
@@ -11,9 +11,6 @@ import { ThemedView } from "./ThemedView";
 import GradientText from './ui/GradientText';
 import GradientBorderBox from './ui/GradientBorderBox';
 import supabase from '@/app/lib/supabase';
-
-const focusIcon = require('@/assets/images/parent/icon-focus.png');
-
 
 import IconEdit from "@/assets/images/parent/icon-edit.svg";
 import IconDetail from "@/assets/images/parent/icon-detailBtn.svg"
@@ -28,6 +25,8 @@ import IconDoc from "@/assets/images/parent/icon-doc.svg"
 import IconTop from "@/assets/images/parent/icon-top.svg"
 import IconInformation from "@/assets/images/parent/icon-information.svg"
 import IconCheck from "@/assets/images/parent/icon-check.svg"
+import LearningModuleModal from './Modals/LearningModuleMode';
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 interface Child {
     id: string,
@@ -132,9 +131,13 @@ export function FocusCard({ focus, handleEditButton, handleViewButton }: { focus
                                             gap: 10,
                                         }}
                                     >
-                                        <Image
-                                            style={styles.avatar}
-                                            source={item.children.avatar_url ? { uri: item.children.avatar_url } : require('@/assets/images/parent/avatar-parent-2.png')} ></Image>
+                                        {
+                                            item.children.avatar_url ?
+                                                <Image source={{ uri: item.children.avatar_url }} style={styles.avatar} />
+                                                :
+                                                <IconDefaultAvatar width={35} height={35} />
+
+                                        }
                                         <ThemedView style={styles.avatarOutline}>
                                             <IconCheck width={20} height={20} color={"#FCFCFC"} style={styles.checkAvatar} />
                                         </ThemedView>
@@ -197,14 +200,13 @@ export function FocusDetailedCard({
                                         width={24}
                                         height={24}
                                         color={'rgba(122, 193, 198, 1)'}
-                                        style={{ width: 18, height: 18 }}
                                     />
                                 </TouchableOpacity>
                                 <ThemedText style={{ color: 'rgba(122, 193, 198, 0.5)' }}> | </ThemedText>
                                 <TouchableOpacity
                                     onPress={handleBack}
                                     style={[styles.iconBtn, styles.iconBtnCircle, styles.backOrange]}>
-                                    <IconTop style={{ width: 24, height: 24 }}/>
+                                    <IconTop style={{ width: 24, height: 24 }} />
                                 </TouchableOpacity>
                             </ThemedView>
                         </ThemedView>
@@ -278,11 +280,15 @@ export function FocusDetailedCard({
                                             gap: 10,
                                         }}
                                     >
-                                        <Image
-                                            style={styles.avatar}
-                                            source={item.children.avatar_url ? { uri: item.children.avatar_url } : require('@/assets/images/parent/avatar-parent-2.png')} ></Image>
+                                        {
+                                            item.children.avatar_url ?
+                                                <Image source={{ uri: item.children.avatar_url }} style={styles.avatar} />
+                                                :
+                                                <IconDefaultAvatar width={35} height={35} />
+
+                                        }
                                         <ThemedView style={styles.avatarOutline}>
-                                            <IconCheck width={20} height={20} color={"#FCFCFC"} style={styles.checkAvatar}/>
+                                            <IconCheck width={20} height={20} color={"#FCFCFC"} style={styles.checkAvatar} />
                                         </ThemedView>
                                     </GradientBorderBox>
                                 )}
@@ -310,6 +316,8 @@ export function FocusEditCard({ focus }: { focus: any }) {
     const [children, setChildren] = React.useState<Child[]>([]);
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalType, setModalType] = React.useState<'category' | 'child' | null>(null);
+    const [currentTarget, setCurrentTarget] = React.useState(null);
+    const [TargetModalVisible, setTargetModalVisible] = React.useState(false);
 
     useEffect(() => {
         setName(focus?.name || '')
@@ -418,15 +426,31 @@ export function FocusEditCard({ focus }: { focus: any }) {
         });
     }
 
+    function handleInformationClicked(target: any) {
+        if (target) {
+            setCurrentTarget(target)
+            setTargetModalVisible(true)
+        }
+    }
     return (
         <ThemedView style={[styles.container_detail]}>
+            <Modal
+                visible={TargetModalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setTargetModalVisible(false)}
+            >
+                <LearningModuleModal
+                    target={currentTarget}
+                    onCancel={() => setTargetModalVisible(false)} />
+            </Modal>
             <Image
                 source={require("@/assets/images/parent/parent-back-pattern.png")}
                 style={styles.topBackPattern}
                 contentFit='cover'
             />
             <ThemedView style={[styles.overview, { alignItems: 'center' }]}>
-                <Image source={focusIcon} />
+                <IconFocus width={27} height={27} />
                 <ThemedText style={styles.title}>{name}</ThemedText>
             </ThemedView>
 
@@ -456,7 +480,8 @@ export function FocusEditCard({ focus }: { focus: any }) {
                         </ThemedView>
                         <ThemedView style={[styles.flexRow, { justifyContent: 'space-between' }]} >
                             <ThemedView style={styles.flexRow}>
-                                <ThemedView style={[styles.iconBtnCircle, { padding: 8 }]}><Image source={focusIcon} style={styles.ButtonIcon} /></ThemedView>
+                                <ThemedView style={[styles.iconBtnCircle, { padding: 8 }]}>
+                                    <IconFocus width={21} height={21} style={styles.ButtonIcon} /></ThemedView>
                                 {editName ? (
                                     <TextInput
                                         style={{
@@ -610,11 +635,13 @@ export function FocusEditCard({ focus }: { focus: any }) {
                                     innerStyle={{ paddingVertical: 4 }}
                                 >
                                     <ThemedView key={index} style={[styles.flexRow]}>
-                                        <Image
-                                            source={target?.avatar_url ? { uri: target.avatar_url } : require('@/assets/images/parent/avatar-parent-2.png')}
-                                            style={styles.avatar}
-                                            contentFit="cover"
-                                        />
+                                        {
+                                            target?.avatar_url ?
+                                                <Image source={{ uri: target?.avatar_url }} style={styles.avatar} />
+                                                :
+                                                <IconDefaultAvatar width={35} height={35} />
+
+                                        }
                                         <TouchableOpacity onPress={() => handleRemoveChild(index)}>
                                             <ThemedView style={styles.categoryEditIconContainer}>
                                                 <IconCancel style={styles.categoryEditIcon} />
@@ -668,6 +695,7 @@ export function FocusEditCard({ focus }: { focus: any }) {
                                                         onPress={() => handleTargetSelected(cat.id, cat.name)}
                                                         checkIcon={IconCheck}
                                                         informationIcon={IconInformation}
+                                                        handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
                                                     />
                                                 ))}
                                             {modalType === "child" && allChildren && allChildren.length > 0 &&

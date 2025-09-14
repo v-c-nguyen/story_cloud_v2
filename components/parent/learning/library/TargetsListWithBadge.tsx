@@ -13,6 +13,8 @@ import { useCollectionsStore } from "@/store/collectionsStore";
 import CollectionSelection from "./CollectionSelection";
 
 import IconArrowRightGradient from "@/assets/images/icons/arrow-right-gradient.svg"
+import IconCheck from "@/assets/images/parent/icon-check.svg"
+
 import { useLearningCategoryStore } from "@/store/learningCategoryStore";
 interface TargetsListWithBadgeProps {
   targetsCategories: any[];
@@ -143,10 +145,10 @@ const TargetsListWithBadge: React.FC<TargetsListWithBadgeProps> = ({
                     <TouchableOpacity onPress={() => handleFilterItem(category, "all")}>
                       <ThemedView style={styles.statsIconContainer}>
                         {selectedItem === "all" && (
-                          <Image
-                            source={require("@/assets/images/kid/check.png")}
-                            style={styles.statsIcon}
-                            contentFit="contain"
+                          <IconCheck
+                            width={14}
+                            height={14}
+                            color="#F4A672"
                           />
                         )}
                         <ThemedText
@@ -164,10 +166,10 @@ const TargetsListWithBadge: React.FC<TargetsListWithBadgeProps> = ({
                     <TouchableOpacity onPress={() => handleFilterItem(category, "series")}>
                       <ThemedView style={styles.statsIconContainer}>
                         {selectedItem === "series" && (
-                          <Image
-                            source={require("@/assets/images/kid/check.png")}
-                            style={styles.statsIcon}
-                            contentFit="contain"
+                          <IconCheck
+                            width={14}
+                            height={14}
+                            color="#F4A672"
                           />
                         )}
                         <ThemedText
@@ -187,10 +189,10 @@ const TargetsListWithBadge: React.FC<TargetsListWithBadgeProps> = ({
                     >
                       <ThemedView style={styles.statsIconContainer}>
                         {selectedItem === "stories" && (
-                          <Image
-                            source={require("@/assets/images/kid/check.png")}
-                            style={styles.statsIcon}
-                            contentFit="contain"
+                          <IconCheck
+                            width={14}
+                            height={14}
+                            color="#F4A672"
                           />
                         )}
                         <ThemedText

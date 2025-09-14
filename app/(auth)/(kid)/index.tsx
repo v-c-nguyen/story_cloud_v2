@@ -105,8 +105,6 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   topImage: {
-    top: 0,
-    left: 0,
     marginTop: 60,
   },
   titleWrap: {

@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Image, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Image, Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { LinearGradient } from "expo-linear-gradient";
@@ -11,6 +11,7 @@ import supabase from "@/app/lib/supabase";
 import { LearningTargetCard } from "./LearningTargetCard";
 import { ChildrenCard } from "./ChildrenCard";
 import PathwayStories from "./parent/learning/pathway/PathwayStories";
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 interface Child {
   id: string,
@@ -33,6 +34,7 @@ import IconDoc from "@/assets/images/parent/icon-doc.svg"
 import IconTop from "@/assets/images/parent/icon-top.svg"
 import IconInformation from "@/assets/images/parent/icon-information.svg"
 import IconCheck from "@/assets/images/parent/icon-check.svg"
+import LearningModuleModal from "./Modals/LearningModuleMode";
 
 export function PathwayCard({
   pathway,
@@ -291,10 +293,13 @@ export function PathwayDetailedCard({
                       width: 'auto'
                     }}
                   >
-                    <Image
-                      source={kid.children?.avatar_url ? { uri: kid.children?.avatar_url } : require('@/assets/images/parent/avatar-parent-2.png')}
-                      style={styles.avatar}
-                    ></Image>
+                    {
+                      kid.children?.avatar_url ?
+                        <Image source={{ uri: kid.children?.avatar_url }} style={styles.avatar} />
+                        :
+                        <IconDefaultAvatar width={35} height={35} />
+
+                    }
                     <ThemedText style={styles.name}>
                       {kid.children?.name}
                     </ThemedText>
@@ -409,6 +414,8 @@ export function PathwayEditCard({
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalType, setModalType] = React.useState<'category' | 'child' | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [currentTarget, setCurrentTarget] = React.useState(null);
+  const [TargetModalVisible, setTargetModalVisible] = React.useState(false);
 
   useEffect(() => {
     if (pathwayMode) {
@@ -519,8 +526,26 @@ export function PathwayEditCard({
       setLoading(false);
     }
   }
+
+  function handleInformationClicked(target: any) {
+    if (target) {
+      setCurrentTarget(target)
+      setTargetModalVisible(true)
+    }
+  }
+
   return (
     <ThemedView style={[styles.container, { paddingBottom: 30 }]}>
+      <Modal
+        visible={TargetModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setTargetModalVisible(false)}
+      >
+        <LearningModuleModal
+          target={currentTarget}
+          onCancel={() => setTargetModalVisible(false)} />
+      </Modal>
       <Image
         source={require("@/assets/images/parent/parent-back-pattern.png")}
         style={styles.topBackPattern}
@@ -640,7 +665,7 @@ export function PathwayEditCard({
               <ThemedView style={[styles.flexRow, { alignItems: 'flex-start' }]}>
                 <ThemedView style={[styles.iconBtnCircle, { padding: 8, marginTop: 8 }]}>
                   <IconDoc width={21} height={21} style={styles.ButtonIcon} />
-                  </ThemedView>
+                </ThemedView>
                 <ThemedView style={{ width: '90%' }}>
                   <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                     <GradientText text='Description' />
@@ -715,10 +740,13 @@ export function PathwayEditCard({
                           paddingVertical: 4
                         }}
                       >
-                        <Image
-                          source={kid?.avatar_url ? { uri: kid?.avatar_url } : require('@/assets/images/parent/avatar-parent-2.png')}
-                          style={styles.avatar}
-                        ></Image>
+                        {
+                          kid.children?.avatar_url ?
+                            <Image source={{ uri: kid.children?.avatar_url }} style={styles.avatar} />
+                            :
+                            <IconDefaultAvatar width={35} height={35} />
+
+                        }
                         <ThemedText style={styles.name}>
                           {kid?.name}
                         </ThemedText>
@@ -840,6 +868,7 @@ export function PathwayEditCard({
                           onPress={() => handleTargetSelected(cat.id, cat.name)}
                           checkIcon={IconCheck}
                           informationIcon={IconInformation}
+                          handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
                         />
                       ))}
                     {modalType === "child" && allChildren && allChildren.length > 0 &&

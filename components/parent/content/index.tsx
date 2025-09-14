@@ -4,12 +4,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import IconInformation from "@/assets/images/parent/icon-information.svg"
 
 const ageGroups = ["2 - 5", "6 - 9"];
 const storyStyles = ["Story Time", "Play Time"];
 const timeLimits = ["1 hr", "2 hr", "3 hr", "4 hr"];
 const WeeklytimeLimits = ["2 hr", "5 hr", "10 hr", "15 hr"];
-const information_circle = require("@/assets/images/parent/information_circle.png")
 
 interface ContentPreferencesProps {
   setModalVisible: (visible: boolean) => void;
@@ -86,7 +86,7 @@ export default function ContentPreferences({
       <ThemedView style={{ flexDirection: 'row', gap: 15, alignItems: 'center' }}>
         <Text style={styles.label}>Story Style</Text>
         <TouchableOpacity style={{ marginBottom: 8 }} onPress={() => setModalVisible(true)}>
-          <Image source={information_circle} style={styles.informationBtn} />
+          <IconInformation width={18} height={18} color={"#s053B4A"} style={styles.informationBtn} />
         </TouchableOpacity>
       </ThemedView>
       <View style={styles.pillRow}>
@@ -126,7 +126,7 @@ export default function ContentPreferences({
               key={limit}
               style={[styles.pill, selectedLimit === limit && styles.pillActive]}
               onPress={() =>
-                setSelectedLimit(selectedLimit === limit ? null : limit)
+                setSelectedLimit(selectedLimit === limit ? "" : limit)
               }
             >
               <Text style={[styles.pillText, selectedLimit === limit && styles.pillTextActive]}>
@@ -140,7 +140,7 @@ export default function ContentPreferences({
               key={limit}
               style={[styles.pill, selectedLimit === limit && styles.pillActive]}
               onPress={() =>
-                setSelectedLimit(selectedLimit === limit ? null : limit)
+                setSelectedLimit(selectedLimit === limit ? "" : limit)
               }
             >
               <Text style={[styles.pillText, selectedLimit === limit && styles.pillTextActive]}>

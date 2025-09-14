@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
+import IconKidCong from "@/assets/images/auth/auth-kid-cong.svg";
 const { width } = Dimensions.get("window");
 
 export default function KidAuthSuccess() {
@@ -29,8 +30,9 @@ export default function KidAuthSuccess() {
                 style={styles.backPattern}
                 contentFit='cover'
               />
-              <Image
-                source={require("@/assets/images/auth/kid-cong.png")}
+              <IconKidCong
+                width={129}
+                height={120}
                 style={styles.topImage}
               />
               {/* Title */}

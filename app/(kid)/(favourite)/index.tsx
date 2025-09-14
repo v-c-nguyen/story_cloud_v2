@@ -1,7 +1,7 @@
 import supabase from "@/app/lib/supabase";
 import { useUser } from "@/app/lib/UserContext";
 import BottomNavBar from "@/components/BottomNavBar";
-import { StoryCard2 } from "@/components/Cards";
+import { StoryCard2, StoryCard3 } from "@/components/Cards";
 import { ItemSeriesRef } from "@/components/ItemSeries";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -17,148 +17,10 @@ import {
   TouchableOpacity
 } from "react-native";
 
-
-const cardsData = [
-  { color: '#FFFFFF', icon: require('@/assets/images/parent/series.png'), text: 'Series' },
-  { color: '#F8ECAE', icon: require('@/assets/images/parent/collections.png'), text: 'Collections' },
-  { color: '#ADD7DA', icon: require('@/assets/images/parent/map.png'), text: 'Map' },
-  { color: '#7AC1C6', icon: require('@/assets/images/parent/themes.png'), text: 'Themes' },
-  { color: '#053B4A', icon: require('@/assets/images/parent/characters.png'), text: 'Characters' },
-];
-
-
-const seriesData = [
-  {
-    title: "KAI’S LIVING ADVENTURE",
-    image: "1",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S CLIMATE QUEST",
-    image: "2",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S INVESTIGATION STATION",
-    image: "3",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S BIG ADVENTURES",
-    image: "4",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S NEIGHBORHOOD ADVENTURES",
-    image: "5",
-    count: 8,
-    isFavorite: true,
-  },
-];
-
-
-const storiesData = [
-  {
-    bgColor: "#F4A672",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: true,
-    number: "#1",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: false,
-    number: "#2",
-    storyTitle: "Petal Tales: The Search for Rainbow Flowers",
-    seriesTitle: "Underwater Adventures",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: false,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#048F99",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#3",
-    storyTitle: "Muddy Mystery at the Pond",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F8ECAE",
-    isBallonYellow: true,
-    number: "#4",
-    storyTitle: "Seeds of Surprise",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 12,
-    image: "2",
-    featured: true,
-    isFavorite: true,
-    watched: false,
-  },
-  {
-    bgColor: "#F8ECAE",
-    textColor: "#053B4A",
-    subTextColor: "#F8ECAE",
-    progressColor: "#F4A672",
-    isBallonYellow: true,
-    number: "#5",
-    storyTitle: "The Great Garden Clean-Up",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "1",
-    featured: false,
-    isFavorite: true,
-    watched: true,
-  },
-  {
-    bgColor: "#053B4A",
-    textColor: "#FCFCFC",
-    subTextColor: "#F8ECAE",
-    progressColor: "#ADD7DA",
-    isBallonYellow: false,
-    number: "#7",
-    storyTitle: "A Night with Nocturnal Neighbours",
-    seriesTitle: "KAI’S LIVING ADVENTURE",
-    duration: 32,
-    progress: 20,
-    image: "3",
-    featured: false,
-    isFavorite: false,
-    watched: true,
-  },
-];
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+import Header from "@/components/Header";
+import IconSearch from "@/assets/images/icons/icon-search.svg"
+import IconMic from "@/assets/images/icons/icon-micro.svg"
 
 export default function Favourites() {
 
@@ -219,8 +81,10 @@ export default function Favourites() {
           />
         </Link> */}
           <TouchableOpacity onPress={() => { setSelectedSeries(title) }}>
-            <Image
-              source={require("@/assets/images/kid/arrow-right.png")}
+            <IconAvatarRight
+              width={24}
+              height={24}
+              color={"#053B4A"}
             />
           </TouchableOpacity>
         </ThemedView>
@@ -270,18 +134,7 @@ export default function Favourites() {
             style={styles.topBackPattern}
             resizeMode="cover"
           />
-          <ThemedView style={styles.headingWrap}>
-            <Image
-              source={require("@/assets/images/kid/logo-ballon.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/logo-baby.png")}
-              style={styles.logoBallon}
-              resizeMode="cover"
-            />
-          </ThemedView>
+          <Header role="kid" mode={child?.mode} />
 
           {/* Header */}
           <ThemedText style={styles.headerTitle}>All your favorites in one easy place</ThemedText>
@@ -304,13 +157,13 @@ export default function Favourites() {
               <ThemedView
                 style={styles.searchBoxStyle}
               >
-                <Image source={require('@/assets/images/parent/icon-search.png')} style={styles.searchIcon}></Image>
+                <IconSearch color={"#053b4a7c"} width={26} height={26} />
                 <TextInput
                   placeholder="Search for your next adventure..."
-                  placeholderTextColor={'#D9D9D9'}
+                  placeholderTextColor={'#053b4a7e'}
                   style={styles.searchText}
                 />
-                <Image source={require('@/assets/images/parent/Microphone4.png')} style={styles.searchIcon}></Image>
+                <IconMic width={28} height={28} />
               </ThemedView>
             </ThemedView>
           </ThemedView>
@@ -322,7 +175,7 @@ export default function Favourites() {
               <ThemedView style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', paddingHorizontal: 16, paddingTop: 20 }}>
                 {
                   favoriteStories.length > 0 && favoriteStories.map((story, index) => (
-                    <StoryCard2 key={index} {...story} />
+                    <StoryCard3 key={index} num={index + 1} story={story} />
                   ))
                 }
               </ThemedView>

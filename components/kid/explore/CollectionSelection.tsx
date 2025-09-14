@@ -15,6 +15,7 @@ import StoryItems from "./StoryItems";
 import { useStoryStore } from "@/store/storyStore";
 import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
+import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 
 interface Props {
   currentCollection: any;
@@ -41,13 +42,14 @@ export default function CollectionSelection({
       <ThemedText style={[styles.sectionTitle, { marginTop: 10, color: "#048F99", fontSize: 18 }]}>{"COLLECTION"}</ThemedText>
       <ThemedText style={[styles.sectionTitle, { marginTop: 10, textAlign: 'center' }]}>{currentCollection?.name}</ThemedText>
       <ThemedText style={[styles.sectiondesc, { padding: 20, paddingBottom: 0, marginBottom: 0, textAlign: "center" }]}>{currentCollection?.description_kid}</ThemedText>
-      <View style={{ backgroundColor: "#d0d0d08c", height: 1, width: 230, marginBottom: 20}}></View>
+      <View style={{ backgroundColor: "#d0d0d08c", height: 1, width: 230, marginBottom: 20 }}></View>
       <TouchableOpacity style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}
         onPress={handleBackToExplore}
       >
-        <Image
-          source={require("@/assets/images/kid/arrow-left.png")}
-          style={[styles.closeArrow, { width: 20, height: 20, tintColor: "#053B4A", marginRight: 10 }]}
+        <IconArrowLeft
+          width={24}
+          height={24}
+          color={"#fcfcfc"}
         />
         <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Explore"}</ThemedText>
       </TouchableOpacity>

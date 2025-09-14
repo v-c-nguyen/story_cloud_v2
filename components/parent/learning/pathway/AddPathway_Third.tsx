@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import { Image, Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import {LinearGradient} from 'expo-linear-gradient';
 import StepIndicator_Pathway from "./StepIndecator";
 import GradientText from "@/components/ui/GradientText";
 
@@ -13,12 +14,6 @@ import IconClock from "@/assets/images/parent/icon-clock.svg"
 import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 import LearningModuleModal from "@/components/Modals/LearningModuleMode";
 
-const targetIcon = require('@/assets/images/parent/icon-target.png')
-const clockIcon = require('@/assets/images/parent/icon-clock.png')
-const checkIcon = require('@/assets/images/parent/dashboard/selected.png')
-const rightButton = require('@/assets/images/parent/icon-right.png')
-const informationIcon = require('@/assets/images/parent/information_circle.png')
-
 const timeOptions = ['20 min', '40 min', '60 min', '2 hrs', '4 hrs', '6 hrs', '8 hrs', '10 hrs'];
 
 
@@ -27,8 +22,10 @@ export default function AddPathway_Third({ mode, currentStep, onPress }: { mode:
     const [learningTargets, setLearningTargets] = React.useState<{ id: string, name: string }[]>([]);
     const [selectedTargets, setSelectedTargets] = React.useState<{ id: string, name: string }[]>([]);
     const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
-    const [modalVisible, setModalVisible] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
+    const [currentTarget, setCurrentTarget] = React.useState(null);
+    const [modalVisible, setModalVisible] = React.useState(false);
+
 
     React.useEffect(() => {
         async function fetchLearningTargets() {
@@ -65,6 +62,11 @@ export default function AddPathway_Third({ mode, currentStep, onPress }: { mode:
             }
         });
     }
+    function handleInformationClicked(target: any) {
+        console.log(target)
+        setCurrentTarget(target)
+        setModalVisible(true)
+    }
     return (
         <ThemedView style={styles.container}>
 
@@ -74,7 +76,9 @@ export default function AddPathway_Third({ mode, currentStep, onPress }: { mode:
                 animationType="fade"
                 onRequestClose={() => setModalVisible(false)}
             >
-                <LearningModuleModal onCancel={() => setModalVisible(false)} />
+                <LearningModuleModal 
+                    target = {currentTarget}
+                    onCancel={() => setModalVisible(false)} />
             </Modal>
             {/* Step Indicators */}
             <StepIndicator_Pathway mode={mode} currentStep={currentStep} />
@@ -143,19 +147,35 @@ export default function AddPathway_Third({ mode, currentStep, onPress }: { mode:
                         const isSelected = selectedTargets.some(t => t.id === target.id);
                         return (
                             <TouchableOpacity key={target.id} onPress={() => handleTargetSelected(target)}>
-                                <ThemedView style={[styles.targetCard, isSelected && styles.activeTargetCard]}>
-                                    <ThemedView style={{ borderWidth: 2, borderColor: 'rgba(252, 252, 252, 0.2)', borderRadius: '50%' }}>
-                                        <ThemedView style={[styles.circle, isSelected && styles.checkCircle]}>
-                                            {isSelected &&
-                                                <IconCheck width={30} height={30} color={"#FCFCFC"} />
-                                            }
+                                {isSelected ? (
+                                    <LinearGradient
+                                        colors={["#F7A866", "#F7A866", "#d47c34ff"]}
+                                        locations={[0, 0.7, ]}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        style={styles.targetCard}
+                                    >
+                                        <ThemedView style={{ borderWidth: 2, borderColor: 'rgba(252, 252, 252, 0.2)', borderRadius: 24 }}>
+                                            <ThemedView style={[styles.circle, styles.checkCircle]}>
+                                                <IconCheck width={30} height={30} color={"white"} />
+                                            </ThemedView>
                                         </ThemedView>
+                                        <ThemedText style={[styles.cardTitle, { color: '#053B4A' }]}>{target.name.split('&')[0] + (target.name.includes('&') ? ' &\n' + target.name.split('&')[1] : '')}</ThemedText>
+                                        <TouchableOpacity style={[styles.cardInfoIcon]} onPress={() => handleInformationClicked(target)}>
+                                            <IconInformation color={'#053B4A'} />
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                ) : (
+                                    <ThemedView style={styles.targetCard}>
+                                        <ThemedView style={{ borderWidth: 2, borderColor: 'rgba(252, 252, 252, 0.2)', borderRadius: 24 }}>
+                                            <ThemedView style={styles.circle} />
+                                        </ThemedView>
+                                        <ThemedText style={styles.cardTitle}>{target.name.split('&')[0] + (target.name.includes('&') ? ' &\n' + target.name.split('&')[1] : '')}</ThemedText>
+                                        <TouchableOpacity style={[styles.cardInfoIcon]} onPress={() => handleInformationClicked(target)}>
+                                            <IconInformation color={"#7AC1C6"} />
+                                        </TouchableOpacity>
                                     </ThemedView>
-                                    <ThemedText style={[styles.cardTitle, isSelected && { color: 'rgba(5, 59, 74, 1)' }]}>{target.name.split('&')[0] + (target.name.includes('&') ? ' &\n' + target.name.split('&')[1] : '')}</ThemedText>
-                                    <TouchableOpacity style={[styles.cardInfoIcon]} onPress={() => setModalVisible(true)}>
-                                        <IconInformation color={isSelected ? 'rgba(5, 59, 74, 1)' : "#7AC1C6"} />
-                                    </TouchableOpacity>
-                                </ThemedView>
+                                )}
                             </TouchableOpacity>
                         );
                     })}

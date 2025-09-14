@@ -4,6 +4,7 @@ import { ImageSourcePropType, StyleSheet, TouchableOpacity, View } from "react-n
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
+import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 
 
@@ -34,21 +35,28 @@ export function ItemWithImage({ name, avatar, active, onPress }: ItemProps) {
                 style={styles.gradientBorder}
             >
                 <View style={styles.innerCardWrap}>
-                    <View style={[styles.itemStyleLeft, active && styles.itemActiveStyleLeft ]}>
+                    <View style={[styles.itemStyleLeft, active && styles.itemActiveStyleLeft]}>
                         <LinearGradient
                             colors={active ? gradient : gradient2}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={{ ...styles.gradientBorder }}
                         >
-                            <Image
-                                source={avatar ? { uri: avatar } : require('@/assets/images/parent/avatar-parent-2.png')}
-                                style={[styles.avatar_left, !active && {
-                                    borderColor: '#7AC1C6',
-                                    borderWidth: 2
-                                }]}
-                                contentFit="cover"
-                            />
+                            {
+                                avatar ?
+                                    <Image
+                                        source={typeof avatar === 'string' ? { uri: avatar } : avatar}
+                                        style={[styles.avatar_left, !active && {
+                                            borderColor: '#7AC1C6',
+                                            borderWidth: 2
+                                        }]}
+
+                                        contentFit="cover"
+                                    />
+                                    :
+                                    <IconDefaultAvatar width={50} height={50} />
+
+                            }
                         </LinearGradient>
                         <ThemedText style={[styles.nameTextLeft, active && styles.activeNameTextLeft]}>{name}</ThemedText>
                     </View>
@@ -65,11 +73,13 @@ export function ItemWithRightImage({ name, avatar }: { name: string, avatar: str
             <ThemedView
                 style={styles.itemActiveStyle}
             >
-                <Image
-                    source={avatar ? { uri: avatar } : require('@/assets/images/parent/avatar-parent-2.png')}
-                    style={styles.avatar}
-                    contentFit="cover"
-                />
+                {
+                    avatar ?
+                        <Image source={{ uri: avatar }} style={styles.avatar} contentFit="cover"/>
+                        :
+                        <IconDefaultAvatar width={40} height={40} />
+
+                }
                 <ThemedText style={styles.nameText}>{name}</ThemedText>
             </ThemedView>
         </TouchableOpacity>

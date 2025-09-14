@@ -25,10 +25,7 @@ import IconDownload from "@/assets/images/icons/icon-download.svg"
 import IconEdit from "@/assets/images/parent/icon-edit.svg"
 import IconAge from "@/assets/images/icons/icon-age.svg"
 import IconInformation from "@/assets/images/parent/icon-information.svg"
-import IconCheck from "@/assets/images/parent/icon-check.svg"
-import IconSelectable from "@/assets/images/icons/icon-selectable.svg"
 import IconFrontbox from "@/assets/images/icons/frontbox-white.svg"
-import ImageCloud from "@/assets/images/icons/cloud.svg"
 
 
 interface Kid {
@@ -39,13 +36,8 @@ interface Kid {
     [key: string]: any;
 }
 import IconProfile from "@/assets/images/parent/footer/icon-profile.svg"
+import IconPlus from "@/assets/images/parent/icon-plus.svg"
 import { tabData } from '@/data/parent/dashboardData';
-
-const downloadIcon = require('@/assets/images/parent/icon-download.png')
-const editIcon = require('@/assets/images/parent/icon-edit.png')
-const cakeIcon = require('@/assets/images/parent/icon-cake.png')
-const information_circle = require('@/assets/images/parent/information_circle.png')
-const plusIcon = require('@/assets/images/parent/icon-plus.png')
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL'
 type User = {
@@ -341,7 +333,7 @@ const AccountSettings = () => {
                                                 style={[styles.addButton, children.length >= 4 && { display: 'none' }]}
                                                 onPress={handleAddButton}
                                             >
-                                                <Image source={plusIcon} style={{ width: 18, height: 18 }} />
+                                                <IconPlus width={18} height={18} />
                                                 <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Add One More Kid</ThemedText>
                                             </TouchableOpacity>
                                         </ThemedView>

@@ -48,50 +48,51 @@ const styles = StyleSheet.create({
 });
 
 // The data array now references the separately defined styles.
-const landmarksData = [
-  { key: 'landmark_1', source: require('@/assets/images/Landmarks/Group 163248.png'), style: styles.landmark1Style },
-  { key: 'landmark_2', source: require('@/assets/images/Landmarks/Group 163250.png'), style: styles.landmark2Style },
-  { key: 'landmark_3', source: require('@/assets/images/Landmarks/Group 163251.png'), style: styles.landmark3Style },
-  { key: 'landmark_4', source: require('@/assets/images/Landmarks/Group 163252.png'), style: styles.landmark4Style },
-  { key: 'landmark_5', source: require('@/assets/images/Landmarks/Group 163254.png'), style: styles.landmark5Style },
-  { key: 'landmark_6', source: require('@/assets/images/Landmarks/Group 163255-1.png'), style: styles.landmark6Style },
-  { key: 'landmark_7', source: require('@/assets/images/Landmarks/Group 163255.png'), style: styles.landmark7Style },
-  { key: 'landmark_8', source: require('@/assets/images/Landmarks/Group 163257-1.png'), style: styles.landmark8Style },
-  { key: 'landmark_9', source: require('@/assets/images/Landmarks/Group 163257.png'), style: styles.landmark9Style },
-  { key: 'landmark_10', source: require('@/assets/images/Landmarks/Group 163258.png'), style: styles.landmark10Style },
-  { key: 'landmark_11', source: require('@/assets/images/Landmarks/Group 163259.png'), style: styles.landmark11Style },
-  { key: 'landmark_12', source: require('@/assets/images/Landmarks/Group 163260.png'), style: styles.landmark12Style },
-  { key: 'landmark_13', source: require('@/assets/images/Landmarks/Group 163262.png'), style: styles.landmark13Style },
-  { key: 'landmark_14', source: require('@/assets/images/Landmarks/Group 163264.png'), style: styles.landmark14Style },
-  { key: 'landmark_15', source: require('@/assets/images/Landmarks/Group 163265.png'), style: styles.landmark15Style },
-  { key: 'landmark_16', source: require('@/assets/images/Landmarks/Group 163266.png'), style: styles.landmark16Style },
-  { key: 'landmark_17', source: require('@/assets/images/Landmarks/Group 163267.png'), style: styles.landmark17Style },
-  { key: 'landmark_18', source: require('@/assets/images/Landmarks/Group 163268.png'), style: styles.landmark18Style },
-  { key: 'landmark_19', source: require('@/assets/images/Landmarks/Group 163269.png'), style: styles.landmark19Style },
-  { key: 'landmark_20', source: require('@/assets/images/Landmarks/Group 163270.png'), style: styles.landmark20Style },
-  { key: 'landmark_21', source: require('@/assets/images/Landmarks/Group 163271.png'), style: styles.landmark21Style },
-  { key: 'landmark_22', source: require('@/assets/images/Landmarks/Group 163272-1.png'), style: styles.landmark22Style },
-  { key: 'landmark_23', source: require('@/assets/images/Landmarks/Group 163285.png'), style: styles.landmark23Style },
-  { key: 'landmark_24', source: require('@/assets/images/Landmarks/Group 163287.png'), style: styles.landmark24Style },
-  { key: 'landmark_25', source: require('@/assets/images/Landmarks/Group 163300.png'), style: styles.landmark25Style },
-  { key: 'landmark_26', source: require('@/assets/images/Landmarks/Group 163301.png'), style: styles.landmark26Style },
-   { key: 'landmark_27', source: require('@/assets/images/Landmarks/Group 163302.png'), style: styles.landmark27Style },
-];
+// const landmarksData = [
+//   { key: 'landmark_1', source: require('@/assets/images/Landmarks/Group 163248.png'), style: styles.landmark1Style },
+//   { key: 'landmark_2', source: require('@/assets/images/Landmarks/Group 163250.png'), style: styles.landmark2Style },
+//   { key: 'landmark_3', source: require('@/assets/images/Landmarks/Group 163251.png'), style: styles.landmark3Style },
+//   { key: 'landmark_4', source: require('@/assets/images/Landmarks/Group 163252.png'), style: styles.landmark4Style },
+//   { key: 'landmark_5', source: require('@/assets/images/Landmarks/Group 163254.png'), style: styles.landmark5Style },
+//   { key: 'landmark_6', source: require('@/assets/images/Landmarks/Group 163255-1.png'), style: styles.landmark6Style },
+//   { key: 'landmark_7', source: require('@/assets/images/Landmarks/Group 163255.png'), style: styles.landmark7Style },
+//   { key: 'landmark_8', source: require('@/assets/images/Landmarks/Group 163257-1.png'), style: styles.landmark8Style },
+//   { key: 'landmark_9', source: require('@/assets/images/Landmarks/Group 163257.png'), style: styles.landmark9Style },
+//   { key: 'landmark_10', source: require('@/assets/images/Landmarks/Group 163258.png'), style: styles.landmark10Style },
+//   { key: 'landmark_11', source: require('@/assets/images/Landmarks/Group 163259.png'), style: styles.landmark11Style },
+//   { key: 'landmark_12', source: require('@/assets/images/Landmarks/Group 163260.png'), style: styles.landmark12Style },
+//   { key: 'landmark_13', source: require('@/assets/images/Landmarks/Group 163262.png'), style: styles.landmark13Style },
+//   { key: 'landmark_14', source: require('@/assets/images/Landmarks/Group 163264.png'), style: styles.landmark14Style },
+//   { key: 'landmark_15', source: require('@/assets/images/Landmarks/Group 163265.png'), style: styles.landmark15Style },
+//   { key: 'landmark_16', source: require('@/assets/images/Landmarks/Group 163266.png'), style: styles.landmark16Style },
+//   { key: 'landmark_17', source: require('@/assets/images/Landmarks/Group 163267.png'), style: styles.landmark17Style },
+//   { key: 'landmark_18', source: require('@/assets/images/Landmarks/Group 163268.png'), style: styles.landmark18Style },
+//   { key: 'landmark_19', source: require('@/assets/images/Landmarks/Group 163269.png'), style: styles.landmark19Style },
+//   { key: 'landmark_20', source: require('@/assets/images/Landmarks/Group 163270.png'), style: styles.landmark20Style },
+//   { key: 'landmark_21', source: require('@/assets/images/Landmarks/Group 163271.png'), style: styles.landmark21Style },
+//   { key: 'landmark_22', source: require('@/assets/images/Landmarks/Group 163272-1.png'), style: styles.landmark22Style },
+//   { key: 'landmark_23', source: require('@/assets/images/Landmarks/Group 163285.png'), style: styles.landmark23Style },
+//   { key: 'landmark_24', source: require('@/assets/images/Landmarks/Group 163287.png'), style: styles.landmark24Style },
+//   { key: 'landmark_25', source: require('@/assets/images/Landmarks/Group 163300.png'), style: styles.landmark25Style },
+//   { key: 'landmark_26', source: require('@/assets/images/Landmarks/Group 163301.png'), style: styles.landmark26Style },
+//    { key: 'landmark_27', source: require('@/assets/images/Landmarks/Group 163302.png'), style: styles.landmark27Style },
+// ];
 
 const Landmarks = () => {
   return (
-    <View style={styles.container}>
-      {/* Map over the landmarksData array to render each landmark */}
-      {landmarksData.map(item => (
-        <TouchableOpacity
-          key={item.key}
-          style={[styles.landmarkContainer, item.style]}
-          onPress={()=>{router.replace('/detailed-screen')}}
-        >
-          <Image source={item.source} style={styles.image} />
-        </TouchableOpacity>
-      ))}
-    </View>
+    // <View style={styles.container}>
+    //   {/* Map over the landmarksData array to render each landmark */}
+    //   {landmarksData.map(item => (
+    //     <TouchableOpacity
+    //       key={item.key}
+    //       style={[styles.landmarkContainer, item.style]}
+    //       onPress={()=>{router.replace('/detailed-screen')}}
+    //     >
+    //       <Image source={item.source} style={styles.image} />
+    //     </TouchableOpacity>
+    //   ))}
+    // </View>
+    <View></View>
   );
 };
 

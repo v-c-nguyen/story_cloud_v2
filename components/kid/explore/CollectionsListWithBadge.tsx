@@ -12,6 +12,8 @@ import SeriesSelection from "./SeriesSelection";
 import { useCollectionsStore } from "@/store/collectionsStore";
 import CollectionSelection from "./CollectionSelection";
 
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+
 interface CollectionsListWithBadgeProps {
   collectionCategories: any[];
 }
@@ -165,10 +167,12 @@ function SectionHeader({
       <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
         <TouchableOpacity onPress={() => { handleSelectedItem(title) }}>
-          <Image
-            source={require("@/assets/images/kid/arrow-right.png")}
-            style={styles.arrowIcon}
-          />
+          
+                <IconAvatarRight
+                  width={24}
+                  height={24}
+                  color={"#053B4A"}
+                />
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>

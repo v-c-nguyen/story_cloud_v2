@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler';
@@ -7,15 +8,23 @@ import Landmarks from './Landmarks';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
-const MapWrapper = () => {
+
+interface MapWrapperProps {
+}
+
+const MapWrapper = ({
+}: MapWrapperProps
+) => {
+  const [activeTab, setActiveTab] = useState<'characters' | 'landmarks'>('characters');
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const mapWidth = 1440;
+  const mapHeight = 1048;
   const x = useSharedValue(0);
   const y = useSharedValue(0);
   const savedX = useSharedValue(0);
   const savedY = useSharedValue(0);
-  const scale = useSharedValue(0.6);
-  const savedScale = useSharedValue(0.6);
-  const [activeTab, setActiveTab] = useState('Characters');
+  const scale = useSharedValue(1);
+  const savedScale = useSharedValue(1);
   // const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 
   // useEffect(() => {
@@ -26,27 +35,38 @@ const MapWrapper = () => {
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
-      const minScale = 0.1;
+      const minScale = 1;
       const maxScale = 2;
       scale.value = Math.max(minScale, Math.min(savedScale.value * e.scale, maxScale));
     })
     .onEnd(() => {
       savedScale.value = scale.value;
+      // After zoom, recenter if needed
+      resetPanLimits();
     });
+
+  function resetPanLimits() {
+    // Center the map after zoom or on mount
+    const scaledWidth = mapWidth * scale.value;
+    const scaledHeight = mapHeight * scale.value;
+    // If map is smaller than window, center it
+    x.value = 0;
+    y.value = 0;
+    savedX.value = 0;
+    savedY.value = 0;
+  }
 
   const panGesture = Gesture.Pan()
     .onUpdate((e) => {
+      const scaledWidth = mapWidth * scale.value;
+      const scaledHeight = mapHeight * scale.value;
       const newX = savedX.value + e.translationX;
-      const newY = savedY.value + e.translationY;
 
-      const maxX = (2500 * 1.2 - windowWidth) / 2;
-      const minX = -maxX;
-
-      const maxY = (1200 * 1.2 - windowHeight) / 2;
-      const minY = -maxY;
+      // Calculate max/min so map edges never go past window edges
+      const maxX = Math.max(0, scaledWidth);
+      const minX = -(scaledWidth - windowWidth);
 
       x.value = Math.max(minX, Math.min(newX, maxX));
-      y.value = Math.max(minY, Math.min(newY, maxY));
     })
     .onEnd(() => {
       savedX.value = x.value;
@@ -61,69 +81,34 @@ const MapWrapper = () => {
   const composedGesture = Gesture.Simultaneous(panGesture, pinchGesture, nativeGesture);
 
   return (
-
     <View style={styles.container}>
-      {/* <Image
-          source={require('@/assets/images/kid/map-cloud.png')}
-          style={styles.cloudImage}
-        /> */}
       <ThemedView style={styles.tabContainer}>
-
         <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === 'Characters' && styles.activeTabButton
-          ]}
-          onPress={() => setActiveTab('Characters')}
+          style={[styles.tabButton, activeTab === 'characters' && styles.activeTabButton]}
+          onPress={() => setActiveTab('characters')}
         >
-          <ThemedText
-            style={[
-              styles.tabText,
-              activeTab === 'Characters' && styles.activeTabText
-            ]}
-          >
-            Characters
-          </ThemedText>
+          <ThemedText style={[styles.tabText, activeTab === 'characters' && styles.activeTabText]}>Characters</ThemedText>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === 'Landmarks' && styles.activeTabButton
-          ]}
-          onPress={() => setActiveTab('Landmarks')}
+          style={[styles.tabButton, activeTab === 'landmarks' && styles.activeTabButton]}
+          onPress={() => setActiveTab('landmarks')}
         >
-          <ThemedText
-            style={[
-              styles.tabText,
-              activeTab === 'Landmarks' && styles.activeTabText
-            ]}
-          >
-            Landmarks
-          </ThemedText>
+          <ThemedText style={[styles.tabText, activeTab === 'landmarks' && styles.activeTabText]}>Landmarks</ThemedText>
         </TouchableOpacity>
       </ThemedView>
-      {/* <Image
-          source={require('@/assets/images/kid/map-cloud.png')}
-          style={styles.cloudImage}
-        /> */}
-      <ScrollView>
-        <ThemedView >
-          <GestureDetector gesture={composedGesture}>
-            <Animated.View style={[styles.animatedView]}>
-              <Image
-                source={require('@/assets/images/maps/Map1.png')}
-                style={styles.mapImage}
-              />
-              {activeTab === 'Characters' && < Characters />}
-              {/* Conditionally render Landmarks for Landmarks tab */}
-              {activeTab === 'Landmarks' && <Landmarks />}
-
-            </Animated.View>
-          </GestureDetector>
-        </ThemedView>
-      </ScrollView>
+      <ThemedView style={{ flex: 1 }}>
+        <GestureDetector gesture={composedGesture}>
+          <Animated.View style={[styles.animatedView, animatedStyle]}>
+            <Image
+              source={{ uri: "https://fzmutsehqndgqwprkxrm.supabase.co/storage/v1/object/sign/resources/locations_map/Map1.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iNjNkYWNiNy1lYWJiLTQyOTQtOGY2My03YjVlYTk2Y2JiOWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyZXNvdXJjZXMvbG9jYXRpb25zX21hcC9NYXAxLnBuZyIsImlhdCI6MTc1NzY5Nzg1NCwiZXhwIjoxNzg5MjMzODU0fQ.e0QPcHD9_5WULG1jLvSjbkkY8VZvYkLjAIQvBzLGRgw" }}
+              style={styles.mapImage}
+            />
+            {activeTab === 'characters' && < Characters />}
+            {/* {activeTab === 'landmarks' && <Landmarks />} */}
+          </Animated.View>
+        </GestureDetector>
+      </ThemedView>
     </View>
-
   );
 };
 

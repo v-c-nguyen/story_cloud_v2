@@ -21,9 +21,9 @@ interface HeaderProps {
 import IconBallon from "@/assets/images/icons/icon-ballon.svg"
 import IconParent from "@/assets/images/icons/icon-parent.svg"
 import IconDown from "@/assets/images/icons/icon-down.svg"
-import IconFree from "@/assets/images/icons/avatar-free.svg"
-import IconFocus from "@/assets/images/icons/avatar-focus.svg"
-import IconPathway from "@/assets/images/icons/avatar-pathway.svg"
+import IconFree from "@/assets/images/icons/icon-free-mode.svg"
+import IconFocus from "@/assets/images/icons/icon-focus-mode.svg"
+import IconPathway from "@/assets/images/icons/icon-pathway-mode.svg"
 
 export default function Header({ icon: Icon, role = "kid", title = "", theme = "light", flag = false, mode = "learning" }: HeaderProps) {
     const router = useRouter();
@@ -114,23 +114,34 @@ export default function Header({ icon: Icon, role = "kid", title = "", theme = "
                             {title}
                         </ThemedText>
                     </ThemedView>
-                    {role == "kid" && mode == "free" &&
-                        <IconFree
-                            color={theme == 'dark' ? 'white' : "rgba(5, 59, 74, 1)"}
-                            style={[styles.logoBallon]}
-                        />
-                    }
-                    {role == "kid" && mode == "focus" &&
-                        <IconFocus
-                            color={theme == 'dark' ? 'white' : "rgba(5, 59, 74, 1)"}
-                            style={[styles.logoBallon]}
-                        />
-                    }
-                    {role == "kid" && mode == "pathway" &&
-                        <IconPathway
-                            color={theme == 'dark' ? 'white' : "rgba(5, 59, 74, 1)"}
-                            style={[styles.logoBallon]}
-                        />
+                    {
+                        role == "kid" && 
+                        <ThemedView style={styles.kidIconGroup}>
+                            {role == "kid" && mode == "free" &&
+                                <IconFree
+                                    color={theme == 'dark' ? "#fcfcfc" : "rgba(5, 59, 74, 1)"}
+                                    style={[styles.logoBallon]}
+                                />
+                            }
+                            {role == "kid" && mode == "focus" &&
+                                <IconFocus
+                                    color={theme == 'dark' ? "#fcfcfc" : "rgba(5, 59, 74, 1)"}
+                                    style={[styles.logoBallon]}
+                                />
+                            }
+                            {role == "kid" && mode == "pathway" &&
+                                <IconPathway
+                                    color={theme == 'dark' ? "#fcfcfc" : "rgba(5, 59, 74, 1)"}
+                                    style={[styles.logoBallon]}
+                                />
+                            }
+
+                            <Image
+                                source={require("@/assets/images/parent/orange-circle.png")}
+                                style={[styles.setKidCirclePosition, mode == "pathway" && { tintColor: "#F8ECAE" }]}
+                                contentFit="cover"
+                            />
+                        </ThemedView>
                     }
                     {role == "parent" &&
                         <ThemedView style={{ display: 'flex', flexDirection: 'row', alignItems: "center", }}>
@@ -147,10 +158,9 @@ export default function Header({ icon: Icon, role = "kid", title = "", theme = "
                             </ThemedView>
                             <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
                                 <IconDown
-                                    width={16}
-                                    height={16}
+                                    width={14}
+                                    height={14}
                                     color={theme == 'dark' ? 'white' : "rgba(5, 59, 74, 1)"}
-                                    style={[styles.logodown]}
                                 />
                             </TouchableOpacity>
 
@@ -201,7 +211,6 @@ const styles = StyleSheet.create({
         height: 48,
     },
     logoParent: { width: 48, height: 48 },
-    logodown: { width: 24, height: 24 },
     headTextStyle: {
         fontSize: 14,
         color: 'rgba(122, 193, 198, 1)',
@@ -217,6 +226,14 @@ const styles = StyleSheet.create({
         width: 64,
         height: 50
     },
+    kidIconGroup: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 48,
+        height: 48
+    },
     parentIcon: {
         width: 42,
         height: 32,
@@ -227,6 +244,15 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 0,
         bottom: 0,
+        width: 26,
+        height: 26,
+        zIndex: -10
+    },
+    setKidCirclePosition: {
+        position: 'absolute',
+        right: 0,
+        bottom: "50%",
+        transform: "translateY(50%)",
         width: 26,
         height: 26,
         zIndex: -10
