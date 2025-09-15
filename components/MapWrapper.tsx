@@ -10,12 +10,14 @@ import { ThemedView } from './ThemedView';
 
 
 interface MapWrapperProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void
 }
 
 const MapWrapper = ({
+  activeTab, setActiveTab
 }: MapWrapperProps
 ) => {
-  const [activeTab, setActiveTab] = useState<'characters' | 'landmarks'>('characters');
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const mapWidth = 1440;
   const mapHeight = 1048;
@@ -104,7 +106,7 @@ const MapWrapper = ({
               style={styles.mapImage}
             />
             {activeTab === 'characters' && < Characters />}
-            {/* {activeTab === 'landmarks' && <Landmarks />} */}
+            {activeTab === 'landmarks' && <Landmarks />}
           </Animated.View>
         </GestureDetector>
       </ThemedView>
@@ -114,6 +116,7 @@ const MapWrapper = ({
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 50,
     flex: 1,
     overflow: 'hidden',
   },

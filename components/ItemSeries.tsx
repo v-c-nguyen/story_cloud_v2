@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 14,
-    borderRadius: 10,
+    borderRadius: 20,
     backgroundColor: "#fff",
     marginRight: 10,
     borderWidth: 1,
-    borderColor: "#053b4a17",
+    borderColor: "#053b4a38",
   },
 
   pillSelected: {

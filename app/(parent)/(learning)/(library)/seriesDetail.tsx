@@ -95,7 +95,7 @@ export default function seriesDetail() {
                                     {currentSeries?.name || ""}
                                 </ThemedText>
                                 <ThemedText style={styles.cntTitle}>
-                                    {currentSeries?.stories.length || ""} Stories
+                                    {currentSeries?.stories?.length || ""} Stories
                                 </ThemedText>
                                 <ThemedText style={styles.subtitle}>
                                     {currentSeries?.description_parent || ""}
@@ -114,15 +114,17 @@ export default function seriesDetail() {
                                     </ThemedText>
                                 </ThemedView>
                             </TouchableOpacity>
+                            <ThemedView style={{width: "100%", flexDirection: "row", justifyContent: 'center'}}>
+                                <StoryItems
+                                    seriesCategory={currentSeries?.name || ""}
+                                    tag="series"
+                                    mode="parent"
+                                    direction="vertical"
+                                    seriesCategories={currentSeries}
+                                    filter={"stories"}
 
-                            <StoryItems
-                                seriesCategory={currentSeries?.name || ""}
-                                tag="series"
-                                mode="parent"
-                                direction="vertical"
-                                seriesCategories={currentSeries}
-                                filter={"stories"}
-                            />
+                                />
+                            </ThemedView>
                         </ThemedView>
 
                     </ThemedView>

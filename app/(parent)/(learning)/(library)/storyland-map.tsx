@@ -31,9 +31,14 @@ import normalize from "@/app/lib/normalize";
 import { useUser } from "@/app/lib/UserContext";
 import IconList from "@/assets/images/icons/icon-list.svg"
 import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
+import { useLocationsStore } from "@/store/locationsStore";
 
 export default function StorylandMapLibrary() {
   const { child } = useUser();
+  const characters = useCharactersStore((s) => s.characters);
+  const setCharacters = useCharactersStore((s) => s.setCharacters);
+  const locations = useLocationsStore((s) => s.locations);
+  const setLocations = useLocationsStore((s) => s.setLocations);
   const [categories, setCategory] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(false);
   const storyOptions = storyOptionsData;
@@ -42,11 +47,12 @@ export default function StorylandMapLibrary() {
   const [dropdownVisible, setDropdownVisible] = React.useState(false);
   const currentCharacter = useCharactersStore((s) => s.currentCharacter);
   const setCurrentCharacter = useCharactersStore((s) => s.setCurrentCharacter);
-
+  const currentLocation = useLocationsStore((s) => s.currentLocation);
+  const setCurrentLocation = useLocationsStore((s) => s.setCurrentLocation);
 
   useEffect(() => {
     setLoading(true);
-    async function fetchMapRegions() {
+    async function fetchCharacters() {
       try {
         const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
         const { data, error } = await supabase.functions.invoke('stories/characters', {
@@ -59,7 +65,7 @@ export default function StorylandMapLibrary() {
           console.error('Error fetching map regions:', error.message);
 
         } else if (data && Array.isArray(data)) {
-          setCategory(data);
+          setCharacters(data);
         }
       } catch (e) {
         console.error('Error fetching map regions:', e);
@@ -67,8 +73,38 @@ export default function StorylandMapLibrary() {
         setLoading(false);
       }
     }
-    fetchMapRegions();
+
+    async function fetchLocations() {
+      try {
+        const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+        const { data, error } = await supabase.functions.invoke('stories/locations', {
+          method: 'GET',
+          headers: {
+            Authorization: jwt ? `Bearer ${jwt}` : '',
+          },
+        });
+        if (error) {
+          console.error('Error fetching locations:', error.message);
+
+        } else if (data && Array.isArray(data)) {
+          setLocations(data);
+        }
+      } catch (e) {
+        console.error('Error fetching locations:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCharacters();
+    fetchLocations();
   }, []);
+
+  useEffect(() => {
+    if (activeTab) {
+      setCategory(activeTab == "characters" ? characters : locations);
+    }
+  }, [activeTab])
+
 
   function handleItemSelection(item: string) {
     setActiveItem(item)
@@ -100,7 +136,8 @@ export default function StorylandMapLibrary() {
     }
   }
 
-  function handleStoryItem(item: string) {
+  function handleCharacterSelected(item: string) {
+    console.log("item::", item)
     if (!setCurrentCharacter) return;
     // Find matching character object
     const found = categories.find(
@@ -116,6 +153,29 @@ export default function StorylandMapLibrary() {
     } else {
       setCurrentCharacter({ id: item, name: item } as any);
     }
+  }
+
+
+  function handleLocationSelected(item: string) {
+    if (!setCurrentLocation) return;
+    const found = categories.find((t: any) => t.name === item || t.id === item);
+    if (
+      currentLocation &&
+      ((currentLocation as any).name === item || (currentLocation as any).id === item)
+    ) {
+      setCurrentLocation(null);
+    } else if (found) {
+      setCurrentLocation(found as any);
+    } else {
+      setCurrentLocation({ id: item, name: item } as any);
+    }
+  }
+
+  function handleStoryItem(item: string) {
+    if (activeTab == "characters")
+      handleCharacterSelected(item);
+    else
+      handleLocationSelected(item);
   }
 
   return (
@@ -196,11 +256,11 @@ export default function StorylandMapLibrary() {
               </TouchableOpacity>
             </Modal>
 
-            {!currentCharacter &&
+            {!(currentCharacter || currentLocation) &&
               (
                 <ThemedView style={styles.bottomPadding}>
                   <ThemedView style={{ marginBottom: 80 }}>
-                    <MapWrapper />
+                    <MapWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
                   </ThemedView>
                 </ThemedView>
               )}
@@ -215,10 +275,13 @@ export default function StorylandMapLibrary() {
                   <ThemedView
                     style={[
                       styles.categoryPill,
-                      currentCharacter &&
-                        (currentCharacter as any).name.trim() === item.name.trim()
+                      (currentCharacter &&
+                        (currentCharacter as any).name.trim() === item.name.trim()) ||
+                        (currentLocation &&
+                          (currentLocation as any).name.trim() === item.name.trim())
                         ? styles.categoryPillActive
-                        : styles.categoryPillInactive,
+                        : styles.categoryPillInactive
+
                     ]}
                   >
                     <View
@@ -226,6 +289,10 @@ export default function StorylandMapLibrary() {
                         styles.avatarImgContainer,
                         currentCharacter &&
                           (currentCharacter as any).name.trim() === item.name.trim()
+                          ? { backgroundColor: "#F4A672" }
+                          : null,
+                        currentLocation &&
+                          (currentLocation as any).name.trim() === item.name.trim()
                           ? { backgroundColor: "#F4A672" }
                           : null,
                       ]}
@@ -246,6 +313,10 @@ export default function StorylandMapLibrary() {
                             (currentCharacter as any).name.trim() === item.name.trim()
                             ? { color: "rgba(5, 59, 74, 1)" }
                             : null,
+                          currentLocation &&
+                            (currentLocation as any).name.trim() === item.name.trim()
+                            ? { color: "rgba(5, 59, 74, 1)" }
+                            : null,
                         ]}
                       >
                         {item.name.trim()}
@@ -262,7 +333,7 @@ export default function StorylandMapLibrary() {
               <MapListWithBadge
                 charactersCategories={categories}
                 loading={loading}
-                mode="parent"
+                activeTab={activeTab}
               />
             </ThemedView>
 

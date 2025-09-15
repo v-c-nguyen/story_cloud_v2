@@ -4,26 +4,23 @@ import { ThemedView } from "@/components/ThemedView";
 import { useStoryStore } from "@/store/storyStore";
 import { Image } from "expo-image";
 import React, { useEffect } from "react";
-import { ActivityIndicator, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import StoryItems from "./StoryItems";
 import normalize from "@/app/lib/normalize";
 import { useCharactersStore } from "@/store/charactersStore";
 import CharacterSelection from "./CharacterSelection";
 
-import IconArrowRightGradient from "@/assets/images/icons/arrow-right-gradient.svg"
+import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 
-interface CharactersListWithBadgeProps {
+interface MapListWithBadgeProps {
   charactersCategories: any[];
-  loading: boolean;
   mode: string;
 }
-
-const { width, height } = Dimensions.get("window");
-const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
+const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
   charactersCategories,
-  loading,
   mode,
 }) => {
+  const [loading, setLoading] = React.useState(false);
   const [categoriesWithStories, setCategoriesWithStories] = React.useState<
     any[]
   >([]);
@@ -33,8 +30,8 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
   const stories = useStoryStore((state) => state.stories);
   const setStories = useStoryStore((state) => state.setStories);
   // Use characters store for selection
-  const currentCharacter = useCharactersStore((s) => s.currentCharacter);
-  const setCurrentCharacter = useCharactersStore((s) => s.setCurrentCharacter);
+  const currentCharacter = useCharactersStore((s) => s.currentKidCharacter);
+  const setCurrentCharacter = useCharactersStore((s) => s.setCurrentKidCharacter);
 
   useEffect(() => {
     const targets = charactersCategories.filter((category) =>
@@ -47,7 +44,7 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
 
   useEffect(() => {
     // If a current character is selected in the store, filter to that one; otherwise show all
-    if (currentCharacter) {
+    if ((currentCharacter as any)?.name) {
       const name = (currentCharacter as any).name;
       setDisplayedCategories(
         categoriesWithStories.filter(
@@ -71,46 +68,16 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
   }
   return (
     <ThemedView style={{ paddingBottom: 55 }}>
-
-      {/* Top background */}
-      {displayedCategories.length === 0 && !loading && (
-        <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
-          <Image
-            source={require("@/assets/images/parent/parent-back-pattern.png")}
-            style={styles.topBackPattern}
-            contentFit="cover"
-          />
-          <ThemedText style={styles.loadingText}>
-            No stories available in the library.
-          </ThemedText>
-        </ThemedView>
-      )}
-
-      {displayedCategories.length === 0 && loading && (
-        <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
-          <Image
-            source={require("@/assets/images/parent/parent-back-pattern.png")}
-            style={styles.topBackPattern}
-            contentFit="cover"
-          />
-          <ActivityIndicator color="#ffffff" style={{ marginTop: 20 }} />
-        </ThemedView>
-      )}
-      {currentCharacter
+      {(currentCharacter as any)?.name
         ? displayedCategories &&
         displayedCategories.length > 0 && (
           <CharacterSelection
-            currentCharacter={displayedCategories[0]}
+            currentCharacter={currentCharacter}
             setCurrentCharacter={setCurrentCharacter}
           />
         )
         : displayedCategories.map((category, index) => (
           <ThemedView key={index}>
-            <Image
-              source={require("@/assets/images/parent/parent-back-pattern.png")}
-              style={styles.topBackPattern}
-              contentFit="cover"
-            />
             <ThemedView style={styles.headerTitleContainer}>
               <SectionHeader
                 avatar={
@@ -124,19 +91,16 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
                     ? category.description_parent
                     : category.description_kid
                 }
-                link="continue"
                 categories={charactersCategories}
+                link="continue"
               />
-              <TouchableOpacity onPress={() => handleStoryItem(category)}>
-                <IconArrowRightGradient width={24} height={24} />
-              </TouchableOpacity>
             </ThemedView>
             <StoryItems
               key={index}
               seriesCategory={category.name}
               tag="characters"
               mode="parent"
-              charactersCategories={category}
+              charactersData={category}
             />
           </ThemedView>
         ))}
@@ -148,31 +112,34 @@ function SectionHeader({
   avatar,
   title,
   desc,
+  categories,
   link,
-  categories
 }: {
   avatar: any;
   title: string;
   desc: string;
+  categories: any[];
   link: string;
-  categories:  any[]
 }) {
 
-  const currentTheme = useCharactersStore((s) => s.currentCharacter);
-  const setCurrentTheme = useCharactersStore((s) => s.setCurrentCharacter);
+  const currentCharacter = useCharactersStore((s) => s.currentKidCharacter);
+  const setCurrentCharacter = useCharactersStore((s) => s.setCurrentKidCharacter);
 
-  function handleStoryItem(item: string) {
-    if (!setCurrentTheme) return;
-    const found = categories.find((t: any) => t.name === item || t.id === item);
+  function handleSelectedItem(item: any) {
+    if (!setCurrentCharacter) return;
+    // Find matching character object
+    const found = categories.find(
+      (c: any) => (c.name || String(c))?.trim() === item?.trim()
+    );
     if (
-      currentTheme &&
-      ((currentTheme as any).name === item || (currentTheme as any).id === item)
+      currentCharacter &&
+      normalize((currentCharacter as any).name) === normalize(item)
     ) {
-      setCurrentTheme(null);
+      setCurrentCharacter(null);
     } else if (found) {
-      setCurrentTheme(found as any);
+      setCurrentCharacter(found as any);
     } else {
-      setCurrentTheme({ id: item, name: item } as any);
+      setCurrentCharacter({ id: item, name: item } as any);
     }
   }
   return (
@@ -181,25 +148,24 @@ function SectionHeader({
         style={[
           styles.avatarImgContainer,
           {
-            width: 50,
-            height: 50,
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "row",
             margin: 18,
-            marginBottom: 5,
+            marginBottom: 10,
             marginTop: 60,
           },
         ]}
       >
         <Image source={avatar} style={[styles.avatarImg]} />
       </ThemedView>
-      <ThemedText style={styles.sectionTitle}>{title.trim()}</ThemedText>
-      <ThemedView style={[styles.sectionHeader, {width: "100%"}]}>
-        <ThemedText style={[styles.sectiondesc, {width: "85%"}]}>{desc}</ThemedText>
+      <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
+      <ThemedView style={styles.sectionHeader}>
+        <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
+        <TouchableOpacity onPress={() => { handleSelectedItem(title) }}>
 
-        <TouchableOpacity onPress={() => { handleStoryItem(title) }} >
-          <IconArrowRightGradient width={24} height={24} style={{ marginBottom: 20 }} />
+          <IconAvatarRight
+            width={24}
+            height={24}
+            color={"#053B4A"}
+          />
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>
@@ -213,67 +179,55 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   avatarImgContainer: {
-    padding: 10,
-    borderColor: "#ffffff",
-    borderWidth: 1.5,
+    width: 42,
+    height: 42,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 10,
-    borderRadius: 999,
-    backgroundColor: "rgba(122, 193, 198, 1)",
+    borderRadius: 50,
+    backgroundColor: "#F8ECAE",
   },
   horizontalScrollContent: {
     gap: 20,
     paddingHorizontal: 16,
   },
   avatarImg: {
-    height: 50,
-    width: 50,
+    height: 42,
+    width: 42,
   },
   sectionHeader: {
     marginTop: 0,
     marginBottom: 8,
+    width: '100%',
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   sectionTitle: {
-    color: "#ffffff",
+    color: "#053B4A",
     fontSize: 24,
-    marginBottom: 16,
+    width: '85%',
     paddingHorizontal: 16,
+    marginBottom: 10,
     fontWeight: "700",
     lineHeight: 24,
   },
   sectiondesc: {
-    color: "#ffffff",
+    width: '90%',
+    color: "#053B4A",
     fontSize: 16,
     fontWeight: "400",
     fontStyle: "italic",
     lineHeight: 24,
   },
   arrowIcon: {
-    tintColor: "#F4A672",
+    tintColor: "#053B4A",
     marginRight: 16,
     marginBottom: 10,
-  },
-  loadingContainer: {
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: '#ffffff',
-    fontSize: 16,
-    marginTop: 20,
-  },
-  topBackPattern: {
-    width: '100%',
-    height: '100%',
-    position: "absolute",
+    width: 24,
+    height: 24
   },
 });
 
-export default CharactersListWithBadge;
+export default MapListWithBadge;

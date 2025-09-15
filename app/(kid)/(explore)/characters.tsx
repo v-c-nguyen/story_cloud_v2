@@ -142,7 +142,7 @@ export default function Characters() {
           <Image
             source={require("@/assets/images/kid/top-back-pattern.png")}
             style={styles.topBackPattern}
-            resizeMode="cover"
+            contentFit="cover"
           />
           <Header role="kid" mode={child?.mode} />
 
@@ -154,12 +154,12 @@ export default function Characters() {
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
             {/* Header */}
             <ThemedView style={{ paddingTop: 25, paddingHorizontal: 16, width: '100%' }}>

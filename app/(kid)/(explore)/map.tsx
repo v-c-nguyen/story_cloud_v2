@@ -22,6 +22,14 @@ import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
 import Header from "@/components/Header";
 import { useUser } from "@/app/lib/UserContext";
+import { useCharactersStore } from "@/store/charactersStore";
+import { useLocationsStore } from "@/store/locationsStore";
+import { ItemSeries, ItemSeriesRef } from "@/components/ItemSeries";
+import normalize from "@/app/lib/normalize";
+import CharactersListWithBadge from "@/components/kid/explore/CharactersListWithBadge";
+import MapListWithBadge from "@/components/kid/explore/MapListWithBadge";
+
+import MapBack from "@/assets/images/kid/map_back.svg";
 
 
 const cardsData = [
@@ -33,171 +41,251 @@ const cardsData = [
 ];
 
 export default function Map() {
-    const {child} = useUser();
-    const [collections, setCollections] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [selectedCollection, setSelectedCollection] = useState<any | null>(null);
-    const storiesData = stories
+    const { child } = useUser();
+    const characters = useCharactersStore((s) => s.characters);
+    const setCharacters = useCharactersStore((s) => s.setCharacters);
+    const locations = useLocationsStore((s) => s.locations);
+    const setLocations = useLocationsStore((s) => s.setLocations);
+    const [categories, setCategory] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(false);
+    const [activeItem, setActiveItem] = React.useState('Storyland Map');
+    const [activeTab, setActiveTab] = React.useState('characters');
+    const [dropdownVisible, setDropdownVisible] = React.useState(false);
+    const currentCharacter = useCharactersStore((s) => s.currentKidCharacter);
+    const setCurrentCharacter = useCharactersStore((s) => s.setCurrentKidCharacter);
+    const currentLocation = useLocationsStore((s) => s.currentKidLocation);
+    const setCurrentLocation = useLocationsStore((s) => s.setCurrentKidLocation);
+    const [searchQuery, setSearchQuery] = useState("");
     const scrollViewRef = useRef<ScrollView>(null);
+    const itemSeriesRef = useRef<ItemSeriesRef>(null);
 
-    function handleCollectionPress(collection: any) {
-        setSelectedCollection(collection);
-    }
-
-    function handleSelectItem(itemName: string) {
-        const selected = collections.find(c => c.name === itemName);
-        setSelectedCollection(selected || null);
-    }
+    const filteredCollections = categories.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     useEffect(() => {
-        if (selectedCollection) {
-            setTimeout(() => {
-                scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-            }, 100);
-        }
-    }, [selectedCollection]);
-
-    useEffect(() => {
-        async function fetchSeries() {
-            setLoading(true);
+        setLoading(true);
+        async function fetchCharacters() {
             try {
                 const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
-                const { data, error } = await supabase.functions.invoke('collections', {
+                const { data, error } = await supabase.functions.invoke('stories/characters', {
                     method: 'GET',
                     headers: {
                         Authorization: jwt ? `Bearer ${jwt}` : '',
                     },
                 });
                 if (error) {
-                    console.error('Error fetching series:', error.message);
+                    console.error('Error fetching map regions:', error.message);
 
-                } else if (data && Array.isArray(data.data)) {
-                    console.log("Collections::", data.data)
-                    setCollections(data.data);
+                } else if (data && Array.isArray(data)) {
+                    setCharacters(data);
                 }
             } catch (e) {
-                console.error('Error fetching focus modes:', e);
+                console.error('Error fetching map regions:', e);
             } finally {
                 setLoading(false);
             }
         }
-        fetchSeries();
+
+        async function fetchLocations() {
+            try {
+                const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+                const { data, error } = await supabase.functions.invoke('stories/locations', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: jwt ? `Bearer ${jwt}` : '',
+                    },
+                });
+                if (error) {
+                    console.error('Error fetching locations:', error.message);
+
+                } else if (data && Array.isArray(data)) {
+                    setLocations(data);
+                }
+            } catch (e) {
+                console.error('Error fetching locations:', e);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchCharacters();
+        fetchLocations();
     }, []);
 
+    useEffect(() => {
+        if (activeTab) {
+            setCategory(activeTab == "characters" ? characters : locations);
+        }
+    }, [activeTab])
+
+    function handleCharacterSelected(item: string) {
+        console.log("characters:", item)
+        if (!setCurrentCharacter) return;
+        // Find matching character object
+        const found = categories.find(
+            (c: any) => (c.name || String(c)).trim() === item.trim()
+        );
+        console.log("found:", found, currentCharacter)
+        if (
+            currentCharacter &&
+            normalize((currentCharacter as any).name) === normalize(item)
+        ) {
+            setCurrentCharacter(null);
+        } else if (found) {
+            setCurrentCharacter(found as any);
+        } else {
+            setCurrentCharacter(null);
+        }
+    }
+
+
+    function handleLocationSelected(item: string) {
+        if (!setCurrentLocation) return;
+        const found = categories.find((t: any) => t.name === item || t.id === item);
+        if (
+            currentLocation &&
+            ((currentLocation as any).name === item || (currentLocation as any).id === item)
+        ) {
+            setCurrentLocation(null);
+        } else if (found) {
+            setCurrentLocation(found as any);
+        } else {
+            setCurrentLocation(null);
+        }
+    }
+
+    function handleSelectedItem(item: string) {
+        console.log(item)
+        if (activeTab == "characters")
+            handleCharacterSelected(item);
+        else
+            handleLocationSelected(item);
+    }
+
+
     return (
-        <>
+        <GestureHandlerRootView style={{ flex: 1 }}>
             <Stack.Screen options={{
                 headerShown: false
             }} />
-            <GestureHandlerRootView style={{ flex: 1 }}>
-                <SafeAreaView style={{ flex: 1 }}>
-                    <ScrollView
-                        ref={scrollViewRef}
-                        style={styles.rootContainer}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        {/* Top background */}
+            <SafeAreaView style={{ flex: 1 }}>
+                <ScrollView
+                    ref={scrollViewRef}
+                    style={styles.rootContainer}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {/* Top background */}
+                    <Image
+                        source={require("@/assets/images/kid/top-back-pattern.png")}
+                        style={styles.topBackPattern}
+                        resizeMode="cover"
+                    />
+                    <Header role="kid" mode={child?.mode} />
+                    {/* Header */}
+                    <ThemedText style={styles.headerTitle}>StoryCloud Map</ThemedText>
+
+                    {/* Characters and Landmarks buttons */}
+
+                    <ThemedView style={styles.headerCloudWrap}>
+                        {/* Clouds */}
                         <Image
-                            source={require("@/assets/images/kid/top-back-pattern.png")}
-                            style={styles.topBackPattern}
+                            source={require("@/assets/images/kid/cloud-group-far.png")}
+                            style={styles.imgCloudFar}
                             resizeMode="cover"
                         />
-                        <Header role="kid" mode={child?.mode} />
+                        <Image
+                            source={require("@/assets/images/kid/cloud-group-near.png")}
+                            style={styles.imgCloudNear}
+                            resizeMode="cover"
+                        />
                         {/* Header */}
-                        <ThemedText style={styles.headerTitle}>StoryCloud Map</ThemedText>
-
-                        {/* Characters and Landmarks buttons */}
-
-
-                        <ThemedView style={styles.headerCloudWrap}>
-                            {/* Clouds */}
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-far.png")}
-                                style={styles.imgCloudFar}
-                                resizeMode="cover"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear}
-                                resizeMode="cover"
-                            />
-                            {/* Header */}
-                            <ThemedView style={{ paddingTop: 25, paddingHorizontal: 16, width: '100%' }}>
-                                <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>StoryCloud Series</ThemedText>
-                                <ThemedView
-                                    style={styles.searchBoxStyle}
-                                >
-                                    <IconSearch color={"#053b4a7c"} width={26} height={26} />
-                                    <TextInput
-                                        placeholder="Search for your next adventure..."
-                                        placeholderTextColor={'#053b4a7e'}
-                                        style={styles.searchText}
-                                    />
-                                    <IconMic width={28} height={28} />
-                                </ThemedView>
+                        <ThemedView style={{ paddingTop: 25, paddingHorizontal: 16, width: '100%' }}>
+                            <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>StoryCloud Series</ThemedText>
+                            <ThemedView
+                                style={styles.searchBoxStyle}
+                            >
+                                <IconSearch color={"#053b4a7c"} width={26} height={26} />
+                                <TextInput
+                                    placeholder="Search for your next adventure..."
+                                    placeholderTextColor={'#053b4a7e'}
+                                    style={styles.searchText}
+                                />
+                                <IconMic width={28} height={28} />
                             </ThemedView>
                         </ThemedView>
+                    </ThemedView>
+                    {/* Tab Bar */}
 
-
-                        {/* Tab Bar */}
-                        <CardSeries data={cardsData} active="Map" />
-
-
-                        <>
-                            <ThemedView style={{ height: 1000, width: "100%", marginBottom: 80 }}>
-                                <MapWrapper />
+                    <ThemedView style={styles.mainContent}>
+                        <ThemedView style={styles.content}>
+                            {/* Story List */}
+                            <ThemedView style={{ marginBottom: 80 }}>
+                                <CardSeries data={cardsData} active="Map" />
                             </ThemedView>
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear2}
-                                resizeMode="cover"
-                            />
-                            <ThemedView style={styles.mainContent}>
-                                <ThemedView style={styles.content}>
+                            {
+                                !(currentCharacter || currentLocation) &&
+                                <ThemedView style={{ position: "relative" }}>
+                                    <MapBack width={600} height={1400} style={styles.mapback} />
 
-
-                                    <ThemedView style={{ paddingBottom: 80, paddingTop: 40, gap: 20 }}>
-                                        {collections.map((collection, index) => (
-                                            <React.Fragment key={index}>
-                                                <SectionHeader
-                                                    title={collection.name}
-                                                    desc={collection.description}
-                                                    link="continue"
-                                                    onPress={() => handleCollectionPress(collection)}
-                                                />
-                                                <ScrollView
-                                                    horizontal
-                                                    showsHorizontalScrollIndicator={false}
-                                                    contentContainerStyle={styles.cardScrollContainer}
-                                                >
-                                                    {storiesData
-                                                        .map((item, idx) => (
-                                                            <StoryCard2 key={idx} {...item} />
-                                                        ))}
-                                                </ScrollView>
-                                            </React.Fragment>
-                                        ))}
+                                    <ThemedView style={styles.bottomPadding}>
+                                        <ThemedView style={{ marginBottom: 80 }}>
+                                            <MapWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
+                                        </ThemedView>
+                                    </ThemedView>
+                                    <ThemedView style={{ position: "relative" }}>
+                                        <Image
+                                            source={require("@/assets/images/kid/cloud-group-far.png")}
+                                            style={styles.imgCloudFar2}
+                                            resizeMode="cover"
+                                        />
+                                        <Image
+                                            source={require("@/assets/images/kid/cloud-group-near.png")}
+                                            style={styles.imgCloudNear2}
+                                            resizeMode="cover"
+                                        />
                                     </ThemedView>
                                 </ThemedView>
+
+                            }
+
+                            <ThemedView>
+                                <ThemedView style={{ marginTop: -60, backgroundColor: "#fff" }}>
+                                    <ItemSeries
+                                        ref={itemSeriesRef}
+                                        itemsData={filteredCollections}
+                                        onSelect={(item) => {
+                                            handleSelectedItem(item?.name || "");
+                                        }}
+                                    />
+                                    {/* Story List */}
+                                    <MapListWithBadge
+                                        charactersCategories={categories}
+                                        mode="parent"
+                                    />
+                                </ThemedView>
                             </ThemedView>
-                        </>
-                    </ScrollView>
-                    {/* Sticky Bottom Navigation */}
-                    <ThemedView
-                        style={{
-                            position: "absolute",
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            height: 178,
-                            zIndex: 1000,
-                        }}
-                    >
-                        <BottomNavBar active="Explore" theme="light" image={true} />
+                            <ThemedView>
+                            </ThemedView>
+
+                        </ThemedView>
                     </ThemedView>
-                </SafeAreaView>
-            </GestureHandlerRootView>
-        </>
+
+                </ScrollView>
+                {/* Sticky Bottom Navigation */}
+                <ThemedView
+                    style={{
+                        position: "absolute",
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        height: 178,
+                        zIndex: 1000,
+                    }}
+                >
+                    <BottomNavBar active="Explore" theme="light" image={true} />
+                </ThemedView>
+            </SafeAreaView>
+        </GestureHandlerRootView>
     );
 
 
@@ -228,6 +316,11 @@ const styles = StyleSheet.create({
         height: 116,
         gap: 10,
     },
+    mapback: {
+        position: "absolute",
+        top: -110,
+        left: -100
+    },
     avatar: {
         width: 50,
         height: 50,
@@ -235,6 +328,9 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginBottom: 50,
         marginTop: 50,
+    },
+    bottomPadding: {
+        paddingBottom: 80
     },
     title: {
         fontFamily: 'Sitara',
@@ -332,12 +428,18 @@ const styles = StyleSheet.create({
         left: 0,
     },
     imgCloudNear2: {
-        width: "150%",
-        height: "7%",
+        width: "100%",
+        height: 279,
         position: "absolute",
-        top: 10 * 120,
+        top: -210,
         left: 0,
-
+    },
+    imgCloudFar2: {
+        width: "100%",
+        height: 278,
+        position: "absolute",
+        top: -250,
+        left: 0,
     },
     listContent: {
         paddingHorizontal: 16,

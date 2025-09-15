@@ -42,8 +42,6 @@ export default function Collections() {
   const itemSeriesRef = useRef<ItemSeriesRef>(null);
   const currentKidCollection = useCollectionsStore((s) => s.currentKidCollection);
   const setCurrentKidCollection = useCollectionsStore((s) => s.setCurrentKidCollection);
-  const storiesData = stories
-  const seriesData = series
 
   // Filter data based on search query
   const filteredCollections = categories.filter(item =>

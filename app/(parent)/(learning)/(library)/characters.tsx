@@ -31,13 +31,13 @@ import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
 
 export default function CharactersLibrary() {
   const [categories, setCategory] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const currentCharacter = useCharactersStore((s) => s.currentCharacter);
+  const setCurrentCharacter = useCharactersStore((s) => s.setCurrentCharacter);
   const storyOptions = storyOptionsData;
   const [activeItem, setActiveItem] = React.useState("Characters");
   const [dropdownVisible, setDropdownVisible] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
   // Use characters store for selection
-  const currentCharacter = useCharactersStore((s) => s.currentCharacter);
-  const setCurrentCharacter = useCharactersStore((s) => s.setCurrentCharacter);
 
   useEffect(() => {
     async function fetchSeries() {

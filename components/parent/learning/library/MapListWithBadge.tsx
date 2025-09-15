@@ -12,18 +12,20 @@ import CharacterSelection from "./CharacterSelection";
 
 import IconArrowRightGradient from "@/assets/images/icons/arrow-right-gradient.svg"
 import MapWrapper from "@/components/MapWrapper";
+import { useLocationsStore } from "@/store/locationsStore";
+import LocationSelection from "./LocationSelection";
 
 interface MapListWithBadgeProps {
   charactersCategories: any[];
   loading: boolean;
-  mode: string;
+  activeTab: string
 }
 
 const { width, height } = Dimensions.get("window");
 const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
   charactersCategories,
   loading,
-  mode
+  activeTab
 }) => {
   const [categoriesWithStories, setCategoriesWithStories] = React.useState<
     any[]
@@ -31,11 +33,11 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
   const [displayedCategories, setDisplayedCategories] = React.useState<any[]>(
     []
   );
-  const stories = useStoryStore((state) => state.stories);
-  const setStories = useStoryStore((state) => state.setStories);
   // Use characters store for selection
   const currentCharacter = useCharactersStore((s) => s.currentCharacter);
   const setCurrentCharacter = useCharactersStore((s) => s.setCurrentCharacter);
+  const currentLocation = useLocationsStore((s) => s.currentLocation);
+  const setCurrentLocation = useLocationsStore((s) => s.setCurrentLocation);
 
   useEffect(() => {
     const targets = charactersCategories.filter((category) =>
@@ -55,10 +57,17 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
           (c) => normalize(c.name) === normalize(name)
         )
       );
+    } else if (currentLocation) {
+      const name = (currentLocation as any).name;
+      setDisplayedCategories(
+        categoriesWithStories.filter(
+          (c) => normalize(c.name) === normalize(name)
+        )
+      );
     } else {
       setDisplayedCategories(categoriesWithStories);
     }
-  }, [currentCharacter, categoriesWithStories]);
+  }, [currentCharacter, currentLocation, categoriesWithStories]);
 
   // using shared normalize
 
@@ -97,64 +106,123 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
           <ActivityIndicator color="#ffffff" style={{ marginTop: 20 }} />
         </ThemedView>
       )}
-      {currentCharacter
-        ? displayedCategories &&
+      {currentLocation ?
+        displayedCategories &&
         displayedCategories.length > 0 && (
-          <CharacterSelection
-            currentCharacter={displayedCategories[0]}
-            setCurrentCharacter={setCurrentCharacter}
+          <LocationSelection
+            currentLocation={displayedCategories[0]}
+            setCurrentLoation={setCurrentLocation}
           />
         )
-        : displayedCategories.map((category, index) => (
-          <ThemedView key={index}>
-            <Image
-              source={require("@/assets/images/parent/parent-back-pattern.png")}
-              style={styles.topBackPattern}
-              contentFit="cover"
+        :
+        currentCharacter
+          ? displayedCategories &&
+          displayedCategories.length > 0 && (
+            <CharacterSelection
+              currentCharacter={displayedCategories[0]}
+              setCurrentCharacter={setCurrentCharacter}
             />
-            <ThemedView style={styles.headerTitleContainer}>
-              <SectionHeader
-                avatar={
-                  (category as any)?.avatar_url
-                    ? { uri: category.avatar_url }
-                    : require("@/assets/images/avatars/dano_badger.png")
-                }
-                title={category.name}
-                desc={
-                  mode == "parent"
-                    ? category.description_parent
-                    : category.description_kid
-                }
-                link="continue"
+          )
+          : displayedCategories.map((category, index) => (
+            <ThemedView key={index}>
+              <Image
+                source={require("@/assets/images/parent/parent-back-pattern.png")}
+                style={styles.topBackPattern}
+                contentFit="cover"
               />
-              <TouchableOpacity onPress={() => handleStoryItem(category)}>
-                <IconArrowRightGradient width={24} height={24} />
-              </TouchableOpacity>
+              <ThemedView style={styles.headerTitleContainer}>
+                <SectionHeader
+                  activeTab={activeTab}
+                  avatar={
+                    (category as any)?.avatar_url
+                      ? { uri: category.avatar_url }
+                      : require("@/assets/images/avatars/dano_badger.png")
+                  }
+                  title={category.name}
+                  desc={category.description_parent ?? category.description_narrative
+                  }
+                  link="continue"
+                  categories={charactersCategories}
+                />
+                <TouchableOpacity onPress={() => handleStoryItem(category)}>
+                  <IconArrowRightGradient width={24} height={24} />
+                </TouchableOpacity>
+              </ThemedView>
+              <StoryItems
+                key={index}
+                seriesCategory={category.name}
+                tag="characters"
+                mode="parent"
+                charactersCategories={category}
+              />
             </ThemedView>
-            <StoryItems
-              key={index}
-              seriesCategory={category.name}
-              tag="characters"
-              mode="parent"
-              charactersCategories={category}
-            />
-          </ThemedView>
-        ))}
+          ))}
     </ThemedView>
   );
 };
 
 function SectionHeader({
+  activeTab,
   avatar,
   title,
   desc,
   link,
+  categories
 }: {
+  activeTab: string,
   avatar: any;
   title: string;
   desc: string;
   link: string;
+  categories: any[]
 }) {
+
+  const currentCharacter = useCharactersStore((s) => s.currentCharacter);
+  const setCurrentCharacter = useCharactersStore((s) => s.setCurrentCharacter);
+  const currentLocation = useLocationsStore((s) => s.currentLocation);
+  const setCurrentLocation = useLocationsStore((s) => s.setCurrentLocation);
+  function handleCharacterSelected(item: string) {
+    console.log("item::", item)
+    if (!setCurrentCharacter) return;
+    // Find matching character object
+    const found = categories.find(
+      (c: any) => (c.name || String(c)).trim() === item
+    );
+    if (
+      currentCharacter &&
+      normalize((currentCharacter as any).name) === normalize(item)
+    ) {
+      setCurrentCharacter(null);
+    } else if (found) {
+      setCurrentCharacter(found as any);
+    } else {
+      setCurrentCharacter({ id: item, name: item } as any);
+    }
+  }
+
+
+  function handleLocationSelected(item: string) {
+    if (!setCurrentLocation) return;
+    const found = categories.find((t: any) => t.name === item || t.id === item);
+    if (
+      currentLocation &&
+      ((currentLocation as any).name === item || (currentLocation as any).id === item)
+    ) {
+      setCurrentLocation(null);
+    } else if (found) {
+      setCurrentLocation(found as any);
+    } else {
+      setCurrentLocation({ id: item, name: item } as any);
+    }
+  }
+
+  function handleStoryItem(item: string) {
+    if (activeTab == "characters")
+      handleCharacterSelected(item);
+    else
+      handleLocationSelected(item);
+  }
+
   return (
     <ThemedView>
       <ThemedView
@@ -174,14 +242,12 @@ function SectionHeader({
         <Image source={avatar} style={[styles.avatarImg]} />
       </ThemedView>
       <ThemedText style={styles.sectionTitle}>{title.trim()}</ThemedText>
-      <ThemedView style={styles.sectionHeader}>
-        <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
-        {/* <Link href={`/kid/dashboard/${link}`}>
-          <Image
-            source={require("@/assets/images/kid/arrow-right.png")}
-            style={styles.sectionArrow}
-          />
-        </Link> */}
+      <ThemedView style={[styles.sectionHeader, { width: "100%" }]}>
+        <ThemedText style={[styles.sectiondesc, { width: "85%" }]}>{desc}</ThemedText>
+
+        <TouchableOpacity onPress={() => { handleStoryItem(title) }} >
+          <IconArrowRightGradient width={24} height={24} style={{ marginBottom: 20 }} />
+        </TouchableOpacity>
       </ThemedView>
     </ThemedView>
   );

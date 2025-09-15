@@ -16,56 +16,81 @@ import { useStoryStore } from "@/store/storyStore";
 import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
 
-import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import IconArrowDown from "@/assets/images/icons/arrow-down.svg"
 import IconCheck from "@/assets/images/parent/icon-check.svg"
 
-
 interface Props {
-  currentCharacter: any;
-  setCurrentCharacter?: (c: any) => void;
+  currentLocation: any;
+  setCurrentLoation?: (c: any) => void;
 }
 
-export default function CharacterSelection({
-  currentCharacter,
-  setCurrentCharacter,
+export default function LocationSelection({
+  currentLocation,
+  setCurrentLoation
 }: Props) {
   const router = useRouter();
   const stories = useStoryStore((state) => state.stories);
   const series = useSeriesStore((state) => state.series);
   const [selectedItem, setSelectedItem] = React.useState<string>("all");
+
   return (
     <ThemedView style={styles.selectionContainer}>
       <View style={styles.detailsSection}>
         <View style={styles.selectionHeaderRow}>
-          <View>
-            <Image
-              source={
-                (currentCharacter as any)?.avatar_url
-                  ? { uri: currentCharacter.avatar_url }
-                  : require("@/assets/images/avatars/dano_badger.png")
-              }
-              style={[styles.avatarImg]}
-            />
+          <View style={{width: "100%"}}>
+            <ThemedView style={{
+              width: '100%', flexDirection: 'row', alignItems: 'center',
+              margin: 18,
+              marginBottom: 5,
+            }}>
+              <View
+                style={[
+                  styles.avatarImgContainer,
+                  {
+                    width: 60,
+                    height: 60,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  },
+                ]}
+              >
+                <Image
+                  source={
+                    (currentLocation as any)?.avatar_url
+                      ? { uri: currentLocation.avatar_url }
+                      : require("@/assets/images/avatars/dano_badger.png")
+                  }
+                  style={[styles.avatarImg]}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setCurrentLoation && setCurrentLoation(null)}
+              >
+                <IconArrowDown width={24} height={24} color={"#F4A672"} />
+              </TouchableOpacity>
+            </ThemedView>
             <ThemedText
               style={[
                 styles.sectionTitle,
                 styles.selectionTitleLarge,
-                { lineHeight: 40, textAlign: "center" },
+                { lineHeight: 40 },
               ]}
             >
-              {(currentCharacter as any)?.name}
+              {(currentLocation as any)?.name.trim()}
             </ThemedText>
             <ThemedText
               style={[styles.sectionTitle, styles.selectionTitleSmall]}
             >
-              {(currentCharacter as any)?.description ??
-                currentCharacter?.description_parent}
+              {(currentLocation as any)?.description ??
+                currentLocation?.description_functional}
             </ThemedText>
           </View>
         </View>
 
         {/* Filters */}
-        <View style={styles.statsContainer}>
+        <View style={[styles.statsContainer, { width: '100%', justifyContent: "center" }]}>
           <TouchableOpacity onPress={() => setSelectedItem("all")}>
             <View style={styles.statsIconContainer}>
               {selectedItem === "all" && (
@@ -102,7 +127,7 @@ export default function CharacterSelection({
                   selectedItem === "series" && styles.statsTextOrange,
                 ]}
               >
-                {currentCharacter.series ? currentCharacter.series.length : 0} SERIES
+                {currentLocation.series ? currentLocation.series.length : 0} SERIES
               </ThemedText>
             </View>
           </TouchableOpacity>
@@ -123,22 +148,11 @@ export default function CharacterSelection({
                   selectedItem === "stories" && styles.statsTextOrange,
                 ]}
               >
-                {currentCharacter.stories ? currentCharacter.stories.length : 0} SERIES
+                {currentLocation.stories ? currentLocation.stories.length : 0} STORIES
               </ThemedText>
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ backgroundColor: "#d0d0d08c", margin: 'auto', marginVertical: 20, height: 1, width: 230 }}></View>
-        <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 10 }}
-          onPress={() => setCurrentCharacter && setCurrentCharacter(null)}
-        >
-                  <IconArrowLeft
-                    width={24}
-                    height={24}
-                    color={"#053B4A"}
-                  />
-          <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Storyland Map"}</ThemedText>
-        </TouchableOpacity>
       </View>
       <ScrollView
         horizontal={false}
@@ -146,12 +160,12 @@ export default function CharacterSelection({
         contentContainerStyle={styles.cardScrollContent}
       >
         <StoryItems
-          seriesCategory={currentCharacter?.name}
+          seriesCategory={currentLocation?.name}
           tag="characters"
           mode="parent"
           direction="vertical"
+          charactersCategories={currentLocation}
           filter={selectedItem}
-          charactersData={currentCharacter}
         />
       </ScrollView>
     </ThemedView>
@@ -162,19 +176,18 @@ const styles = StyleSheet.create({
   selectionContainer: {
     paddingBottom: 120,
     alignItems: "center",
+    borderColor: "rgba(122, 193, 198, 0.5)",
+    borderWidth: 1,
+    backgroundColor: "rgba(5, 59, 74, 1)",
+    marginTop: 50,
     borderRadius: 20,
-  },
-  backButtonText: {
-    color: "#053B4A",
-    fontSize: 18,
-    marginTop: 30,
-    paddingHorizontal: 16,
-    fontWeight: "400",
-    lineHeight: 24,
+    marginHorizontal: 16,
   },
   detailsSection: {
     marginBottom: 5,
     width: "100%",
+    borderColor: "rgba(122, 193, 198, 0.5)",
+    borderBottomWidth: 1,
     marginTop: 25,
   },
   selectionHeaderRow: {
@@ -183,13 +196,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   avatarImg: {
-    height: 232,
-    width: 232,
-    margin: 'auto'
+    height: 60,
+    width: 60,
+  },
+  avatarImgContainer: {
+    borderColor: "#ffffff",
+    borderWidth: 1.5,
+    marginRight: 10,
+    borderRadius: 999,
+    backgroundColor: "rgba(122, 193, 198, 1)",
   },
   sectionTitle: {
-    color: "#053B4A",
+    color: "#ffffff",
     fontSize: 24,
+    marginTop: 60,
     paddingHorizontal: 16,
     fontWeight: "700",
     lineHeight: 24,
@@ -202,7 +222,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 16,
     fontWeight: "400",
-    textAlign: 'center'
   },
   closeButton: {
     position: "absolute",
@@ -216,7 +235,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
-    justifyContent: "center",
+    marginBottom: 20,
+    justifyContent: "flex-start",
   },
   statsText: {
     color: "#048F99",
@@ -247,7 +267,6 @@ const styles = StyleSheet.create({
   cardScrollContent: {
     gap: 20,
     paddingHorizontal: 16,
-    paddingLeft: 30,
     paddingTop: 30,
   },
 });
