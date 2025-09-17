@@ -229,36 +229,38 @@ export default function SeriesCarousel({
               </ThemedView>
             )}
           />
-          <ThemedView style={styles.cardFooter}>
-            <TouchableOpacity onPress={handleLeftArrow}>
-              <IconArrowLeft
-                width={24}
-                height={24}
-                color={"white"}
-                style={styles.leftBtn}
-              />
-            </TouchableOpacity>
-            <ThemedView style={styles.dotsWrap}>
-              {recents.map((_, idx) => (
-                <TouchableOpacity key={idx} onPress={() => handleDotPress(idx)}>
-                  <ThemedView
-                    style={[
-                      styles.dot,
-                      activeIndex === idx && styles.dotActive,
-                    ]}
-                  />
-                </TouchableOpacity>
-              ))}
+          { recents && recents.length > 1 &&
+            <ThemedView style={styles.cardFooter}>
+              <TouchableOpacity onPress={handleLeftArrow}>
+                <IconArrowLeft
+                  width={24}
+                  height={24}
+                  color={"white"}
+                  style={styles.leftBtn}
+                />
+              </TouchableOpacity>
+              <ThemedView style={styles.dotsWrap}>
+                {recents.map((_, idx) => (
+                  <TouchableOpacity key={idx} onPress={() => handleDotPress(idx)}>
+                    <ThemedView
+                      style={[
+                        styles.dot,
+                        activeIndex === idx && styles.dotActive,
+                      ]}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </ThemedView>
+              <TouchableOpacity onPress={handleRightArrow}>
+                <IconArrowRight
+                  width={24}
+                  height={24}
+                  color={"white"}
+                  style={styles.leftBtn}
+                />
+              </TouchableOpacity>
             </ThemedView>
-            <TouchableOpacity onPress={handleRightArrow}>
-              <IconArrowRight
-                width={24}
-                height={24}
-                color={"white"}
-                style={styles.leftBtn}
-              />
-            </TouchableOpacity>
-          </ThemedView>
+          }
         </ThemedView>
       ) : (
         <ThemedView

@@ -76,17 +76,18 @@ export default function ContinueScreen() {
             }}
           >
 
-            <Link href="../">
-              <ThemedView style={[styles.backWrap]}>
+            <ThemedView style={{flexDirection: "row", justifyContent: "center", marginBottom: 28}}>
+              <Link href="../">
+                <ThemedView style={[styles.backWrap]}>
                   <IconArrowLeft
                     width={21}
                     height={21}
                     color={"#053B4A"}
                   />
-                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-              </ThemedView>
-
-            </Link>
+                  <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+                </ThemedView>
+              </Link>
+            </ThemedView>
 
 
             <ThemedView style={{ paddingLeft: 16 }}>
@@ -167,14 +168,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   backWrap: {
-    marginLeft: "auto",
-    marginRight: "auto",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    marginBottom: 28,
   },
   imgArrowLeft: {
     width: 20,
@@ -217,3 +215,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   }
 });
+

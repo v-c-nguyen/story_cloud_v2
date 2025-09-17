@@ -40,7 +40,7 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
     const targets = charactersCategories.filter((category) =>
       category.stories && category.stories.length > 0 || category.series && category.series.length > 0
     );
-
+    console.log(targets)
     setCategoriesWithStories(targets);
     setDisplayedCategories(targets);
   }, [charactersCategories]);
@@ -155,7 +155,7 @@ function SectionHeader({
   title: string;
   desc: string;
   link: string;
-  categories:  any[]
+  categories: any[]
 }) {
 
   const currentTheme = useCharactersStore((s) => s.currentCharacter);
@@ -195,8 +195,8 @@ function SectionHeader({
         <Image source={avatar} style={[styles.avatarImg]} />
       </ThemedView>
       <ThemedText style={styles.sectionTitle}>{title.trim()}</ThemedText>
-      <ThemedView style={[styles.sectionHeader, {width: "100%"}]}>
-        <ThemedText style={[styles.sectiondesc, {width: "85%"}]}>{desc}</ThemedText>
+      <ThemedView style={[styles.sectionHeader, { width: "100%" }]}>
+        <ThemedText style={[styles.sectiondesc, { width: "85%" }]}>{desc}</ThemedText>
 
         <TouchableOpacity onPress={() => { handleStoryItem(title) }} >
           <IconArrowRightGradient width={24} height={24} style={{ marginBottom: 20 }} />

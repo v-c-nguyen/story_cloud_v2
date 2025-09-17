@@ -135,7 +135,6 @@ export default function Header({ icon: Icon, role = "kid", title = "", theme = "
                                     style={[styles.logoBallon]}
                                 />
                             }
-
                             <Image
                                 source={require("@/assets/images/parent/orange-circle.png")}
                                 style={[styles.setKidCirclePosition, mode == "pathway" && { tintColor: "#F8ECAE" }]}
@@ -251,8 +250,6 @@ const styles = StyleSheet.create({
     setKidCirclePosition: {
         position: 'absolute',
         right: 0,
-        bottom: "50%",
-        transform: "translateY(50%)",
         width: 26,
         height: 26,
         zIndex: -10

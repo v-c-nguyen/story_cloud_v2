@@ -33,7 +33,6 @@ const TargetsListWithBadge: React.FC<TargetsListWithBadgeProps> = ({
   const [displayedCategories, setDisplayedCategories] = React.useState<any[]>(
     []
   );
-  const [selectedItem, setSelectedItem] = React.useState<string>("all");
   // Use collections store for selection
   const currentTarget = useLearningCategoryStore((s) => s.currentCategory);
   const setCurrentTarget = useLearningCategoryStore(

@@ -119,13 +119,16 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(122, 193, 198, 0.2)'
     },
     modalContent: {
-        padding: 24
+        padding: 24,
+        height: "100%"
     },
     mainText: {
         fontSize: 20,
         fontWeight: 700,
         textAlign: 'center',
-        marginBottom: 10
+        marginBottom: 10,
+        width: "100%",
+        height: "100%"
     },
     desText: {
         fontSize: 14,

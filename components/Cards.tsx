@@ -1440,7 +1440,7 @@ export function SeriesCard_Parent({
                       { color: "rgba(4, 143, 153, 1)", marginBottom: 5 },
                     ]}
                   >
-                    <GradientText text={series.series_category}></GradientText>
+                    <GradientText text={series.name}></GradientText>
                   </ThemedText>
                   {/* Story Title */}
                   <ThemedText style={[styles.storyLabel, { textAlign: "center", color: "white" }]}>

@@ -9,6 +9,7 @@ import { useLearningCategoryStore } from '@/store/learningCategoryStore';
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+    ActivityIndicator,
     FlatList,
     Image,
     SafeAreaView,
@@ -19,21 +20,21 @@ import {
 
 // Define PathwayTarget type if not imported
 type FocusTarget = {
-  learning_categories: {
-    name: string;
+    learning_categories: {
+        name: string;
+        [key: string]: any;
+    };
     [key: string]: any;
-  };
-  [key: string]: any;
 };
 
 type Focus = {
-  created_at: string,
-  description: string,
-  id: string,
-  parent_id: string,
-  focusmodes_targets: FocusTarget[],
-  name: string,
-  [key: string]: any;
+    created_at: string,
+    description: string,
+    id: string,
+    parent_id: string,
+    focusmodes_targets: FocusTarget[],
+    name: string,
+    [key: string]: any;
 };
 
 import IconSwap from "@/assets/images/icons/icon-swap.svg";
@@ -215,7 +216,9 @@ export default function Index() {
                         </ThemedView>
                         <ThemedView style={{ paddingBottom: 60, marginBottom: 60 }}>
                             {loading ? (
-                                <ThemedText>Loading focus modes...</ThemedText>
+                                <ThemedView style={{ paddingTop: 150 }} >
+                                    <ActivityIndicator color="#ffffff" style={{ zIndex: 999 }} />
+                                </ThemedView>
                             ) : displayModes?.length > 0 ? (
                                 displayModes.map((focus, idx) => (
                                     <FocusCard

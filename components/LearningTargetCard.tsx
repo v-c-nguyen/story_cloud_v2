@@ -16,7 +16,7 @@ export function LearningTargetCard({ target, isSelected, onPress, checkIcon: Ico
     return (
         <TouchableOpacity key={target.id} onPress={onPress}>
             <ThemedView style={[styles.targetCard, isSelected && styles.activeTargetCard]}>
-                <ThemedView style={{ borderWidth: 2, borderColor: 'rgba(252, 252, 252, 0.2)', borderRadius: '50%' }}>
+                <ThemedView style={{ marginTop: 20, borderWidth: 2, borderColor: 'rgba(252, 252, 252, 0.2)', borderRadius: '50%' }}>
                     <ThemedView style={[styles.circle, isSelected && styles.checkCircle]}>
                         {isSelected && (
                             <IconCheck
@@ -25,9 +25,11 @@ export function LearningTargetCard({ target, isSelected, onPress, checkIcon: Ico
                         )}
                     </ThemedView>
                 </ThemedView>
-                <ThemedText style={[styles.cardTitle, isSelected && { color: 'rgba(5, 59, 74, 1)' }]}>
-                    {target.name.split('&')[0] + (target.name.includes('&') ? ' &\n' + target.name.split('&')[1] : '')}
-                </ThemedText>
+                <ThemedView style={{height: "50%"}}>
+                    <ThemedText style={[styles.cardTitle, isSelected && { color: 'rgba(5, 59, 74, 1)' }]}>
+                        {target.name.trim()}
+                    </ThemedText>
+                </ThemedView>
                 <TouchableOpacity style={[styles.cardInfoIcon]} onPress={handleInformationClicked(target)}>
 
                     <IconInformation style={[styles.cardInfoIcon]} color={isSelected ? 'rgba(5, 59, 74, 1)' : "#7AC1C6"} />
@@ -200,6 +202,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'white',
         textAlign: 'center',
+
         fontWeight: '600',
     },
     activeCardTitle: {

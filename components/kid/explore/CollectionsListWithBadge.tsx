@@ -33,45 +33,12 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
   const setCurrentKidCollection = useCollectionsStore((s) => s.setCurrentCollection);
 
   useEffect(() => {
-    // Function to fetch stories
-    async function fetchStories() {
-      setLoading(true);
-      const jwt =
-        supabase.auth.getSession &&
-        (await supabase.auth.getSession())?.data?.session?.access_token;
-      // Sanitize category for URL
-      const { data, error } = await supabase.functions.invoke(`series`, {
-        method: "GET",
-        headers: {
-          Authorization: jwt ? `Bearer ${jwt}` : "",
-          "Content-Type": "application/json",
-        },
-      });
-      setLoading(false);
-      if (error) {
-        alert(error);
-        console.error("Error fetching stories:", error.message);
-        return;
-      }
-      if (data && Array.isArray(data.data)) {
-        setSeries(data.data);
-
-        // Filter seriesCategories to only those with stories
-
-        const targets = collectionCategories.filter((category) =>
-          data.data.some((series: any) => {
-            return (
-              normalize(series.collections) == normalize(category.name)
-            );
-          })
-        );
-        setCategoriesWithStories(targets);
-        // By default show all categories that have stories
-        setDisplayedCategories(targets);
-      }
-    }
-
-    fetchStories();
+    const targets = collectionCategories.filter((category) =>
+      category.series && category.series.length > 0
+    );
+    setCategoriesWithStories(targets);
+    // By default show all categories that have stories
+    setDisplayedCategories(targets);
   }, [collectionCategories]);
 
   useEffect(() => {
@@ -109,7 +76,7 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
           )
         ) :
           displayedCategories.map((category, index) => (
-            <ThemedView key={index}>
+            <ThemedView key={index} style={{ paddingLeft: 10}}>
               <ThemedView style={styles.headerTitleContainer}>
                 <SectionHeader
                   title={category?.name}
@@ -167,12 +134,12 @@ function SectionHeader({
       <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
         <TouchableOpacity onPress={() => { handleSelectedItem(title) }}>
-          
-                <IconAvatarRight
-                  width={24}
-                  height={24}
-                  color={"#053B4A"}
-                />
+
+          <IconAvatarRight
+            width={24}
+            height={24}
+            color={"#053B4A"}
+          />
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>

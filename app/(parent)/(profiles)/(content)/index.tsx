@@ -22,43 +22,6 @@ const starIcon = require('@/assets/images/parent/icon-star.png')
 
 const { width } = Dimensions.get('window');
 
-const plans = [
-    {
-        name: 'Basic',
-        priceMonthly: 8.99,
-        priceAnnual: 89.99,
-        seats: 1,
-        features: [
-            'Listen Mode',
-            'Creative Learning',
-            'Premium Accessibility',
-            'Cutting Edge Content',
-            'Dual Mode Experience',
-            'Interactive Learning',
-            'Character-Driven Adventures',
-            'Anytime, Anywhere',
-        ],
-        buttonLabel: 'Cancel Subscription',
-    },
-    {
-        name: 'Advanced',
-        priceMonthly: 14.99,
-        priceAnnual: 149.99,
-        seats: 5,
-        features: [
-            'Read Mode',
-            'Watch Mode',
-            'Advanced Learning',
-            'Cutting Edge Content',
-            'Dual Mode Experience',
-            'Interactive Learning',
-            'Character-Driven Adventures',
-            'Anytime, Anywhere',
-        ],
-        buttonLabel: 'Update Subscription',
-    },
-];
-
 const ModalTitle = "Story Style"
 export const ModalContent = () => (
     <>
@@ -81,18 +44,6 @@ export default function Content() {
     const [modalVisible, setModalVisible] = useState(false);
     const [activeTab, setActiveTab] = React.useState('subscription');
 
-    const handleScroll = (event: any) => {
-        const x = event.nativeEvent.contentOffset.x;
-        const newIndex = Math.round(x / width);
-        setCurrentIndex(newIndex);
-    };
-
-    const handleButtonClick = (label: string) => {
-        if (label === 'Update Subscription') {
-            setModalVisible(true);
-        } else {
-        }
-    };
 
     const handleTabPress = (tabId: string) => {
         if (tabId === 'content') router.navigate("/(parent)/(profiles)/(content)")
@@ -100,26 +51,6 @@ export default function Content() {
         setActiveTab(tabId);
     };
 
-    const handleItemProcess = (item: string) => {
-        switch (item) {
-            case 'account':
-                router.navigate("/(parent)/(profiles)/(account)");
-                break;
-            case 'login':
-                router.navigate("/(parent)/(profiles)/(login)");
-                break;
-            case 'subscription':
-                router.navigate("/(parent)/(profiles)/(subscription)");
-                break;
-            case 'billing':
-                router.navigate("/(parent)/(profiles)/(billing)");
-                break;
-
-            default:
-                break;
-        }
-
-    }
     return (
 
 

@@ -99,16 +99,16 @@ const MapWrapper = ({
         </TouchableOpacity>
       </ThemedView>
       <ThemedView style={{ flex: 1 }}>
-        <GestureDetector gesture={composedGesture}>
-          <Animated.View style={[styles.animatedView, animatedStyle]}>
-            <Image
-              source={{ uri: "https://fzmutsehqndgqwprkxrm.supabase.co/storage/v1/object/sign/resources/locations_map/Map1.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iNjNkYWNiNy1lYWJiLTQyOTQtOGY2My03YjVlYTk2Y2JiOWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyZXNvdXJjZXMvbG9jYXRpb25zX21hcC9NYXAxLnBuZyIsImlhdCI6MTc1NzY5Nzg1NCwiZXhwIjoxNzg5MjMzODU0fQ.e0QPcHD9_5WULG1jLvSjbkkY8VZvYkLjAIQvBzLGRgw" }}
-              style={styles.mapImage}
-            />
-            {activeTab === 'characters' && < Characters />}
-            {activeTab === 'landmarks' && <Landmarks />}
-          </Animated.View>
-        </GestureDetector>
+        {/* <GestureDetector gesture={composedGesture}> */}
+            <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }}>
+              <Image
+                source={{ uri: "https://fzmutsehqndgqwprkxrm.supabase.co/storage/v1/object/sign/resources/locations_map/Map1.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iNjNkYWNiNy1lYWJiLTQyOTQtOGY2My03YjVlYTk2Y2JiOWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyZXNvdXJjZXMvbG9jYXRpb25zX21hcC9NYXAxLnBuZyIsImlhdCI6MTc1NzY5Nzg1NCwiZXhwIjoxNzg5MjMzODU0fQ.e0QPcHD9_5WULG1jLvSjbkkY8VZvYkLjAIQvBzLGRgw" }}
+                style={styles.mapImage}
+              />
+              {activeTab === 'characters' && < Characters />}
+              {activeTab === 'landmarks' && <Landmarks />}
+            </ScrollView>
+        {/* </GestureDetector> */}
       </ThemedView>
     </View>
   );

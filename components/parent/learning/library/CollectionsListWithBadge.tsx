@@ -33,6 +33,7 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
     []
   );
   const [selectedItem, setSelectedItem] = React.useState<string>("all");
+  const [selectedItems, setSelectedItems] = React.useState<{ [key: string]: string }>({});
   // Use collections store for selection
   const currentCollection = useCollectionsStore((s) => s.currentCollection);
   const setCurrentCollection = useCollectionsStore(
@@ -65,6 +66,13 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
   }, [currentCollection, categoriesWithStories]);
 
   // using shared normalize
+
+  function handleFilterItem(item: any, mode: string) {
+    setSelectedItems(prev => ({
+      ...prev,
+      [item.name]: prev[item.name] === mode ? "all" : mode // toggle or set
+    }));
+  }
 
   function handleStoryItem(item: any) {
     if (!setCurrentCollection) return;
@@ -110,109 +118,112 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
             setCurrentCollection={setCurrentCollection}
           />
         )
-        : displayedCategories.map((category, index) => (
-          <ThemedView key={index}>
+        : displayedCategories.map((category, index) => {
+          const selectedItem = selectedItems[category.name] || "all";
+          return (
+            <ThemedView key={index}>
 
-            <Image
-              source={require("@/assets/images/parent/parent-back-pattern.png")}
-              style={styles.topBackPattern}
-              contentFit="cover"
-            />
-            <ThemedView>
-              <SectionHeader
-                title={category.name}
-                desc={
-                  mode == "parent"
-                    ? category.description_parent
-                    : category.description_kid
-                }
-                link="continue"
+              <Image
+                source={require("@/assets/images/parent/parent-back-pattern.png")}
+                style={styles.topBackPattern}
+                contentFit="cover"
               />
+              <ThemedView>
+                <SectionHeader
+                  title={category.name}
+                  desc={
+                    mode == "parent"
+                      ? category.description_parent
+                      : category.description_kid
+                  }
+                  link="continue"
+                />
 
-              <ThemedView style={styles.headerTitleContainer}>
-                {/* Filters */}
-                <ThemedView style={styles.statsContainer}>
-                  <TouchableOpacity onPress={() => setSelectedItem("all")}>
-                    <ThemedView style={styles.statsIconContainer}>
-                      {selectedItem === "all" && (
-                        <IconCheck
-                          width={14}
-                          height={14}
-                          color="#F4A672"
-                        />
-                      )}
-                      <ThemedText
-                        style={[
-                          styles.statsText,
-                          selectedItem === "all" && styles.statsTextOrange,
-                        ]}
-                      >
-                        ALL
-                      </ThemedText>
-                    </ThemedView>
-                  </TouchableOpacity>
+                <ThemedView style={styles.headerTitleContainer}>
+                  {/* Filters */}
+                  <ThemedView style={styles.statsContainer}>
+                    <TouchableOpacity onPress={() => handleFilterItem(category, "all")}>
+                      <ThemedView style={styles.statsIconContainer}>
+                        {selectedItem === "all" && (
+                          <IconCheck
+                            width={14}
+                            height={14}
+                            color="#F4A672"
+                          />
+                        )}
+                        <ThemedText
+                          style={[
+                            styles.statsText,
+                            selectedItem === "all" && styles.statsTextOrange,
+                          ]}
+                        >
+                          ALL
+                        </ThemedText>
+                      </ThemedView>
+                    </TouchableOpacity>
 
-                  <ThemedView style={styles.divider} />
-                  <TouchableOpacity onPress={() => setSelectedItem("series")}>
-                    <ThemedView style={styles.statsIconContainer}>
-                      {selectedItem === "series" && (
-                        <IconCheck
-                          width={14}
-                          height={14}
-                          color="#F4A672"
-                        />
-                      )}
-                      <ThemedText
-                        style={[
-                          styles.statsText,
-                          selectedItem === "series" && styles.statsTextOrange,
-                        ]}
-                      >
-                        {category.series.length} SERIES
-                      </ThemedText>
-                    </ThemedView>
-                  </TouchableOpacity>
-                  <ThemedView style={styles.divider} />
+                    <ThemedView style={styles.divider} />
+                    <TouchableOpacity onPress={() => handleFilterItem(category, "series")}>
+                      <ThemedView style={styles.statsIconContainer}>
+                        {selectedItem === "series" && (
+                          <IconCheck
+                            width={14}
+                            height={14}
+                            color="#F4A672"
+                          />
+                        )}
+                        <ThemedText
+                          style={[
+                            styles.statsText,
+                            selectedItem === "series" && styles.statsTextOrange,
+                          ]}
+                        >
+                          {category.series.length} SERIES
+                        </ThemedText>
+                      </ThemedView>
+                    </TouchableOpacity>
+                    <ThemedView style={styles.divider} />
 
-                  <TouchableOpacity
-                    onPress={() => setSelectedItem("stories")}
-                  >
-                    <ThemedView style={styles.statsIconContainer}>
-                      {selectedItem === "stories" && (
-                        <IconCheck
-                          width={14}
-                          height={14}
-                          color="#F4A672"
-                        />
-                      )}
-                      <ThemedText
-                        style={[
-                          styles.statsText,
-                          selectedItem === "stories" &&
-                          styles.statsTextOrange,
-                        ]}
-                      >
-                        {category.stories.length} STORIES
-                      </ThemedText>
-                    </ThemedView>
+                    <TouchableOpacity
+                      onPress={() => handleFilterItem(category, "stories")}
+                    >
+                      <ThemedView style={styles.statsIconContainer}>
+                        {selectedItem === "stories" && (
+                          <IconCheck
+                            width={14}
+                            height={14}
+                            color="#F4A672"
+                          />
+                        )}
+                        <ThemedText
+                          style={[
+                            styles.statsText,
+                            selectedItem === "stories" &&
+                            styles.statsTextOrange,
+                          ]}
+                        >
+                          {category.stories.length} STORIES
+                        </ThemedText>
+                      </ThemedView>
+                    </TouchableOpacity>
+                  </ThemedView>
+
+                  <TouchableOpacity onPress={() => handleStoryItem(category)}>
+                    <IconArrowRightGradient width={24} height={24} style={{ marginBottom: 20 }} />
                   </TouchableOpacity>
                 </ThemedView>
-
-                <TouchableOpacity onPress={() => handleStoryItem(category)}>
-                  <IconArrowRightGradient width={24} height={24} style={{ marginBottom: 20 }} />
-                </TouchableOpacity>
               </ThemedView>
+              <StoryItems
+                key={index}
+                seriesCategory={category.name}
+                tag="collections"
+                mode="parent"
+                filter={selectedItem}
+                collectionsCategories={category}
+              />
             </ThemedView>
-            <StoryItems
-              key={index}
-              seriesCategory={category.name}
-              tag="collections"
-              mode="parent"
-              filter={selectedItem}
-              collectionsCategories={category}
-            />
-          </ThemedView>
-        ))}
+          )
+        })}
     </ThemedView>
   );
 };

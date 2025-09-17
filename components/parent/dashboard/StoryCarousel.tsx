@@ -35,6 +35,15 @@ export default function RecentLearning({ activeChild, mode = "parent", watched =
     }, [activeChild]);
     return (
         <>
+            {
+
+                watched && recents.filter((ele) => ele.watched).length <= 0 && !loading ? (
+                    <ThemedText style={{ color: mode == "parent" ? '#ffffff7a' : "#053B4A", textAlign: 'center', marginVertical: 20 }}> no recent data </ThemedText>
+                ) :
+                    !watched && recents.filter((ele) => !ele.watched).length <= 0 && !loading && (
+                        <ThemedText style={{ color: mode == "parent" ? '#ffffff7a' : "#053B4A", textAlign: 'center', marginVertical: 20 }}> no recent data </ThemedText>
+                    )
+            }
             {loading ? (
                 <ActivityIndicator color={mode == "parent" ? "#ffffff" : "#053B4A"} style={{
                     zIndex: 999,
@@ -69,7 +78,7 @@ export default function RecentLearning({ activeChild, mode = "parent", watched =
                         </ScrollView>
                         {/* Pagination Dots */}
                         <ThemedView style={styles.pagination}>
-                            {recents.map((_, idx) => (
+                            {recents && recents.length > 1 && recents.map((_, idx) => (
                                 <ThemedView
                                     key={idx}
                                     style={[
@@ -82,7 +91,7 @@ export default function RecentLearning({ activeChild, mode = "parent", watched =
                     </ThemedView>
                     :
                     <ThemedView style={{ flexDirection: 'row', width: '100%', marginVertical: 20, justifyContent: 'center' }}>
-                        <ThemedText style={{ color: mode == "parent" ? '#ffffff7a': "#053B4A" }}> no recent data </ThemedText>
+                        <ThemedText style={{ color: mode == "parent" ? '#ffffff7a' : "#053B4A" }}> no recent data </ThemedText>
                     </ThemedView>
             }
         </>

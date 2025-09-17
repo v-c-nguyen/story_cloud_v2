@@ -3,7 +3,7 @@ import { View, StyleSheet, ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 type GradientBorderBoxProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   borderRadius?: number;
   borderWidth?: number;
   style?: ViewStyle;

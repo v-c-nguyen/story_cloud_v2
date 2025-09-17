@@ -57,25 +57,24 @@ export default function JustWatchedScreen() {
               style={styles.imgCloudNear}
               contentFit="cover"
             />
-
-            <Link href="../">
-              <ThemedView style={[styles.backWrap]}>
+            <ThemedView style={{ flexDirection: "row", justifyContent: "center", marginTop: 60 }}>
+              <Link href="../">
+                <ThemedView style={[styles.backWrap]}>
                   <IconArrowLeft
-                    width={24}
-                    height={24}
-                    color={"#fcfcfc"}
+                    width={21}
+                    height={21}
+                    color={"#053B4A"}
                   />
-                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-              </ThemedView>
-
-            </Link>
-
+                  <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+                </ThemedView>
+              </Link>
+            </ThemedView>
           </ThemedView>
           {/* Story List */}
           <ThemedView
             style={{
               backgroundColor: "#fcfcfc",
-              marginTop: -4,
+              marginTop: 60,
               minHeight: '100%',
               paddingBottom: 50,
               marginBottom: 40,
@@ -90,7 +89,7 @@ export default function JustWatchedScreen() {
               ))}
               {
                 storiesData.length <= 0 &&
-                <ThemedText style={{ color: '#053B4A', textAlign: 'center', marginTop: 60 }}>no recent data</ThemedText>
+                <ThemedText style={{ color: '#053B4A', textAlign: 'center', marginTop: "40%" }}>no recent data</ThemedText>
               }
             </ThemedView>
           </ThemedView>

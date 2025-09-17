@@ -1,7 +1,6 @@
 import { ItemWithRightImage } from "@/components/ListItems";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { childrenData } from "@/data/childrenData";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
@@ -18,7 +17,7 @@ interface PathwayData {
     description: string;
     length: string;
     targets: { id: string; name: string; }[];
-    children: typeof childrenData;
+    children: any;
 }
 
 
@@ -98,7 +97,7 @@ export default function AddPathway_Fifth({ mode, data, currentStep, onPress }: {
                     </ThemedView>
                     <ThemedView style={{ flexDirection: 'row', gap: 10 }}>
                         {
-                            data.children?.map((child, index) => (
+                            data.children?.map((child: any, index: number) => (
                                 <ItemWithRightImage key={index} name={child.name} avatar={child.avatar_url} ></ItemWithRightImage>
                             ))
                         }

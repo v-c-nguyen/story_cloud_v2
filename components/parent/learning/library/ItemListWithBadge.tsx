@@ -33,6 +33,7 @@ const ItemListWidthBadge: React.FC<ItemListWithBadgeProps> = ({
     const targets = seriesCategories.filter((category) =>
       category.stories && category.stories.length > 0
     );
+    console.log(targets)
     setCategoriesWithStories(targets);
     setDisplayedCategories(targets);
   }, [seriesCategories]);
@@ -75,7 +76,7 @@ const ItemListWidthBadge: React.FC<ItemListWithBadgeProps> = ({
       )}
 
       {displayedCategories.length === 0 && loading && (
-        <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
+        <ThemedView style={[styles.loadingContainer, { height: height - 500 }]}>
           <Image
             source={require("@/assets/images/parent/parent-back-pattern.png")}
             style={styles.topBackPattern}

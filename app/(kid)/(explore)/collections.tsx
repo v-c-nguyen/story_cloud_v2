@@ -11,7 +11,6 @@ import { useCollectionsStore } from "@/store/collectionsStore";
 import { Stack } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -19,19 +18,24 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-
+import { Image } from "expo-image";
 
 import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
 import Header from "@/components/Header";
 import { useUser } from "@/app/lib/UserContext";
+import IconSeries from "@/assets/images/parent/series.svg"
+import IconCollections from "@/assets/images/parent/collections.svg"
+import IconMap from "@/assets/images/parent/map.svg"
+import IconThemes from "@/assets/images/parent/themes.svg"
+import IconCharacters from "@/assets/images/parent/characters.svg"
 
 const cardsData = [
-  { color: '#FFFFFF', icon: require('@/assets/images/parent/series.png'), text: 'Series' },
-  { color: '#F8ECAE', icon: require('@/assets/images/parent/collections.png'), text: 'Collections' },
-  { color: '#ADD7DA', icon: require('@/assets/images/parent/map.png'), text: 'Map' },
-  { color: '#7AC1C6', icon: require('@/assets/images/parent/themes.png'), text: 'Themes' },
-  { color: '#053B4A', icon: require('@/assets/images/parent/characters.png'), text: 'Characters' },
+  { color: '#FFFFFF', icon: IconSeries, text: 'Series' },
+  { color: '#F8ECAE', icon: IconCollections, text: 'Collections' },
+  { color: '#ADD7DA', icon: IconMap, text: 'Map' },
+  { color: '#7AC1C6', icon: IconThemes, text: 'Themes' },
+  { color: '#053B4A', icon: IconCharacters, text: 'Characters' },
 ];
 
 export default function Collections() {
@@ -53,7 +57,7 @@ export default function Collections() {
       setLoading(true);
       try {
         const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
-        const { data, error } = await supabase.functions.invoke('collections', {
+        const { data, error } = await supabase.functions.invoke('stories/collections', {
           method: 'GET',
           headers: {
             Authorization: jwt ? `Bearer ${jwt}` : '',
@@ -62,8 +66,9 @@ export default function Collections() {
         if (error) {
           console.error('Error fetching series:', error.message);
 
-        } else if (data && Array.isArray(data.data)) {
-          setCategory(data.data);
+        } else if (data && Array.isArray(data)) {
+          console.log(data)
+          setCategory(data);
         }
       } catch (e) {
         console.error('Error fetching focus modes:', e);
@@ -102,9 +107,9 @@ export default function Collections() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/top-back-pattern.png")}
+            source={require("@/assets/images/auth/back-pattern.png")}
             style={styles.topBackPattern}
-            resizeMode="cover"
+            contentFit="cover"
           />
           <Header role="kid" mode={child?.mode} />
 
@@ -116,16 +121,15 @@ export default function Collections() {
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
             {/* Header */}
-            <ThemedView style={{ paddingTop: 25, paddingHorizontal: 16, width: '100%' }}>
-              <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>StoryCloud Series</ThemedText>
+            <ThemedView style={{ paddingTop: 25, marginTop: 30, paddingHorizontal: 16, width: '100%' }}>
               <ThemedView
                 style={styles.searchBoxStyle}
               >
@@ -303,7 +307,8 @@ const styles = StyleSheet.create({
     width: "100%",
     fontSize: 14,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: 5,
+    borderRadius: 25,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.2)',
     backgroundColor: '#fff',

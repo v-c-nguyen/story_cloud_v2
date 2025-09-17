@@ -1,17 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet } from "react-native";
 
 import IconCheck from "@/assets/images/parent/icon-check.svg"
 
-const steps = [1, 2, 3, 4, 5];
 
 export default function StepIndicator_Focus({  currentStep }: { currentStep: number }) {
-    const router = useRouter();
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
     const steps = [1, 2, 3, 4];
 
     return (
@@ -32,7 +27,7 @@ export default function StepIndicator_Focus({  currentStep }: { currentStep: num
                             >
                                 {
                                     isCompleted ?
-                                        <IconCheck width={24} height={24} />
+                                        <IconCheck width={18} height={19} color={"#F8ECAE"}/>
                                         :
                                         <ThemedText style={[
                                             styles.stepText,

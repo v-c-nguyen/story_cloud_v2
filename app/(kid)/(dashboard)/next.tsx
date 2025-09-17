@@ -80,25 +80,24 @@ export default function WatchNextScreen() {
               style={styles.imgCloudNear}
               contentFit="cover"
             />
-
-            <Link href="../">
-              <ThemedView style={[styles.backWrap]}>
+            <ThemedView style={{ flexDirection: "row", justifyContent: "center", marginTop: 60 }}>
+              <Link href="../">
+                <ThemedView style={[styles.backWrap]}>
                   <IconArrowLeft
-                    width={24}
-                    height={24}
-                    color={"#fcfcfc"}
+                    width={21}
+                    height={21}
+                    color={"#053B4A"}
                   />
-                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-              </ThemedView>
-
-            </Link>
-
+                  <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+                </ThemedView>
+              </Link>
+            </ThemedView>
           </ThemedView>
           {/* Story List */}
           <ThemedView
             style={{
               backgroundColor: "#fcfcfc",
-              marginTop: -4,
+              marginTop: 60,
               minHeight: '100%',
               paddingBottom: 50,
               marginBottom: 40,
@@ -161,9 +160,8 @@ const styles = StyleSheet.create({
     marginBottom: 66,
   },
   backWrap: {
-    marginLeft: "auto",
-    marginRight: "auto",
     display: "flex",
+    marginHorizontal: 'auto',
     flexDirection: "row",
     alignItems: "center",
     gap: 10,

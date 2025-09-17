@@ -29,11 +29,20 @@ import LearningModuleModal from './Modals/LearningModuleMode';
 import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 interface Child {
+    status: string;
+    children: {
+        id: string,
+        name: string,
+        age: number,
+        mode: string,
+        avatar_url?: string
+    }
+}
+
+interface LearningCategory {
     id: string,
     name: string,
-    age: number,
-    mode: string,
-    avatar_url?: string
+    description: string
 }
 
 export function FocusCard({ focus, handleEditButton, handleViewButton }: { focus: any, handleEditButton: (id: string) => void, handleViewButton: (id: string) => void }) {
@@ -120,28 +129,36 @@ export function FocusCard({ focus, handleEditButton, handleViewButton }: { focus
                                 keyExtractor={(_, index) => index.toString()}
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={({ item }) => (
-                                    <GradientBorderBox
-                                        borderRadius={24}
-                                        borderWidth={1}
-                                        style={styles.progressBar}
-                                        innerStyle={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            paddingVertical: 3,
-                                            gap: 10,
-                                        }}
-                                    >
-                                        {
-                                            item.children.avatar_url ?
-                                                <Image source={{ uri: item.children.avatar_url }} style={styles.avatar} />
-                                                :
-                                                <IconDefaultAvatar width={35} height={35} />
+                                    <ThemedView style={{ marginRight: 5 }}>
+                                        <GradientBorderBox
+                                            borderRadius={24}
+                                            borderWidth={1}
+                                            style={styles.progressBar}
+                                            innerStyle={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                paddingVertical: 3,
+                                                gap: 5,
+                                            }}
+                                        >
+                                            {
+                                                item.children.avatar_url ?
+                                                    <Image source={{ uri: item.children.avatar_url }} style={styles.avatar} />
+                                                    :
+                                                    <IconDefaultAvatar width={35} height={35} />
 
-                                        }
-                                        <ThemedView style={styles.avatarOutline}>
-                                            <IconCheck width={20} height={20} color={"#FCFCFC"} style={styles.checkAvatar} />
-                                        </ThemedView>
-                                    </GradientBorderBox>
+                                            }
+                                            <ThemedView style={styles.avatarOutline}>
+                                                {item.status == "activated" ?
+                                                    <IconCheck width={20} height={20} color={"#FCFCFC"} style={styles.checkAvatar} />
+                                                    :
+                                                    <ThemedView style={styles.circle}>
+                                                    </ThemedView>
+
+                                                }
+                                            </ThemedView>
+                                        </GradientBorderBox>
+                                    </ThemedView>
                                 )}
                             />
                         )}
@@ -312,7 +329,7 @@ export function FocusEditCard({ focus }: { focus: any }) {
     const [editDescription, setEditDescription] = React.useState(false);
     const [name, setName] = React.useState(focus?.name || '');
     const [description, setDescription] = React.useState(focus?.description || '');
-    const [categories, setCategories] = React.useState<string[]>([]);
+    const [categories, setCategories] = React.useState<LearningCategory[]>([]);
     const [children, setChildren] = React.useState<Child[]>([]);
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalType, setModalType] = React.useState<'category' | 'child' | null>(null);
@@ -324,12 +341,12 @@ export function FocusEditCard({ focus }: { focus: any }) {
         setDescription(focus?.description || '')
         setCategories(
             focus?.focusmodes_targets
-                ? focus.focusmodes_targets.map((t: any) => t.learning_categories?.name)
+                ? focus.focusmodes_targets.map((t: any) => t.learning_categories)
                 : []
         );
         setChildren(
             focus?.focusmodes_kids
-                ? focus.focusmodes_kids.map((t: any) => t.children)
+                ? focus.focusmodes_kids.map((t: any) => t)
                 : []
         );
 
@@ -343,6 +360,7 @@ export function FocusEditCard({ focus }: { focus: any }) {
     const handleRemoveChild = (idx: number) => {
         setChildren(children.filter((_, i) => i !== idx));
     };
+
     async function fetchLearningTargets() {
         setLoading(true);
         try {
@@ -406,22 +424,28 @@ export function FocusEditCard({ focus }: { focus: any }) {
         router.navigate("./")
     }
     function handleTargetSelected(id: string, name: string) {
-        setCategories(prev => {
-            const exists = prev.some(t => t.trim() === name.trim());
+        setCategories((prev) => {
+            const exists = prev.some(t => t.name.trim() === name.trim());
             if (exists) {
-                return prev.filter(t => t.trim() !== name.trim());
+                return prev.filter(t => t.name.trim() !== name.trim());
             } else {
-                return [...prev, name];
+                // Find the category object by id and add it
+                const categoryToAdd = allCategories.find((cat: LearningCategory) => cat.id === id);
+                if (categoryToAdd) {
+                    return [...prev, categoryToAdd];
+                }
+                return prev;
             }
         });
     }
-    function handleChildSelected(child: Child) {
+    function handleChildSelected(child: any) {
         setChildren(prev => {
-            const exists = prev.some(t => t.id === child.id);
+            const exists = prev.some(t => t.children.id === child.id);
             if (exists) {
-                return prev.filter(t => t.id !== child.id);
+                return prev.filter(t => t.children.id !== child.id);
             } else {
-                return [...prev, child];
+                const childAdd = { status: 'activated', children: child };
+                return [...prev, childAdd];
             }
         });
     }
@@ -430,6 +454,58 @@ export function FocusEditCard({ focus }: { focus: any }) {
         if (target) {
             setCurrentTarget(target)
             setTargetModalVisible(true)
+        }
+    }
+
+    async function handleSubmit() {
+        const childrenData = {
+            name: name,
+            description: description,
+            categories: categories,
+            children: children
+        }
+        const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+        let response;
+        try {
+            const fetchResponse = await fetch(`https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/focus-modes/${focus.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(childrenData),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: jwt ? `Bearer ${jwt}` : '',
+                }
+            });
+            const data = await fetchResponse.json();
+            if (fetchResponse.ok && data) {
+                // Add to Zustand store
+                router.push('../');
+                setModalVisible(true)
+
+            } else {
+                alert(data?.error || 'Failed to save child');
+            }
+        } catch (e) {
+            // Fallback to fetch if supabase.functions.invoke fails
+            alert(e || 'Failed to save child');
+        }
+    }
+
+    function handleChildrenChanged(target: any, index: number) {
+        const currentChild = children[index];
+        if (currentChild.status === "activated") {
+            // Change status to "deactivated" and update in place
+            setChildren(prev => {
+                const updated = [...prev];
+                updated[index] = { ...currentChild, status: "deactivated" };
+                return updated;
+            });
+        } else if (currentChild.status === "deactivated") {
+            // Change status to "activated" and update in place
+            setChildren(prev => {
+                const updated = [...prev];
+                updated[index] = { ...currentChild, status: "activated" };
+                return updated;
+            });
         }
     }
     return (
@@ -444,6 +520,70 @@ export function FocusEditCard({ focus }: { focus: any }) {
                     target={currentTarget}
                     onCancel={() => setTargetModalVisible(false)} />
             </Modal>
+
+            <Modal
+                visible={modalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <ThemedView style={{
+                    position: 'absolute',
+                    top: -50,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0,0,0,0.4)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1000
+                }}>
+                    <ThemedView style={{ backgroundColor: '#053B4A', borderRadius: 16, borderColor: '#add7da4d', borderWidth: 1, padding: 24, width: "90%", minHeight: 200 }}>
+                        <ThemedText style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 16, color: 'white' }}>
+                            {modalType === 'category' ? 'Add Learning Category' : 'Add Child'}
+                        </ThemedText>
+                        <ScrollView
+                            horizontal
+                            style={{ maxHeight: 300 }}
+                            showsHorizontalScrollIndicator={false}
+                        >
+                            <ThemedView style={{ flexDirection: 'row', gap: 10 }}>
+                                {modalType === 'category' && allCategories && allCategories.length > 0 &&
+                                    allCategories.map(cat => (
+                                        <LearningTargetCard
+                                            key={cat.id}
+                                            target={{ ...cat, id: String(cat.id) }}
+                                            isSelected={categories.some(t => t.name.trim() === (cat.name ?? '').trim())}
+                                            onPress={() => handleTargetSelected(cat.id, cat.name)}
+                                            checkIcon={IconCheck}
+                                            informationIcon={IconInformation}
+                                            handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
+                                        />
+                                    ))}
+                                {modalType === "child" && allChildren && allChildren.length > 0 &&
+                                    allChildren.map(child => (
+                                        <ChildrenCard
+                                            key={child.id}
+                                            child={child}
+                                            isActive={children.some(t => t.children.id === child.id)}
+                                            onPress={() => handleChildSelected(child)}
+                                        />
+                                    ))}
+
+                            </ThemedView>
+
+                        </ScrollView>
+                        <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 24, alignSelf: 'flex-end' }}>
+                            <ThemedView style={{ backgroundColor: '#F4A672', padding: 8, paddingHorizontal: 30, borderRadius: 20 }}>
+                                <ThemedText style={{ fontWeight: 400, color: '#053B4A' }}>Close</ThemedText>
+                            </ThemedView>
+                        </TouchableOpacity>
+                    </ThemedView>
+                </ThemedView>
+            </Modal>
+
+
+
             <Image
                 source={require("@/assets/images/parent/parent-back-pattern.png")}
                 style={styles.topBackPattern}
@@ -466,7 +606,7 @@ export function FocusEditCard({ focus }: { focus: any }) {
                             <ThemedView style={styles.flexRow}>
                                 <TouchableOpacity
                                     style={styles.iconBtn}
-                                    onPress={() => setEditName(true)}
+                                    onPress={() => handleSubmit()}
                                 >
                                     <IconCancel color={'#F4A672'} style={{ width: 18, height: 18 }} />
                                 </TouchableOpacity>
@@ -576,7 +716,7 @@ export function FocusEditCard({ focus }: { focus: any }) {
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}
                         >
-                            {categories.length > 0 && categories.map((target: string, index: number) => (
+                            {categories.length > 0 && categories.map((target: any, index: number) => (
 
                                 <GradientBorderBox
                                     key={index}
@@ -586,7 +726,7 @@ export function FocusEditCard({ focus }: { focus: any }) {
                                 >
                                     <ThemedView key={index} style={[styles.flexRow]}>
                                         <ThemedText style={[styles.categoryEditText]}>
-                                            {target}
+                                            {target.name}
                                         </ThemedText>
                                         <TouchableOpacity onPress={() => handleRemoveCategory(index)}>
                                             <ThemedView style={styles.categoryEditIconContainer}>
@@ -634,20 +774,25 @@ export function FocusEditCard({ focus }: { focus: any }) {
                                     style={styles.progressBar}
                                     innerStyle={{ paddingVertical: 4 }}
                                 >
-                                    <ThemedView key={index} style={[styles.flexRow]}>
-                                        {
-                                            target?.avatar_url ?
-                                                <Image source={{ uri: target?.avatar_url }} style={styles.avatar} />
-                                                :
-                                                <IconDefaultAvatar width={35} height={35} />
+                                    <TouchableOpacity onPress={() => handleChildrenChanged(target, index)}>
+                                        <ThemedView key={index} style={[styles.flexRow]}>
+                                            {
+                                                target?.children.avatar_url ?
+                                                    <Image source={{ uri: target?.children.avatar_url }} style={styles.avatar} />
+                                                    :
+                                                    <IconDefaultAvatar width={35} height={35} />
 
-                                        }
-                                        <TouchableOpacity onPress={() => handleRemoveChild(index)}>
-                                            <ThemedView style={styles.categoryEditIconContainer}>
-                                                <IconCancel style={styles.categoryEditIcon} />
+                                            }
+                                            <ThemedView style={styles.avatarOutline}>
+                                                {target.status == "activated" ?
+                                                    <IconCheck width={20} height={20} color={"#FCFCFC"} style={styles.checkAvatar} />
+                                                    :
+                                                    <ThemedView style={styles.circle}>
+                                                    </ThemedView>
+                                                }
                                             </ThemedView>
-                                        </TouchableOpacity>
-                                    </ThemedView>
+                                        </ThemedView>
+                                    </TouchableOpacity>
                                 </GradientBorderBox>
                             ))}
                             <GradientBorderBox
@@ -668,57 +813,6 @@ export function FocusEditCard({ focus }: { focus: any }) {
 
                         </ScrollView>
                         {/* Modal for adding category/child */}
-                        {modalVisible && (
-                            <ThemedView style={{
-                                position: 'absolute',
-                                top: -50,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
-                                backgroundColor: 'rgba(0,0,0,0.4)',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                zIndex: 1000
-                            }}>
-                                <ThemedView style={{ backgroundColor: '#053B4A', borderRadius: 16, borderColor: '#add7da4d', borderWidth: 1, padding: 24, width: 300, minHeight: 200 }}>
-                                    <ThemedText style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 16, color: 'white' }}>
-                                        {modalType === 'category' ? 'Add Learning Category' : 'Add Child'}
-                                    </ThemedText>
-                                    <ScrollView horizontal style={{ maxHeight: 300 }}>
-                                        <ThemedView style={{ flexDirection: 'row', gap: 10 }}>
-                                            {modalType === 'category' && allCategories && allCategories.length > 0 &&
-                                                allCategories.map(cat => (
-                                                    <LearningTargetCard
-                                                        key={cat.id}
-                                                        target={{ ...cat, id: String(cat.id) }}
-                                                        isSelected={categories.some(t => t.trim() === (cat.name ?? '').trim())}
-                                                        onPress={() => handleTargetSelected(cat.id, cat.name)}
-                                                        checkIcon={IconCheck}
-                                                        informationIcon={IconInformation}
-                                                        handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
-                                                    />
-                                                ))}
-                                            {modalType === "child" && allChildren && allChildren.length > 0 &&
-                                                allChildren.map(child => (
-                                                    <ChildrenCard
-                                                        key={child.id}
-                                                        child={child}
-                                                        isActive={children.some(t => t.id === child.id)}
-                                                        onPress={() => handleChildSelected(child)}
-                                                    />
-                                                ))}
-
-                                        </ThemedView>
-
-                                    </ScrollView>
-                                    <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 24, alignSelf: 'flex-end' }}>
-                                        <ThemedView style={{ backgroundColor: '#F4A672', padding: 8, paddingHorizontal: 30, borderRadius: 20 }}>
-                                            <ThemedText style={{ fontWeight: 400, color: '#053B4A' }}>Close</ThemedText>
-                                        </ThemedView>
-                                    </TouchableOpacity>
-                                </ThemedView>
-                            </ThemedView>
-                        )}
                     </ThemedView>
                 </ThemedView>
             </ThemedView>
@@ -738,6 +832,23 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         flexDirection: 'column',
         gap: 5
+    },
+    deactivatedStyle: {
+        width: 35,
+        height: 35,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    circle: {
+        margin: "auto",
+        width: 35,
+        height: 37,
+        borderWidth: 2,
+        borderColor: 'rgba(122, 193, 198, 1)',
+        backgroundColor: "#053B4A",
+        borderRadius: 20,
+        padding: 0
     },
     topBackPattern: {
         width: "100%",

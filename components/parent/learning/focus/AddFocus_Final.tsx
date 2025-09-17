@@ -1,7 +1,6 @@
 import { ItemWithRightImage } from "@/components/ListItems";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { childrenData } from "@/data/childrenData";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
@@ -17,18 +16,13 @@ interface FocusData {
     name: string;
     description: string;
     targets: string[];
-    children: typeof childrenData;
+    children: any
 }
 
 export default function AddFocus_Final({
     data,
     currentStep,
     onPress }: { data: FocusData, currentStep: number, onPress: () => void }) {
-    const router = useRouter();
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
-
-    const children = childrenData;
     return (
         <ThemedView style={styles.container}>
             {/* Step Indicators */}
@@ -61,9 +55,9 @@ export default function AddFocus_Final({
                                         </ThemedText>
                                         <ThemedView style={[styles.circle, styles.checkCircle]}>
                                             <IconCheck
-                                                color={"#F4A672"}
-                                                width={24}
-                                                height={24}
+                                                color={"#F8ECAE"}
+                                                width={15}
+                                                height={15}
                                             />
                                         </ThemedView>
                                     </ThemedView>
@@ -87,9 +81,9 @@ export default function AddFocus_Final({
                             </ThemedText>
                             <ThemedView style={[styles.circle, styles.checkCircle]}>
                                 <IconCheck
-                                    color={"#F4A672"}
-                                    width={24}
-                                    height={24}
+                                    color={"#F8ECAE"}
+                                    width={15}
+                                    height={15}
                                 />
                             </ThemedView>
                         </ThemedView>
@@ -102,7 +96,7 @@ export default function AddFocus_Final({
                     </ThemedView>
                     <ThemedView style={{ flexDirection: 'row', gap: 10 }}>
                         {
-                            data.children?.map((child, index) => (
+                            data.children?.map((child: any, index: number) => (
                                 <ItemWithRightImage key={index} name={child.name} avatar={child.avatar_url} ></ItemWithRightImage>
                             ))
                         }
@@ -150,7 +144,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#fba864',
         borderRadius: 30,
-        paddingVertical: 5,
+        paddingVertical: 10,
         paddingHorizontal: 12,
         flexDirection: 'row',
         width: '100%',
@@ -205,7 +199,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(122, 193, 198, 0.2)',
         borderWidth: 1,
         borderColor: 'rgba(173, 215, 218, 0.5)',
-        borderRadius: 10,
+        borderRadius: 15,
     },
     valueText: {
         color: 'rgba(173, 215, 218, 1)',

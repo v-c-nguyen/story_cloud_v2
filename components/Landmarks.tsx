@@ -11,21 +11,13 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   landmarkContainer: {
-    width: 48,
-    height: 48,
     borderRadius: 24,
-    backgroundColor: "#F4914F",
-    borderColor: "white",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
     zIndex: 600,
   },
   image: {
-    width: 44,
-    height: 44,
-    resizeMode: 'contain',
   },
 });
 
@@ -63,7 +55,7 @@ const Landmarks = () => {
           <ThemedView style={styles.landmarkContainer}>
             {item.avatar_url ? (
               // Use SvgUri to render SVG from URL
-              <SvgUri width="44" height="44" uri={item.avatar_url} style={styles.image} />
+              <SvgUri uri={item.map_image} style={styles.image} />
 
             ) : null}
           </ThemedView>

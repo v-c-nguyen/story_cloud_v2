@@ -25,6 +25,8 @@ import {
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 import IconMusic from "@/assets/images/icons/music.svg";
+import StoryStyleModal from "@/components/Modals/StoryStyleModal";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function ListenStory() {
   const router = useRouter();
@@ -33,7 +35,6 @@ export default function ListenStory() {
   const currentStory = useStoryStore((state) => state.listeningStory);
   const setCurrentStory = useStoryStore((state) => state.setCurrentStory);
   const [loading, setLoading] = React.useState(false);
-  const modes = modesData;
   const [modalVisible, setModalVisible] = React.useState(false);
   const { activeChild, setActiveChild } = useChildrenStore();
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
@@ -41,6 +42,7 @@ export default function ListenStory() {
   const setStories = useStoryStore((state) => state.setStories);
   const stories = useStoryStore((state) => state.stories);
   const setActiveTrack = useTrackStore((state) => state.setActiveTrack);
+  const [changeMode, setChangeMode] = React.useState(true);
   const { child } = useUser();
 
   React.useEffect(() => {
@@ -85,9 +87,7 @@ export default function ListenStory() {
 
   const onNext = () => {
     setCurrentStory(stories[currentCardIndex + 1]);
-
     setCurrentCardIndex(currentCardIndex + 1);
-
     setModalVisible(false);
   };
 
@@ -110,6 +110,7 @@ export default function ListenStory() {
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={{ flex: 1, display: "flex", height: 500 }}>
         <ThemedView style={{ flex: 1, display: "flex", position: "relative" }}>
+
           <ScrollView
             style={styles.rootContainer}
             showsVerticalScrollIndicator={false}
@@ -128,6 +129,7 @@ export default function ListenStory() {
 
             <ThemedView style={styles.container}>
               {/* Dots */}
+
               <ThemedView style={styles.cardFooter}>
                 <TouchableOpacity onPress={() => router.push("./")}>
                   <IconArrowLeft
@@ -137,7 +139,10 @@ export default function ListenStory() {
                     style={styles.leftBtn}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ position: 'relative', width: 32 }} >
+                <TouchableOpacity
+                  style={{ position: 'relative', width: 32 }}
+                  onPress={() => setChangeMode(true)}
+                >
                   <IconMusic width={24} height={24} style={styles.rightBtn} />
                   <ThemedView style={{
                     position: 'absolute',

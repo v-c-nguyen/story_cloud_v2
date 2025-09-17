@@ -50,62 +50,65 @@ export default function Recommend({ activeChild, mode = "parent" }: { activeChil
                         marginVertical: 50,
                     }} />
                 ) :
-                    storiesData.length > 0 ?
-                        <ThemedView>
-                            <ScrollView
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                                onScroll={event => {
-                                    const x = event.nativeEvent.contentOffset.x;
-                                    const cardWidth = 290 + 10; // card width + gap (adjust if needed)
-                                    const index = Math.round(x / cardWidth);
-                                    setCurrentCardIndex(index);
-                                }}
-                                scrollEventThrottle={16}
-                                contentContainerStyle={styles.cardScrollContainer}
-                            >
-                                {mode == "parent" ?
-                                    storiesData
-                                        // .filter((ele) => !ele.watched)
-                                        .map((item, idx) => (
-                                            <StoryCard1
-                                                key={idx}
-                                                num={idx + 1}
-                                                story={item}
-                                                onPlay={(storyId: string) => router.push({ pathname: '/(parent)/(listen)/listenStory', params: { storyId } })}
-                                            />
-                                        )) :
-                                    storiesData
-                                        // .filter((ele) => !ele.watched)
-                                        .map((item, idx) => (
-                                            <StoryCard3
-                                                key={idx}
-                                                num={idx + 1}
-                                                story={item}
-                                                onPlay={(storyId: string) => router.push({ pathname: '/(kid)/(listen)/listenStory', params: { storyId } })}
-                                            />
-                                        ))
-                                }
+                    storiesData.length <= 0 && !loading ? (
+                        <ThemedText style={{ color: mode == "parent" ? '#ffffff7a' : "#053B4A", textAlign: 'center', marginVertical: 20 }}> no recommeded data </ThemedText>
+                    ) :
+                        storiesData.length > 0 ?
+                            <ThemedView>
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    onScroll={event => {
+                                        const x = event.nativeEvent.contentOffset.x;
+                                        const cardWidth = 290 + 10; // card width + gap (adjust if needed)
+                                        const index = Math.round(x / cardWidth);
+                                        setCurrentCardIndex(index);
+                                    }}
+                                    scrollEventThrottle={16}
+                                    contentContainerStyle={styles.cardScrollContainer}
+                                >
+                                    {mode == "parent" ?
+                                        storiesData
+                                            // .filter((ele) => !ele.watched)
+                                            .map((item, idx) => (
+                                                <StoryCard1
+                                                    key={idx}
+                                                    num={idx + 1}
+                                                    story={item}
+                                                    onPlay={(storyId: string) => router.push({ pathname: '/(parent)/(listen)/listenStory', params: { storyId } })}
+                                                />
+                                            )) :
+                                        storiesData
+                                            // .filter((ele) => !ele.watched)
+                                            .map((item, idx) => (
+                                                <StoryCard3
+                                                    key={idx}
+                                                    num={idx + 1}
+                                                    story={item}
+                                                    onPlay={(storyId: string) => router.push({ pathname: '/(kid)/(listen)/listenStory', params: { storyId } })}
+                                                />
+                                            ))
+                                    }
 
-                            </ScrollView>
+                                </ScrollView>
 
-                            {/* Pagination Dots */}
-                            <ThemedView style={styles.pagination}>
-                                {storiesData.map((_, idx) => (
-                                    <ThemedView
-                                        key={idx}
-                                        style={[
-                                            styles.dot,
-                                            idx === currentCardIndex && styles.activeDot,
-                                        ]}
-                                    />
-                                ))}
+                                {/* Pagination Dots */}
+                                <ThemedView style={styles.pagination}>
+                                    {storiesData && storiesData.length > 1 && storiesData.map((_, idx) => (
+                                        <ThemedView
+                                            key={idx}
+                                            style={[
+                                                styles.dot,
+                                                idx === currentCardIndex && styles.activeDot,
+                                            ]}
+                                        />
+                                    ))}
+                                </ThemedView>
                             </ThemedView>
-                        </ThemedView>
-                        :
-                        <ThemedView style={{ flexDirection: 'row', width: '100%', marginVertical: 20, justifyContent: 'center' }}>
-                            <ThemedText style={{ color: '#ffffff7a' }}> no recommended data </ThemedText>
-                        </ThemedView>
+                            :
+                            <ThemedView style={{ flexDirection: 'row', width: '100%', marginVertical: 20, justifyContent: 'center' }}>
+                                <ThemedText style={{ color: '#ffffff7a' }}> no recommended data </ThemedText>
+                            </ThemedView>
             }
         </ThemedView>
     )

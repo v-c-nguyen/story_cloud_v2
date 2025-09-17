@@ -41,7 +41,7 @@ export default function AddFocus_First( {
                     <TextInput
                         value={name}
                         placeholder="Focus Name"
-                        placeholderTextColor={'rgba(122, 193, 198, 0.2)'}
+                        placeholderTextColor={'#7ac1c679'}
                         editable={true}
                         onChangeText={setName}
                         style={styles.input}
@@ -56,7 +56,7 @@ export default function AddFocus_First( {
                     <TextInput
                         value={description}
                         placeholder="Description"
-                        placeholderTextColor={'rgba(122, 193, 198, 0.2)'}
+                        placeholderTextColor={'#7ac1c679'}
                         editable={true}
                         onChangeText={setDescription}
                         multiline
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#fba864',
         borderRadius: 30,
-        paddingVertical: 5,
+        paddingVertical: 10,
         paddingHorizontal: 12,
         flexDirection: 'row',
         width: '100%',
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 12,
         outlineWidth: 0,
-        color: 'white',
+        color: 'rgba(122, 193, 198, 1)',
         fontSize: 16
     },
     textarea: {
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 12,
         outlineWidth: 0,
-        color: 'rgba(122, 193, 198, 0.5)',
+        color: 'rgba(122, 193, 198, 1)',
         fontSize: 16
     },
     circle: {

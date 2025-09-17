@@ -9,13 +9,13 @@ import { useFavoritesStore } from "@/store/favoritesStore";
 import { Stack } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity
 } from "react-native";
+import { Image } from "expo-image";
 
 import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 import Header from "@/components/Header";
@@ -128,32 +128,31 @@ export default function Favourites() {
           style={styles.rootContainer}
           showsVerticalScrollIndicator={false}
         >
-          {/* Top background */}
+
           <Image
-            source={require("@/assets/images/kid/top-back-pattern.png")}
+            source={require("@/assets/images/auth/back-pattern.png")}
             style={styles.topBackPattern}
-            resizeMode="cover"
+            contentFit="cover"
           />
           <Header role="kid" mode={child?.mode} />
 
           {/* Header */}
-          <ThemedText style={styles.headerTitle}>All your favorites in one easy place</ThemedText>
+          <ThemedText style={styles.headerTitle}>All your favourites in one easy place</ThemedText>
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
             {/* Header */}
-            <ThemedView style={{ paddingTop: 25, paddingHorizontal: 16, width: '100%' }}>
-              <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>StoryCloud Series</ThemedText>
+            <ThemedView style={{ paddingTop: 25, marginTop: 15, paddingHorizontal: 16, width: '100%' }}>
               <ThemedView
                 style={styles.searchBoxStyle}
               >
@@ -169,10 +168,10 @@ export default function Favourites() {
           </ThemedView>
 
           <ThemedView style={styles.mainContent}>
-            <ThemedView style={styles.content}>
+            <ThemedView style={[styles.content, {paddingBottom: 60}]}>
               {/* Tab Bar */}
               <ThemedText style={styles.subtitle}>Stories | {favoriteStories?.length} total</ThemedText>
-              <ThemedView style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', paddingHorizontal: 16, paddingTop: 20 }}>
+              <ThemedView style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', paddingHorizontal: 16, paddingTop: 20, marginBottom: 80 }}>
                 {
                   favoriteStories.length > 0 && favoriteStories.map((story, index) => (
                     <StoryCard3 key={index} num={index + 1} story={story} />
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
   },
   topBackPattern: {
     width: "100%",
-    height: "100%",
+    height: 400,
     maxHeight: 1200,
     position: "absolute",
   },
@@ -331,7 +330,8 @@ const styles = StyleSheet.create({
     width: "100%",
     fontSize: 14,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: 5,
+    borderRadius: 25,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.2)',
     backgroundColor: '#fff',

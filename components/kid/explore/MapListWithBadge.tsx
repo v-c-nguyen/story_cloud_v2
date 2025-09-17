@@ -11,6 +11,8 @@ import { useCharactersStore } from "@/store/charactersStore";
 import CharacterSelection from "./CharacterSelection";
 
 import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+import { useLocationsStore } from "@/store/locationsStore";
+import LocationSelection from "./LocationSelecton";
 
 interface MapListWithBadgeProps {
   charactersCategories: any[];
@@ -32,6 +34,8 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
   // Use characters store for selection
   const currentCharacter = useCharactersStore((s) => s.currentKidCharacter);
   const setCurrentCharacter = useCharactersStore((s) => s.setCurrentKidCharacter);
+  const currentLocation = useLocationsStore((s) => s.currentKidLocation);
+  const setCurrentLocation = useLocationsStore((s) => s.setCurrentKidLocation);
 
   useEffect(() => {
     const targets = charactersCategories.filter((category) =>
@@ -51,10 +55,17 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
           (c) => normalize(c.name) === normalize(name)
         )
       );
+    } else if ((currentLocation as any)?.name) {
+      const name = (currentLocation as any).name;
+      setDisplayedCategories(
+        categoriesWithStories.filter(
+          (c) => normalize(c.name) === normalize(name)
+        )
+      );
     } else {
       setDisplayedCategories(categoriesWithStories);
     }
-  }, [currentCharacter, categoriesWithStories]);
+  }, [currentCharacter, currentLocation, categoriesWithStories]);
 
   // using shared normalize
 
@@ -68,42 +79,48 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
   }
   return (
     <ThemedView style={{ paddingBottom: 55 }}>
-      {(currentCharacter as any)?.name
+      {(currentLocation as any)?.name
         ? displayedCategories &&
         displayedCategories.length > 0 && (
-          <CharacterSelection
-            currentCharacter={currentCharacter}
-            setCurrentCharacter={setCurrentCharacter}
+          <LocationSelection
+            currentLocation={displayedCategories[0]}
+            setCurrentLocation={setCurrentLocation}
           />
         )
-        : displayedCategories.map((category, index) => (
-          <ThemedView key={index}>
-            <ThemedView style={styles.headerTitleContainer}>
-              <SectionHeader
-                avatar={
-                  (category as any)?.avatar_url
-                    ? { uri: category.avatar_url }
-                    : require("@/assets/images/avatars/dano_badger.png")
-                }
-                title={category.name}
-                desc={
-                  mode == "parent"
-                    ? category.description_parent
-                    : category.description_kid
-                }
-                categories={charactersCategories}
-                link="continue"
+        :
+        (currentCharacter as any)?.name
+          ? displayedCategories &&
+          displayedCategories.length > 0 && (
+            <CharacterSelection
+              currentCharacter={currentCharacter}
+              setCurrentCharacter={setCurrentCharacter}
+            />
+          )
+          : displayedCategories.map((category, index) => (
+            <ThemedView key={index}>
+              <ThemedView style={styles.headerTitleContainer}>
+                <SectionHeader
+                  avatar={
+                    (category as any)?.avatar_url
+                      ? { uri: category.avatar_url }
+                      : require("@/assets/images/avatars/dano_badger.png")
+                  }
+                  title={category.name}
+                  desc={category.description_kid ?? category.description_narrative
+                  }
+                  categories={charactersCategories}
+                  link="continue"
+                />
+              </ThemedView>
+              <StoryItems
+                key={index}
+                seriesCategory={category.name}
+                tag="characters"
+                mode="parent"
+                charactersData={category}
               />
             </ThemedView>
-            <StoryItems
-              key={index}
-              seriesCategory={category.name}
-              tag="characters"
-              mode="parent"
-              charactersData={category}
-            />
-          </ThemedView>
-        ))}
+          ))}
     </ThemedView>
   );
 };

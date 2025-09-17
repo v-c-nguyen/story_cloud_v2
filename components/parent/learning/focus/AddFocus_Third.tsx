@@ -8,7 +8,7 @@ import { FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
 import StepIndicator_Focus from "./StepIndecator";
 import GradientText from '@/components/ui/GradientText';
 
-import IconDoc from "@/assets/images/parent/icon-doc.svg"
+import IconHappy from "@/assets/images/parent/icon-happy.svg"
 import IconArrowRight from "@/assets/images/icons/arrow-right.svg"
 
 interface Child {
@@ -20,9 +20,7 @@ interface Child {
 }
 
 export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: number, currentStep: number, onPress: (children: Child[]) => void }) {
-    const router = useRouter();
     const [children, setChildren] = React.useState<Child[]>([]);
-    const [number, setNumber] = React.useState(0);
     const [activeChildren, setActiveChildren] = React.useState<Child[]>([]);
     const [loading, setLoading] = React.useState(false);
 
@@ -31,7 +29,7 @@ export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: n
             setLoading(true);
             try {
                 const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
-                const { data, error } = await supabase.functions.invoke('children/focus', {
+                const { data, error } = await supabase.functions.invoke('children', {
                     method: 'GET',
                     headers: {
                         Authorization: jwt ? `Bearer ${jwt}` : '',
@@ -39,8 +37,7 @@ export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: n
                 });
                 if (error) {
                     console.error('Error fetching children:', error.message);
-                } else if (data && Array.isArray(data.chidlrenForFocus)) {
-                    console.log("data:", data)
+                } else if (data && Array.isArray(data.data)) {
                     setChildren(data.data);
                 }
             } catch (e) {
@@ -75,7 +72,7 @@ export default function AddFocus_Third({ mode, currentStep, onPress }: { mode: n
                 {/* Form */}
                 <ThemedView style={styles.label}>
                     <ThemedView style={styles.iconContainer}>
-                        <IconDoc width={21} height={21} style={styles.labelIcon} />
+                        <IconHappy width={21} height={21} style={styles.labelIcon} />
                     </ThemedView>
                     <GradientText text="Children" />
                     <ThemedText style={styles.labelText}>| {activeChildren.length} Child</ThemedText>
@@ -141,7 +138,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#fba864',
         borderRadius: 30,
-        paddingVertical: 5,
+        paddingVertical: 10,
         paddingHorizontal: 12,
         flexDirection: 'row',
         width: '100%',

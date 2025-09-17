@@ -10,7 +10,6 @@ import { useThemesStore } from "@/store/themesStore";
 import { Stack } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -18,18 +17,24 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { Image } from "expo-image";
 import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
 import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 import Header from "@/components/Header";
 import { useUser } from "@/app/lib/UserContext";
+import IconSeries from "@/assets/images/parent/series.svg"
+import IconCollections from "@/assets/images/parent/collections.svg"
+import IconMap from "@/assets/images/parent/map.svg"
+import IconThemes from "@/assets/images/parent/themes.svg"
+import IconCharacters from "@/assets/images/parent/characters.svg"
 
 const cardsData = [
-  { color: '#FFFFFF', icon: require('@/assets/images/parent/series.png'), text: 'Series' },
-  { color: '#F8ECAE', icon: require('@/assets/images/parent/collections.png'), text: 'Collections' },
-  { color: '#ADD7DA', icon: require('@/assets/images/parent/map.png'), text: 'Map' },
-  { color: '#7AC1C6', icon: require('@/assets/images/parent/themes.png'), text: 'Themes' },
-  { color: '#053B4A', icon: require('@/assets/images/parent/characters.png'), text: 'Characters' },
+  { color: '#FFFFFF', icon: IconSeries, text: 'Series' },
+  { color: '#F8ECAE', icon: IconCollections, text: 'Collections' },
+  { color: '#ADD7DA', icon: IconMap, text: 'Map' },
+  { color: '#7AC1C6', icon: IconThemes, text: 'Themes' },
+  { color: '#053B4A', icon: IconCharacters, text: 'Characters' },
 ];
 
 export default function Themes() {
@@ -130,13 +135,12 @@ export default function Themes() {
           style={styles.rootContainer}
           showsVerticalScrollIndicator={false}
         >
-          {/* Top background */}
-          <Image
-            source={require("@/assets/images/kid/top-back-pattern.png")}
-            style={styles.topBackPattern}
-            resizeMode="cover"
-          />
 
+          <Image
+            source={require("@/assets/images/auth/back-pattern.png")}
+            style={styles.topBackPattern}
+            contentFit="cover"
+          />
           <Header role="kid" mode={child?.mode} />
 
           {/* Header */}
@@ -147,16 +151,15 @@ export default function Themes() {
             <Image
               source={require("@/assets/images/kid/cloud-group-far.png")}
               style={styles.imgCloudFar}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <Image
               source={require("@/assets/images/kid/cloud-group-near.png")}
               style={styles.imgCloudNear}
-              resizeMode="cover"
+              contentFit="cover"
             />
             {/* Header */}
-            <ThemedView style={{ paddingTop: 25, paddingHorizontal: 16, width: '100%' }}>
-              <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>StoryCloud Series</ThemedText>
+            <ThemedView style={{ paddingTop: 25, marginTop: 30, paddingHorizontal: 16, width: '100%' }}>
               <ThemedView
                 style={styles.searchBoxStyle}
               >
@@ -219,7 +222,7 @@ const styles = StyleSheet.create({
   },
   topBackPattern: {
     width: "100%",
-    height: "100%",
+    height: 400,
     maxHeight: 1200,
     position: "absolute",
   },
@@ -333,7 +336,8 @@ const styles = StyleSheet.create({
     width: "100%",
     fontSize: 14,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: 5,
+    borderRadius: 25,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.2)',
     backgroundColor: '#fff',

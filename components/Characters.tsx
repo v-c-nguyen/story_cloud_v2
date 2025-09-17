@@ -11,20 +11,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   characterContainer: {
-    width: 48,
-    height: 48,
     borderRadius: 24,
-    backgroundColor: "#7A4FF4",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: "white",
-    borderWidth: 2,
     zIndex: 600,
   },
   image: {
-    width: 48,
-    height: 48,
-    resizeMode: 'contain',
   },
   // Static styles for 10 character positions with 'top' values in the 30-80 range
 });
@@ -63,7 +55,7 @@ const Characters = () => {
           <ThemedView style={styles.characterContainer}>
             {item.avatar_url ? (
               // Use SvgUri to render SVG from URL
-              <SvgUri width="44" height="44" uri={item.avatar_url} style={styles.image} />
+              <SvgUri  uri={item.profile_image} style={styles.image} />
 
             ) : null}
           </ThemedView>

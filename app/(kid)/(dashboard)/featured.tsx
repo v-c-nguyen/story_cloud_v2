@@ -25,11 +25,9 @@ export default function FeaturedAdventuresScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{
+        headerShown: false
+      }} />
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           style={styles.rootContainer}
@@ -43,9 +41,7 @@ export default function FeaturedAdventuresScreen() {
           />
           <Header role="kid" mode={child?.mode}></Header>
           {/* Header */}
-          <ThemedText style={styles.headerTitle}>
-            Featured Adventures
-          </ThemedText>
+          <ThemedText style={styles.headerTitle}>Featured Adventures</ThemedText>
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
@@ -59,26 +55,24 @@ export default function FeaturedAdventuresScreen() {
               style={styles.imgCloudNear}
               contentFit="cover"
             />
-
-            <Link href="../">
-              <ThemedView style={[styles.backWrap]}>
-                <IconArrowLeft
-                  width={20}
-                  height={20}
-                  color={"#053B4A"}
-                  style={styles.imgArrowLeft}
-                />
-                <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
-              </ThemedView>
-
-            </Link>
-
+            <ThemedView style={{ flexDirection: "row", justifyContent: "center", marginTop: 60 }}>
+              <Link href="../">
+                <ThemedView style={[styles.backWrap]}>
+                  <IconArrowLeft
+                    width={21}
+                    height={21}
+                    color={"#053B4A"}
+                  />
+                  <ThemedText style={styles.backText}>Back to Dashboard</ThemedText>
+                </ThemedView>
+              </Link>
+            </ThemedView>
           </ThemedView>
           {/* Story List */}
           <ThemedView
             style={{
               backgroundColor: "#fcfcfc",
-              marginTop: -4,
+              marginTop: 60,
               minHeight: '100%',
               paddingBottom: 50,
               marginBottom: 40,
@@ -141,15 +135,30 @@ const styles = StyleSheet.create({
     marginTop: 67,
     marginBottom: 66,
   },
+  headerSubtitle: {
+    color: "#053B4A",
+    fontSize: 24,
+    fontWeight: "700",
+    lineHeight: 32.4,
+    textAlign: "center",
+    marginTop: 82,
+    marginBottom: 20,
+  },
+  headerCountData: {
+    color: "#048F99",
+    fontSize: 18,
+    fontWeight: "700",
+    lineHeight: 18,
+    textAlign: "center",
+    marginTop: 0,
+    marginBottom: 30,
+  },
   backWrap: {
-    marginLeft: "auto",
-    marginRight: "auto",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 10,
-    marginTop: 84,
-    marginBottom: 58,
   },
   imgArrowLeft: {
     width: 20,
@@ -184,10 +193,11 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
+    paddingTop: 16,
     paddingBottom: 24,
   },
   cardWrap: {
     marginBottom: 16,
     alignItems: "center",
-  },
+  }
 });

@@ -4,7 +4,7 @@ import { LearningTargetCard } from '@/components/LearningTargetCard';
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import React from "react";
-import { Image, Modal, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Image, Modal, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import StepIndicator_Focus from "./StepIndecator";
 import GradientText from '@/components/ui/GradientText';
 
@@ -92,50 +92,55 @@ export default function AddFocus_Second({ currentStep, onPress }: { currentStep:
                     </ThemedView>
                 </ThemedView>
                 {loading ? (
-                    <ThemedText>Loading learning categories...</ThemedText>
+                    <ThemedView>
+                        <ActivityIndicator color="#ffffff" style={{ zIndex: 999, marginTop: 5, marginBottom: 25 }} />
+                    </ThemedView>
                 ) : (
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={styles.scrollConainer}
-                        onScroll={event => {
-                            const x = event.nativeEvent.contentOffset.x;
-                            const cardWidth = 225 + 15; // card width + gap (adjust if needed)
-                            const index = Math.round(x / cardWidth);
-                            setCurrentCardIndex(index);
-                        }}
-                        scrollEventThrottle={16}
-                    >
-                        {/* Learning Target Card */}
-                        {learningTargets.length > 0 && learningTargets.map((target, index) => {
-                            const isSelected = selectedTargets.some(t => t.id === target.id);
-                            return (
-                                <LearningTargetCard
-                                    key={target.id}
-                                    target={target}
-                                    isSelected={isSelected}
-                                    onPress={() => handleTargetSelected(target)}
-                                    checkIcon={IconCheck}
-                                    informationIcon={IconInformation}
-                                    handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
+                    <ThemedView>
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={styles.scrollConainer}
+                            onScroll={event => {
+                                const x = event.nativeEvent.contentOffset.x;
+                                const cardWidth = 225 + 15; // card width + gap (adjust if needed)
+                                const index = Math.round(x / cardWidth);
+                                setCurrentCardIndex(index);
+                            }}
+                            scrollEventThrottle={16}
+                        >
+                            {/* Learning Target Card */}
+                            {learningTargets.length > 0 && learningTargets.map((target, index) => {
+                                const isSelected = selectedTargets.some(t => t.id === target.id);
+                                return (
+                                    <LearningTargetCard
+                                        key={target.id}
+                                        target={target}
+                                        isSelected={isSelected}
+                                        onPress={() => handleTargetSelected(target)}
+                                        checkIcon={IconCheck}
+                                        informationIcon={IconInformation}
+                                        handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
+                                    />
+                                );
+                            })}
+                        </ScrollView>
+                        {/* Pagination Dots */}
+                        <ThemedView style={styles.pagination}>
+                            {learningTargets.map((_, idx) => (
+                                <ThemedView
+                                    key={idx}
+                                    style={[
+                                        styles.dot,
+                                        idx === currentCardIndex && styles.activeDot,
+                                    ]}
                                 />
-                            );
-                        })}
-                    </ScrollView>
+                            ))}
+                        </ThemedView>
+                    </ThemedView>
                 )}
 
-                {/* Pagination Dots */}
-                <ThemedView style={styles.pagination}>
-                    {learningTargets.map((_, idx) => (
-                        <ThemedView
-                            key={idx}
-                            style={[
-                                styles.dot,
-                                idx === currentCardIndex && styles.activeDot,
-                            ]}
-                        />
-                    ))}
-                </ThemedView>
+
 
                 <TouchableOpacity
                     style={styles.button}
@@ -179,7 +184,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#fba864',
         borderRadius: 30,
-        paddingVertical: 5,
+        paddingVertical: 10,
         paddingHorizontal: 12,
         flexDirection: 'row',
         width: '100%',

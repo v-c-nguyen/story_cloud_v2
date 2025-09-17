@@ -48,7 +48,7 @@ const LearningModuleModal = ({ target, onCancel }: { target: any, onCancel: (() 
                         {
                             target?.learning_outcomes && target?.learning_outcomes?.length > 0 && target?.learning_outcomes
                                 .map((item: any, index: number) => (
-                                    <ThemedText style={[styles.modeDescription, { marginBottom: 5 }]}>
+                                    <ThemedText key={index} style={[styles.modeDescription, { marginBottom: 5 }]}>
                                         {item}
                                     </ThemedText>
                                 ))
@@ -62,7 +62,7 @@ const LearningModuleModal = ({ target, onCancel }: { target: any, onCancel: (() 
                         {
                             target?.learning_modules && target?.learning_modules?.length > 0 && target?.learning_modules
                                 .map((item: any, index: number) => (
-                                    <ThemedText style={[styles.modeDescription, { marginBottom: 5 }]}>
+                                    <ThemedText key={index} style={[styles.modeDescription, { marginBottom: 5 }]}>
                                         {item}
                                     </ThemedText>
                                 ))

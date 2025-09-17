@@ -18,10 +18,10 @@ interface CardProps extends Card {
   onPress: () => void;
 }
 
-const Card = ({ color, icon, text, selected, onPress }: CardProps) => (
+const Card = ({ color, icon:Icon, text, selected, onPress }: CardProps) => (
   <ThemedView style={[styles.card, { backgroundColor: color }, selected && styles.selectedCard]}>
     <ThemedView style={[styles.circle, !selected && { display: 'none' }]} />
-    <Image source={icon} style={[styles.icon, selected && styles.selectedIcon]} tintColor={selected ? '#ffffff' : color == '#053B4A' ? '#ADD7DA' : '#053B4A'} />
+    <Icon width={60} height={60} style={[ selected && styles.selectedIcon]} color={selected ? '#ffffff' : color == '#053B4A' ? '#ADD7DA' : '#053B4A'} />
     <ThemedText style={[styles.text, color == "#053B4A" && { color: '#ADD7DA' }, selected && { color: '#053B4A' }]}>{text}</ThemedText>
     <TouchableOpacity style={StyleSheet.absoluteFill} onPress={onPress} />
   </ThemedView>
@@ -133,10 +133,6 @@ const styles = StyleSheet.create({
     color: '#053B4A',
     fontSize: 14,
     fontWeight: '400',
-  },
-  icon: {
-    width: 60,
-    height: 60,
   },
   selectedIcon: {
     tintColor: '#ffffff',
