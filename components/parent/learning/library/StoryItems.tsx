@@ -46,7 +46,7 @@ const StoryItems: React.FC<StoryItemsProps> = ({
       >
         {/* Parent Mode Learning --- Stories */}
         {tag == "stories" &&
-          seriesCategories && seriesCategories.stories
+          seriesCategories?.stories.length > 0 && seriesCategories.stories
             .map((item: any, idx: number) => (
               <StoryCard1
                 key={idx}
@@ -65,13 +65,13 @@ const StoryItems: React.FC<StoryItemsProps> = ({
         {tag == "series" &&
           mode == "parent" &&
           filter != "stories" &&
-          seriesCategories && seriesCategories.series
+          seriesCategories?.series.length > 0 && seriesCategories.series
             .map((item: any, idx: number) => <SeriesCard_Parent key={idx} series={item} />)}
 
         {tag == "series" &&
           mode == "parent" &&
           filter != "series" &&
-          seriesCategories && seriesCategories.stories
+          seriesCategories?.stories.length > 0 && seriesCategories.stories
             .map((item: any, idx: number) =>
               <StoryCard1
                 key={idx}

@@ -22,28 +22,37 @@ export default function ContentPreferences({
     setModalVisible: (visible: boolean) => { },
   }) {
   const [selectedAge, setSelectedAge] = useState("");
+  const [activeUser, setActiveUser] = useState<any>(null);
   const [selectedStyle, setSelectedStyle] = useState("");
   const [limitType, setLimitType] = useState("Daily");
   const [selectedLimit, setSelectedLimit] = useState("2 hr");
   // 2 hrs, 5 hrs, 10 hrs, 15hrs
   // Fetch preferences from DB on mount
+
   useEffect(() => {
-    async function fetchPreferences() {
+    // Prefill parent info when user changes
+    async function getUserPreferences() {
       const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
-      const result = await fetch('https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/preferences/getOne', {
+      const { data: { user }, error: authError } = await supabase.auth.getUser(jwt);
+      setActiveUser(user);
+      const { data, error } = await supabase.functions.invoke(`preferences/getOne/${user?.id}`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: jwt ? `Bearer ${jwt}` : '',
-        }
+        },
       });
-      const data = await result.json();
-      setSelectedAge(data.data?.age);
-      setSelectedStyle(data.data?.style);
+      if (error) {
+        alert('Error fetching children:' + error.message);
+        return;
+      }
+      if (data) {
+        setSelectedAge(data.data?.age);
+        setSelectedStyle(data.data?.style);
+      }
     }
-
-    fetchPreferences();
+    getUserPreferences()
   }, []);
+
 
 
   // Get user from context
@@ -60,11 +69,13 @@ export default function ContentPreferences({
         },
         body: JSON.stringify({
           age_group: selectedAge,
-          story_style: selectedStyle
+          story_style: selectedStyle,
+          kid_id: user?.id
         })
       });
     }
-    updatePreferencesEdge();
+    if (selectedAge || selectedStyle)
+      updatePreferencesEdge();
   }, [selectedAge, selectedStyle]);
 
   return (

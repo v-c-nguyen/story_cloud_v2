@@ -6,11 +6,11 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
-  Image,
   StyleSheet,
   TouchableOpacity,
   ViewToken,
 } from "react-native";
+import { Image } from "expo-image";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useListenStore } from "@/store/listenStore";
@@ -147,7 +147,7 @@ export default function SeriesCarousel({
                     </ThemedText>
                   </ThemedView>
                   <ThemedText style={styles.adventureHeader}>
-                    {item?.stories?.seriesCategory || ""}
+                    {item?.stories?.series || ""}
                   </ThemedText>
                   <ThemedText style={styles.mainTitle}>
                     {item?.stories?.storyTitle || ""}
@@ -159,10 +159,7 @@ export default function SeriesCarousel({
                 <ThemedView style={{ width: "100%", height: 250 }}>
                   <ThemedView style={styles.imageWrap}>
                     <Image
-                      source={
-                        item?.stories?.image ??
-                        require("@/assets/images/parent/sample-card-image.png")
-                      }
+                      source={item?.stories?.featuredIllustration ? item.stories.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
                       style={styles.cardImage}
                       resizeMode="cover"
                     />
@@ -229,7 +226,7 @@ export default function SeriesCarousel({
               </ThemedView>
             )}
           />
-          { recents && recents.length > 1 &&
+          {recents && recents.length > 1 &&
             <ThemedView style={styles.cardFooter}>
               <TouchableOpacity onPress={handleLeftArrow}>
                 <IconArrowLeft

@@ -68,6 +68,7 @@ export default function StorylandMapLibrary() {
 
         } else if (data && Array.isArray(data)) {
           setCharacters(data);
+          setCategory(data)
         }
       } catch (e) {
         console.error('Error fetching map regions:', e);
@@ -142,7 +143,6 @@ export default function StorylandMapLibrary() {
   }
 
   function handleCharacterSelected(item: string) {
-    console.log("item::", item)
     if (!setCurrentCharacter) return;
     // Find matching character object
     const found = categories.find(
@@ -271,6 +271,7 @@ export default function StorylandMapLibrary() {
                       setActiveTab={setActiveTab} 
                       characterLoading={characterLoading}
                       landmarkLoading={landmarkLoading}
+                      mode="parent"
                     />
                   </ThemedView>
                 </ThemedView>

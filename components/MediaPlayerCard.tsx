@@ -4,11 +4,12 @@ import { useTrackStore } from '@/store/trackStore';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
 import React, { useEffect, useRef, useState } from "react";
-import { Image, Modal, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Modal, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useListenStore } from '@/store/listenStore';
 import GradientSlider from './ui/GradientSlider';
+import { Image } from "expo-image"
 
 import IconPlay from "@/assets/images/icons/play.svg";
 import IconForward from "@/assets/images/icons/forward.svg";
@@ -37,7 +38,6 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
     const setActiveTrack = useTrackStore(state => state.setActiveTrack)
     const setPlayed = useTrackStore(state => state.setPlayed)
     const setDuration = useTrackStore(state => state.setDuration)
-    const setWatched = useTrackStore(state => state.setWatched)
     const story = useStoryStore((state) => state.listeningStory)
     const [isLoaded, setIsLoaded] = useState(false);
     const setCurrentStory = useStoryStore((state) => state.setCurrentStory);
@@ -226,11 +226,11 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                 <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
                     {/* Overlay player UI matching attached design */}
                     <Image
-                        source={require("@/assets/images/parent/sample-card-image.png")}
+                        source={story?.featuredIllustration ? story.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
                         style={{ position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.7 }}
                     />
                     <View style={{ position: 'absolute', top: 40, left: 0, right: 0, alignItems: 'center' }}>
-                        <Text style={{ color: '#FFE7A0', fontWeight: 'bold', fontSize: 18 }}>{story?.seriesCategory}</Text>
+                        <Text style={{ color: '#FFE7A0', fontWeight: 'bold', fontSize: 18 }}>{story?.series}</Text>
                         <Text style={{ color: 'white', fontSize: 16, marginTop: 4 }}>
                             #{currentIndex + 1} {story?.storyTitle}
                         </Text>
@@ -238,13 +238,13 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                     {/* Controls row */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 120 }}>
                         <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={() => handleSeek(-10)}>
-                            <IconBackward width={60} height={60}/>
+                            <IconBackward width={60} height={60} />
                         </TouchableOpacity>
                         <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={handlePlayPause}>
-                            {isPlay ? <IconPause width={85} height={85}/> : <IconPlay width={85} height={85}/>}
+                            {isPlay ? <IconPause width={85} height={85} /> : <IconPlay width={85} height={85} />}
                         </TouchableOpacity>
                         <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={() => handleSeek(10)}>
-                            <IconForward width={60} height={60}/>
+                            <IconForward width={60} height={60} />
                         </TouchableOpacity>
                     </View>
                     {/* Bottom bar */}
@@ -268,7 +268,7 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                     </View>
                 </View>
             </Modal>
-            
+
             {/* Fullscreen Modal */}
             <Modal visible={isFullscreen && isPlay} animationType="fade" transparent={true}>
                 <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
@@ -283,7 +283,7 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                         }}
                     >
                         <Image
-                            source={require("@/assets/images/parent/sample-card-image.png")}
+                            source={story?.featuredIllustration ? story.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
                             style={{ width: '100%', aspectRatio: 16 / 9, resizeMode: 'stretch', borderColor: 'rgba(250, 248, 248, 0.2)' }}
                         />
                     </TouchableOpacity>
@@ -293,7 +293,7 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
             <View style={[styles.container, orientation == 'landscape' && { display: 'none' }]}>
                 {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.headerAdventure}>{story?.seriesCategory}</Text>
+                    <Text style={styles.headerAdventure}>{story?.series}</Text>
                     <Text style={styles.headerTitle}>
                         <Text style={styles.headerNumber}>#{currentIndex + 1} </Text>
                         <Text style={styles.headerTitleItalic}>{story?.storyTitle}</Text>
@@ -301,7 +301,7 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                 </View>
                 {/* Image */}
                 <Image
-                    source={require("@/assets/images/parent/sample-card-image.png")} // Replace with your image
+                    source={story?.featuredIllustration ? story.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
                     style={[styles.cardImage, isFullscreen && { width: '100%', borderRadius: 0, borderWidth: 0 }]}
                     resizeMode="cover"
                 />
@@ -351,7 +351,7 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
                         {
-                            isPlay ? <IconPause width={85} height={85}/> : <IconPlay width={85} height={85}/>
+                            isPlay ? <IconPause width={85} height={85} /> : <IconPlay width={85} height={85} />
                         }
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.sideButton} onPress={() => handleSeek(10)}>

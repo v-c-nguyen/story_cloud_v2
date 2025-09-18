@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
   selectionHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 12,
   },
   avatarImg: {

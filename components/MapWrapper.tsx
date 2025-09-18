@@ -17,13 +17,15 @@ interface MapWrapperProps {
   setActiveTab: (tab: string) => void;
   characterLoading: boolean;
   landmarkLoading: boolean;
+  mode: string;
 }
 
 const MapWrapper = ({
   activeTab,
   setActiveTab,
   characterLoading,
-  landmarkLoading
+  landmarkLoading,
+  mode
 }: MapWrapperProps
 ) => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -126,8 +128,8 @@ const MapWrapper = ({
                 source={activeTab === "characters" ? { uri: characterMapURL } : { uri: landmarMapURL }}
                 style={styles.mapImage}
               />
-              {activeTab === 'characters' && < Characters mode='parent' />}
-              {activeTab === 'landmarks' && <Landmarks mode='parent' />}
+              {activeTab === 'characters' && < Characters mode={mode} />}
+              {activeTab === 'landmarks' && <Landmarks mode={mode} />}
             </ScrollView>
             {/* </GestureDetector> */}
           </ThemedView>

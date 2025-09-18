@@ -5,7 +5,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
 import IconPlus from "@/assets/images/parent/icon-plus.svg"
@@ -70,7 +71,7 @@ export default function storyDetail() {
                             height: '100%'
                         }
                         ]}
-                        resizeMode="cover"
+                        contentFit="cover"
                     />
 
                     <Header role="parent" theme="dark"></Header>
@@ -86,7 +87,10 @@ export default function storyDetail() {
                         <ThemedView style={styles.mainCard}>
                             {/* Top Image */}
                             <Image
-                                source={require("@/assets/images/parent/sample-card-image.png")}
+                                source={currentStory?.featuredIllustration ? 
+                                            currentStory.featuredIllustration
+                                            :
+                                            require("@/assets/images/parent/sample-card-image.png")}
                                 style={styles.cardImg}
                             />
 
@@ -98,7 +102,7 @@ export default function storyDetail() {
                                     </ThemedText>
                                 </ThemedView>
                                 <ThemedText style={styles.adventureHeader}>
-                                    {currentStory?.seriesCategory || ""}
+                                    {currentStory?.series || ""}
                                 </ThemedText>
                                 <ThemedText style={styles.mainTitle}>
                                     {currentStory?.storyTitle || ""}

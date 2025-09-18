@@ -24,6 +24,7 @@ import {
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 import IconMusic from "@/assets/images/icons/music.svg";
+import IconMoon from "@/assets/images/parent/moon.svg"
 import StoryStyleModal from "@/components/Modals/StoryStyleModal";
 
 export default function ListenStory() {
@@ -41,6 +42,7 @@ export default function ListenStory() {
   const setStories = useStoryStore((state) => state.setStories);
   const stories = useStoryStore((state) => state.stories);
   const setActiveTrack = useTrackStore((state) => state.setActiveTrack);
+  const [activeStyle, setActiveStyle] = React.useState("play");
   const [styleModalVisible, setStyleModalVisible] = React.useState(false);
 
   React.useEffect(() => {
@@ -116,7 +118,10 @@ export default function ListenStory() {
             animationType="fade"
             onRequestClose={() => setStyleModalVisible(false)}
           >
-            <StoryStyleModal goBack={() => setStyleModalVisible(false)}/>
+            <StoryStyleModal 
+              activeStyle={activeStyle}
+              setActiveStyle={setActiveStyle}
+              goBack={() => setStyleModalVisible(false)} />
           </Modal>
           <ScrollView
             style={styles.rootContainer}
@@ -149,7 +154,12 @@ export default function ListenStory() {
                   style={{ position: 'relative', width: 32 }}
                   onPress={() => setStyleModalVisible(true)}
                 >
-                  <IconMusic width={24} height={24} style={styles.rightBtn} />
+                  {
+                    activeStyle === "play" ?
+                      <IconMusic width={24} height={24} color={"white"} style={styles.rightBtn} />
+                      :
+                      <IconMoon width={24} height={24} color={"white"} style={[styles.rightBtn]} />
+                  }
                   <ThemedView style={{
                     position: 'absolute',
                     width: 20,

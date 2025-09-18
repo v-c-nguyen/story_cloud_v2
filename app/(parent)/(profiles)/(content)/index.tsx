@@ -6,7 +6,7 @@ import { TabBar } from '@/components/TabBar';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Stack, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -17,6 +17,7 @@ import {
 import { Image } from 'expo-image';
 import IconProfile from "@/assets/images/parent/footer/icon-profile.svg";
 import { tabData } from '@/data/parent/dashboardData';
+import supabase from '@/app/lib/supabase';
 
 const starIcon = require('@/assets/images/parent/icon-star.png')
 
@@ -50,6 +51,7 @@ export default function Content() {
         if (tabId === 'account') router.navigate("/(parent)/(profiles)/(account)")
         setActiveTab(tabId);
     };
+
 
     return (
 

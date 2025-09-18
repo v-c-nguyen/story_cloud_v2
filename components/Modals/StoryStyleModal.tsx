@@ -9,7 +9,16 @@ import IconMusic from "@/assets/images/parent/music_outline.svg"
 import IconMoon from "@/assets/images/parent/moon.svg"
 import { ModalContent } from '@/app/(parent)/(profiles)/(content)';
 
-const StoryStyleModal = ({ goBack }: { goBack: () => void }) => {
+interface StoryStyleModalProps { 
+    activeStyle: string;
+    setActiveStyle: (style: string) => void;
+    goBack: () => void;
+}
+
+const StoryStyleModal = ({ 
+    activeStyle,
+    setActiveStyle,
+    goBack }: StoryStyleModalProps) => {
     const [style, setStyle] = React.useState(0);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#053B4A' }}>
@@ -32,17 +41,17 @@ const StoryStyleModal = ({ goBack }: { goBack: () => void }) => {
                     <ThemedView style={styles.setTabStyle}>
                         <TouchableOpacity
                             style={[styles.setTabItem]}
-                            onPress={() => setStyle(0)}
+                            onPress={() => setActiveStyle("story")}
                         >
-                            <IconMoon width={24} height={24} style={style == 0 ? styles.activeTab : {}} />
-                            <ThemedText>Story Time</ThemedText>
+                            <IconMoon width={24} height={24} color={"black"} style={activeStyle == "story" ? styles.activeTab : {}} />
+                            <ThemedText style={{color: "black"}}>Story Time</ThemedText>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.setTabItem}
-                            onPress={() => setStyle(1)}
+                            onPress={() => setActiveStyle("play")}
                         >
-                            <IconMusic width={24} height={24} style={style == 1 ? styles.activeTab : {}} />
-                            <ThemedText>Play Time</ThemedText>
+                            <IconMusic width={24} height={24} color={"black"} style={activeStyle == "play" ? styles.activeTab : {}} />
+                            <ThemedText style={{color: "black"}}>Play Time</ThemedText>
                         </TouchableOpacity>
                     </ThemedView>
                 </ThemedView>
@@ -84,7 +93,7 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: "50%",
         borderColor: "#000",
-        borderWidth: 1
+        borderWidth: 2
     },
     setTabStyle: {
         flexDirection: 'row',
@@ -94,7 +103,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#ADD7DA",
         marginHorizontal: "auto",
         borderRadius: 30,
-        paddingVertical: 8,
+        paddingVertical: 5,
         marginBottom: 24,
         paddingHorizontal: 5
     },

@@ -84,6 +84,7 @@ export default function Map() {
 
                 } else if (data && Array.isArray(data)) {
                     setCharacters(data);
+                    setCategory(data)
                 }
             } catch (e) {
                 console.error('Error fetching map regions:', e);
@@ -142,7 +143,6 @@ export default function Map() {
             setCurrentCharacter(null);
         }
     }
-
 
     function handleLocationSelected(item: string) {
         if (!setCurrentLocation) return;
@@ -236,6 +236,7 @@ export default function Map() {
                                                 setActiveTab={setActiveTab}
                                                 characterLoading={characterLoading}
                                                 landmarkLoading={landmarkLoading}
+                                                mode="kid"
                                                  />
                                         </ThemedView>
                                     </ThemedView>
@@ -243,12 +244,12 @@ export default function Map() {
                                         <Image
                                             source={require("@/assets/images/kid/cloud-group-far.png")}
                                             style={styles.imgCloudFar2}
-                                            resizeMode="cover"
+                                            contentFit="cover"
                                         />
                                         <Image
                                             source={require("@/assets/images/kid/cloud-group-near.png")}
                                             style={styles.imgCloudNear2}
-                                            resizeMode="cover"
+                                            contentFit="cover"
                                         />
                                     </ThemedView>
                                 </ThemedView>

@@ -2,10 +2,10 @@ import { create } from "zustand";
 
 export interface Story {
   storyId: string;
-  seriesCategory: string;
+  series: string;
   storyTitle: string;
   descriptionParent?: string;
-  image?: string;
+  featuredIllustration?: string;
   isFavourite?: boolean;
   learning_categories?: string[];
   characters?: object;

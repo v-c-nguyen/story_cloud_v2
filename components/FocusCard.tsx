@@ -458,6 +458,7 @@ export function FocusEditCard({ focus }: { focus: any }) {
     }
 
     async function handleSubmit() {
+        console.log("children:", children)
         const childrenData = {
             name: name,
             description: description,
@@ -476,9 +477,10 @@ export function FocusEditCard({ focus }: { focus: any }) {
                 }
             });
             const data = await fetchResponse.json();
-            if (fetchResponse.ok && data) {
+            if (fetchResponse.ok) {
+
                 // Add to Zustand store
-                router.push('../');
+                router.push('/(parent)/(learning)/(focus)');
                 setModalVisible(true)
 
             } else {

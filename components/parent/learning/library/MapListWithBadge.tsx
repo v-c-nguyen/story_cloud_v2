@@ -278,8 +278,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   avatarImg: {
-    height: 50,
-    width: 50,
+    height: 48,
+    width: 48,
+    borderRadius: 25,
+    position: "absolute",
+    right: 1
   },
   sectionHeader: {
     marginTop: 0,

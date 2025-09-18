@@ -30,20 +30,9 @@ export default function SeriesSelection({
   setCurrentSeries,
 }: Props) {
   const router = useRouter();
-  const stories = useStoryStore((state) => state.stories);
-  const series = useSeriesStore((state) => state.series);
-  const [filteredStories, setFilteredStories] = React.useState<any>([]);
-  const [filteredSeries, setFilteredSeries] = React.useState<any>([]);
   const [selectedItem, setSelectedItem] = React.useState<string>("all");
 
-  useEffect(() => {
-    const filtered = stories.filter((story) => {
-      return (
-        normalize(story.seriesCategory) === normalize(currentSeries?.name)
-      );
-    });
-    setFilteredStories(filtered);
-  }, [currentSeries]);
+
   return (
     <ThemedView style={styles.selectionContainer}>
       <View style={styles.detailsSection}>

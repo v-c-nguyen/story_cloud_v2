@@ -28,20 +28,13 @@ interface RecentProps {
   stories: {
     storyId: string;
     seriesCategory: string;
+    series: string;
     storyTitle: string;
     featuredIllustration: string;
   };
   duration?: number;
   played?: number;
   watched?: boolean;
-}
-
-interface CardStyle {
-  bgColor: string;
-  textColor: string;
-  subTextColor: string;
-  progressColor: string;
-  isBallonYellow: boolean;
 }
 
 const cardStyles = [
@@ -217,7 +210,7 @@ export function StoryCard({
           <ThemedText
             style={[styles.storySeries, { color: style.subTextColor }]}
           >
-            {recent.stories.seriesCategory}
+            {recent.stories.series}
           </ThemedText>
           <ThemedText style={[styles.storyTitle, { color: style.textColor }]}>
             {recent.stories.storyTitle}
@@ -335,7 +328,7 @@ export function StoryCard({
 
 interface StoryCard3Props {
   storyId: string;
-  seriesCategory: string;
+  series: string;
   storyTitle: string;
   featuredIllustration?: string;
   isFavourite?: boolean;
@@ -477,7 +470,7 @@ export function StoryCard3({
           <ThemedText
             style={[styles.storySeries, { color: style.subTextColor }]}
           >
-            {story.seriesCategory}
+            {story.series}
           </ThemedText>
           <ThemedText style={[styles.storyTitle, { color: style.textColor }]}>
             {story.storyTitle}
@@ -602,7 +595,7 @@ export function StoryCard3({
 interface StoryProps1 {
   storyId: string;
   storyTitle: string;
-  seriesCategory: string;
+  series: string;
   descriptionParent?: string;
   learning_categories?: any;
   featuredIllustration?: string;
@@ -744,7 +737,7 @@ export function StoryCard1({
                   <ThemedText
                     style={[styles.storySeries, { color: style.subTextColor }]}
                   >
-                    {story.seriesCategory}
+                    {story.series}
                   </ThemedText>
                   {/* Story Title */}
                   <ThemedText
