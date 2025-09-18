@@ -38,7 +38,7 @@ export default function CollectionSelection({
 
 
   return (
-    <ThemedView style={{ paddingBottom: 80, alignItems: "center", paddingLeft: 20, marginTop: 50 }}>
+    <ThemedView style={{ paddingBottom: 80, alignItems: "center",  marginTop: 50 }}>
       <ThemedText style={[styles.sectionTitle, { marginTop: 10, color: "#048F99", fontSize: 18 }]}>{"COLLECTION"}</ThemedText>
       <ThemedText style={[styles.sectionTitle, { marginTop: 10, textAlign: 'center' }]}>{currentCollection?.name}</ThemedText>
       <ThemedText style={[styles.sectiondesc, { padding: 20, paddingBottom: 0, marginBottom: 0, textAlign: "center" }]}>{currentCollection?.description_kid}</ThemedText>
@@ -49,7 +49,7 @@ export default function CollectionSelection({
         <IconArrowLeft
           width={24}
           height={24}
-          color={"#fcfcfc"}
+          color={"#053B4A"}
         />
         <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Explore"}</ThemedText>
       </TouchableOpacity>
@@ -63,6 +63,7 @@ export default function CollectionSelection({
           tag="collections-details"
           mode="kid"
           direction="vertical"
+          seriesData={currentCollection}
         />
       </ScrollView>
     </ThemedView>

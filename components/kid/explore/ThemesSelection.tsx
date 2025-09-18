@@ -71,21 +71,11 @@ export default function ThemesSelection({
               {(currentTheme as any)?.name}
             </ThemedText>
             <ThemedText
-              style={[styles.sectionTitle, styles.selectionTitleSmall]}
+              style={[styles.sectionTitle, styles.selectionTitleSmall, {textAlign: "center"}]}
             >
               {(currentTheme as any)?.parent}
             </ThemedText>
           </View>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setCurrentTheme && setCurrentTheme(null)}
-          >
-            <IconArrowDown
-              width={24}
-              height={24}
-              color={"#F4A672"}
-            />
-          </TouchableOpacity>
         </View>
 
         {/* Filters */}
@@ -102,7 +92,7 @@ export default function ThemesSelection({
         <IconArrowLeft
           width={24}
           height={24}
-          color={"#fcfcfc"}
+          color={"#053B4A"}
         />
         <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Explore"}</ThemedText>
       </TouchableOpacity>

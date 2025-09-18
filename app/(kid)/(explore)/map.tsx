@@ -45,6 +45,8 @@ const cardsData = [
 
 export default function Map() {
     const { child } = useUser();
+      const [characterLoading, setCharacterLoading] = React.useState(false);
+      const [landmarkLoading, setlandmarkLoading] = React.useState(false);
     const characters = useCharactersStore((s) => s.characters);
     const setCharacters = useCharactersStore((s) => s.setCharacters);
     const locations = useLocationsStore((s) => s.locations);
@@ -229,7 +231,12 @@ export default function Map() {
 
                                     <ThemedView style={styles.bottomPadding}>
                                         <ThemedView style={{ marginBottom: 80 }}>
-                                            <MapWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
+                                            <MapWrapper 
+                                                activeTab={activeTab} 
+                                                setActiveTab={setActiveTab}
+                                                characterLoading={characterLoading}
+                                                landmarkLoading={landmarkLoading}
+                                                 />
                                         </ThemedView>
                                     </ThemedView>
                                     <ThemedView style={{ position: "relative" }}>

@@ -13,7 +13,6 @@ import React, { useEffect } from "react";
 import { useCharactersStore } from "@/store/charactersStore";
 import {
   FlatList,
-  Image,
   Modal,
   SafeAreaView,
   ScrollView,
@@ -21,6 +20,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Image } from "expo-image";
+
 import CharacterSelection from "@/components/parent/learning/library/CharacterSelection";
 import normalize from "@/app/lib/normalize";
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
@@ -192,9 +193,9 @@ export default function CharactersLibrary() {
                         <Image
                           source={
                             item?.avatar_url
-                              ? { uri: item.avatar_url }
-                              : require("@/assets/images/avatars/dano_badger.png")}
+                            }
                           style={[styles.avatarImg]}
+                          contentFit="cover"
                         />
                       </View>
                       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -544,12 +545,17 @@ const styles = StyleSheet.create({
   avatarImg: {
     height: 48,
     width: 48,
+    borderRadius: 25,
+    position: "absolute",
+    right: 2,
+    bottom: 2
   },
   avatarImgContainer: {
     width: 50,
     height: 50,
     borderColor: "#ffffff",
     borderWidth: 1.5,
+    position: "relative",
     flexDirection: "row",
     justifyContent: 'center',
     alignItems: 'center',

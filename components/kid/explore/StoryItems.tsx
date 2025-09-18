@@ -86,21 +86,13 @@ const StoryItems: React.FC<StoryItemsProps> = ({
 
         {tag == "collections" &&
           mode == "kid" &&
-          series
-            .filter(
-              (story) =>
-                normalize(story.collections) === normalize(seriesCategory)
-            )
-            .map((item, idx) => <SeriesCard_Parent key={idx} series={item} />)}
+          seriesData && seriesData.series
+            .map((item: any, idx: number) => <SeriesCard_Parent key={idx} series={item} />)}
 
         {tag == "collections-details" &&
           mode == "kid" &&
-          series
-            .filter(
-              (story) =>
-                normalize(story.collections) === normalize(seriesCategory)
-            )
-            .map((item, idx) => (
+          seriesData && seriesData.series
+            .map((item: any, idx: number) => (
               <ThemedView key={idx}>
                 <SectionHeader title={item.name} desc={item.description_parent || ""} link="continue" />
                 <ScrollView horizontal>
@@ -126,6 +118,13 @@ const StoryItems: React.FC<StoryItemsProps> = ({
 
         {tag == "characters" &&
           mode == "parent" &&
+          filter != "stories" &&
+          charactersData && charactersData.series
+            .map((item: any, idx: number) => <SeriesCard_Parent key={idx} series={item} />)}
+
+        {tag == "characters" &&
+          mode == "parent" &&
+          filter != "series" &&
           charactersData && charactersData.stories
             .map((item: any, idx: number) => (
               <StoryCard1
@@ -140,6 +139,7 @@ const StoryItems: React.FC<StoryItemsProps> = ({
                 }
               />
             ))}
+
 
         {tag == "themes" &&
           mode == "parent" &&

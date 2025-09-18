@@ -49,6 +49,7 @@
         "projectId": "a231c9d7-88e3-4291-ae41-30b700e46d68"
       },
       "router": {}
-    }
+    },
+    "jsEngine": "jsc"
   }
 }

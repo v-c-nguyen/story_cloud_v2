@@ -68,7 +68,7 @@ const ThemesListWithBadge: React.FC<ThemesListWithBadgeProps> = ({
     }
   }
   return (
-    <ThemedView style={{ paddingBottom: 55 }}>
+    <ThemedView style={{ paddingBottom: 55, paddingLeft: 12 }}>
       {(currentKidTheme as any)?.name
         ? displayedCategories &&
         displayedCategories.length > 0 && (

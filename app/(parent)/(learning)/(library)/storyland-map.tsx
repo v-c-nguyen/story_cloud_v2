@@ -1,9 +1,7 @@
 
 import BottomNavBar from "@/components/BottomNavBar";
-import { SeriesCard, StoryCard2 } from "@/components/Cards";
 import Header from "@/components/Header";
 import MapWrapper from "@/components/MapWrapper";
-import { PatternBackground } from "@/components/PatternBackground";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { storyOptionsData } from "@/data/libraryData";
@@ -11,7 +9,6 @@ import { Stack, router } from "expo-router";
 import React, { useEffect } from "react";
 import {
   FlatList,
-  Image,
   Modal,
   SafeAreaView,
   ScrollView,
@@ -19,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
@@ -40,6 +38,8 @@ export default function StorylandMapLibrary() {
   const locations = useLocationsStore((s) => s.locations);
   const setLocations = useLocationsStore((s) => s.setLocations);
   const [categories, setCategory] = React.useState<any[]>([]);
+  const [characterLoading, setCharacterLoading] = React.useState(false);
+  const [landmarkLoading, setlandmarkLoading] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const storyOptions = storyOptionsData;
   const [activeItem, setActiveItem] = React.useState('Storyland Map');
@@ -52,6 +52,8 @@ export default function StorylandMapLibrary() {
 
   useEffect(() => {
     setLoading(true);
+    setCharacterLoading(true);
+    setlandmarkLoading(true);
     async function fetchCharacters() {
       try {
         const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
@@ -70,7 +72,7 @@ export default function StorylandMapLibrary() {
       } catch (e) {
         console.error('Error fetching map regions:', e);
       } finally {
-        setLoading(false);
+        setCharacterLoading(false);
       }
     }
 
@@ -92,7 +94,7 @@ export default function StorylandMapLibrary() {
       } catch (e) {
         console.error('Error fetching locations:', e);
       } finally {
-        setLoading(false);
+        setlandmarkLoading(false);
       }
     }
     fetchCharacters();
@@ -105,6 +107,9 @@ export default function StorylandMapLibrary() {
     }
   }, [activeTab])
 
+  useEffect(() => {
+    console.log(characterLoading, landmarkLoading)
+  }, [characterLoading, landmarkLoading])
 
   function handleItemSelection(item: string) {
     setActiveItem(item)
@@ -191,76 +196,82 @@ export default function StorylandMapLibrary() {
             contentContainerStyle={styles.scrollViewContent}
           >
             {/* Top background */}
-            <Image
-              source={require("@/assets/images/kid/top-back-pattern.png")}
-              style={styles.topBackPattern}
-              resizeMode="cover"
-            />
+            <ThemedView style={{ position: 'relative' }}>
+              <Image
+                source={require("@/assets/images/parent/parent-back-pattern.png")}
+                style={styles.topBackPattern}
+                contentFit="cover"
+              />
 
-            <Header icon={IconLearning} role="parent" title="Learning" theme="dark"></Header>
+              <Header icon={IconLearning} role="parent" title="Learning" theme="dark"></Header>
 
-            {/* Header */}
-            <ThemedView style={styles.topRow}>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('./(parent)/search-screen')}>
-                <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn}>
-                <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-              </TouchableOpacity>
+              {/* Header */}
+              <ThemedView style={styles.topRow}>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('./(parent)/search-screen')}>
+                  <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconBtn}>
+                  <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                </TouchableOpacity>
 
-              {/* Dropdown toggle */}
-              <TouchableOpacity
-                style={styles.dropdownToggle}
-                onPress={() => setDropdownVisible(!dropdownVisible)}
+                {/* Dropdown toggle */}
+                <TouchableOpacity
+                  style={styles.dropdownToggle}
+                  onPress={() => setDropdownVisible(!dropdownVisible)}
+                >
+                  <ThemedView style={styles.ActiveItemStyle} >
+                    <IconList width={21} height={21} />
+                  </ThemedView>
+                  <ThemedText style={styles.dropdownText}>{activeItem}</ThemedText>
+                  <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
+                </TouchableOpacity>
+              </ThemedView>
+
+
+              {/* Dropdown modal */}
+              <Modal
+                transparent
+                visible={dropdownVisible}
+                animationType="fade"
+                onRequestClose={() => setDropdownVisible(false)}
               >
-                <ThemedView style={styles.ActiveItemStyle} >
-                  <IconList width={21} height={21} />
-                </ThemedView>
-                <ThemedText style={styles.dropdownText}>{activeItem}</ThemedText>
-                <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOverlay}
+                  onPress={() => setDropdownVisible(false)}
+                  activeOpacity={1}
+                >
+                  <ThemedView style={styles.dropdownMenu}>
+                    {storyOptions.map((option, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={styles.dropdownItem}
+                        onPress={() => handleItemSelection(option)} >
+                        <ThemedView style={[{ padding: 3 }, option === activeItem && styles.ActiveItemStyle]} >
+                          <IconList
+                            color={
+                              option === activeItem
+                                ? "rgba(5, 59, 74, 1)"
+                                : "rgba(122, 193, 198, 1)"
+                            }
+                          />
+                        </ThemedView>
+                        <ThemedText style={styles.dropdownItemText}>{option}</ThemedText>
+                      </TouchableOpacity>
+                    ))}
+                  </ThemedView>
+                </TouchableOpacity>
+              </Modal>
             </ThemedView>
-
-
-            {/* Dropdown modal */}
-            <Modal
-              transparent
-              visible={dropdownVisible}
-              animationType="fade"
-              onRequestClose={() => setDropdownVisible(false)}
-            >
-              <TouchableOpacity
-                style={styles.modalOverlay}
-                onPress={() => setDropdownVisible(false)}
-                activeOpacity={1}
-              >
-                <ThemedView style={styles.dropdownMenu}>
-                  {storyOptions.map((option, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.dropdownItem}
-                      onPress={() => handleItemSelection(option)} >
-                      <ThemedView style={[{ padding: 3 }, option === activeItem && styles.ActiveItemStyle]} >
-                        <IconList
-                          color={
-                            option === activeItem
-                              ? "rgba(5, 59, 74, 1)"
-                              : "rgba(122, 193, 198, 1)"
-                          }
-                        />
-                      </ThemedView>
-                      <ThemedText style={styles.dropdownItemText}>{option}</ThemedText>
-                    </TouchableOpacity>
-                  ))}
-                </ThemedView>
-              </TouchableOpacity>
-            </Modal>
-
             {!(currentCharacter || currentLocation) &&
               (
                 <ThemedView style={styles.bottomPadding}>
-                  <ThemedView style={{ marginBottom: 80 }}>
-                    <MapWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
+                  <ThemedView>
+                    <MapWrapper 
+                      activeTab={activeTab} 
+                      setActiveTab={setActiveTab} 
+                      characterLoading={characterLoading}
+                      landmarkLoading={landmarkLoading}
+                    />
                   </ThemedView>
                 </ThemedView>
               )}
@@ -332,7 +343,8 @@ export default function StorylandMapLibrary() {
             <ThemedView style={styles.bottomPadding}>
               <MapListWithBadge
                 charactersCategories={categories}
-                loading={loading}
+                characterLoading={characterLoading}
+                landmarkLoading={landmarkLoading}
                 activeTab={activeTab}
               />
             </ThemedView>
@@ -357,18 +369,6 @@ export default function StorylandMapLibrary() {
     </GestureHandlerRootView>
   );
 }
-
-function SectionHeader({ title, desc, link }: { title: string; desc: string, link: string }) {
-  return (
-    <ThemedView >
-      <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
-      <ThemedView style={styles.sectionHeader}>
-        <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
-      </ThemedView>
-    </ThemedView>
-  );
-}
-
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
@@ -604,6 +604,8 @@ const styles = StyleSheet.create({
   avatarImg: {
     height: 48,
     width: 48,
+    position: "absolute",
+    borderRadius: 24,
   },
   avatarImgContainer: {
     width: 50,

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Image } from 'expo-image';
 import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import Characters from './Characters';
@@ -8,14 +9,21 @@ import Landmarks from './Landmarks';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
+const landmarMapURL = "https://fzmutsehqndgqwprkxrm.supabase.co/storage/v1/object/sign/resources/series_illustrations/landmarkMap.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iNjNkYWNiNy1lYWJiLTQyOTQtOGY2My03YjVlYTk2Y2JiOWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyZXNvdXJjZXMvc2VyaWVzX2lsbHVzdHJhdGlvbnMvbGFuZG1hcmtNYXAucG5nIiwiaWF0IjoxNzU4MTI5MzMyLCJleHAiOjE3ODk2NjUzMzJ9.AR_Nc2yf5OuOtCtyUxUyxFlb4fqdjJFFO8iNhaj-mR0"
+const characterMapURL = "https://fzmutsehqndgqwprkxrm.supabase.co/storage/v1/object/sign/resources/series_illustrations/characterMap.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iNjNkYWNiNy1lYWJiLTQyOTQtOGY2My03YjVlYTk2Y2JiOWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyZXNvdXJjZXMvc2VyaWVzX2lsbHVzdHJhdGlvbnMvY2hhcmFjdGVyTWFwLnBuZyIsImlhdCI6MTc1ODEyOTM1NywiZXhwIjoxNzg5NjY1MzU3fQ.X-HBakvcgx-dWlvNZtGPo3a4oZO-Rxr0poxqD2MOU_8"
 
 interface MapWrapperProps {
   activeTab: string;
-  setActiveTab: (tab: string) => void
+  setActiveTab: (tab: string) => void;
+  characterLoading: boolean;
+  landmarkLoading: boolean;
 }
 
 const MapWrapper = ({
-  activeTab, setActiveTab
+  activeTab,
+  setActiveTab,
+  characterLoading,
+  landmarkLoading
 }: MapWrapperProps
 ) => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -84,6 +92,12 @@ const MapWrapper = ({
 
   return (
     <View style={styles.container}>
+
+      <Image
+        source={require("@/assets/images/parent/parent-back-pattern.png")}
+        style={styles.topBackPattern}
+        contentFit="cover"
+      />
       <ThemedView style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tabButton, activeTab === 'characters' && styles.activeTabButton]}
@@ -98,25 +112,33 @@ const MapWrapper = ({
           <ThemedText style={[styles.tabText, activeTab === 'landmarks' && styles.activeTabText]}>Landmarks</ThemedText>
         </TouchableOpacity>
       </ThemedView>
-      <ThemedView style={{ flex: 1 }}>
-        {/* <GestureDetector gesture={composedGesture}> */}
-            <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }}>
+      {
+        activeTab === "characters" && characterLoading || activeTab === "landmarks" && landmarkLoading ?
+          <ActivityIndicator color="#ffffff" style={{ marginTop: 50 }} />
+          :
+          <ThemedView style={{ flex: 1 }}>
+            {/* <GestureDetector gesture={composedGesture}> */}
+            <ScrollView 
+              showsHorizontalScrollIndicator={false}
+              horizontal={true} 
+              contentContainerStyle={{ flexGrow: 1 }}>
               <Image
-                source={{ uri: "https://fzmutsehqndgqwprkxrm.supabase.co/storage/v1/object/sign/resources/locations_map/Map1.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iNjNkYWNiNy1lYWJiLTQyOTQtOGY2My03YjVlYTk2Y2JiOWQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyZXNvdXJjZXMvbG9jYXRpb25zX21hcC9NYXAxLnBuZyIsImlhdCI6MTc1NzY5Nzg1NCwiZXhwIjoxNzg5MjMzODU0fQ.e0QPcHD9_5WULG1jLvSjbkkY8VZvYkLjAIQvBzLGRgw" }}
+                source={activeTab === "characters" ? { uri: characterMapURL } : { uri: landmarMapURL }}
                 style={styles.mapImage}
               />
-              {activeTab === 'characters' && < Characters />}
-              {activeTab === 'landmarks' && <Landmarks />}
+              {activeTab === 'characters' && < Characters mode='parent' />}
+              {activeTab === 'landmarks' && <Landmarks mode='parent' />}
             </ScrollView>
-        {/* </GestureDetector> */}
-      </ThemedView>
+            {/* </GestureDetector> */}
+          </ThemedView>
+      }
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    paddingTop: 50,
     flex: 1,
     overflow: 'hidden',
   },
@@ -127,7 +149,12 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
-
+  topBackPattern: {
+    width: '100%',
+    height: '100%',
+    top: -50,
+    position: "absolute",
+  },
   tabContainer: {
     flexDirection: 'row',
     alignSelf: 'center',

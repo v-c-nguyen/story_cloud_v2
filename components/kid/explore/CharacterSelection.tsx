@@ -123,7 +123,7 @@ export default function CharacterSelection({
                   selectedItem === "stories" && styles.statsTextOrange,
                 ]}
               >
-                {currentCharacter.stories ? currentCharacter.stories.length : 0} SERIES
+                {currentCharacter.stories ? currentCharacter.stories.length : 0} STORIES
               </ThemedText>
             </View>
           </TouchableOpacity>

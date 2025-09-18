@@ -50,7 +50,7 @@ export default function LocationSelection({
               style={[
                 styles.sectionTitle,
                 styles.selectionTitleLarge,
-                { lineHeight: 40, textAlign: "center" },
+                { lineHeight: 40, textAlign: "center"},
               ]}
             >
               {(currentLocation as any)?.name}
@@ -123,7 +123,7 @@ export default function LocationSelection({
                   selectedItem === "stories" && styles.statsTextOrange,
                 ]}
               >
-                {currentLocation.stories ? currentLocation.stories.length : 0} SERIES
+                {currentLocation.stories ? currentLocation.stories.length : 0} STORIES
               </ThemedText>
             </View>
           </TouchableOpacity>

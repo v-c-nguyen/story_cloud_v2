@@ -220,6 +220,9 @@ const styles = StyleSheet.create({
   avatarImg: {
     height: 60,
     width: 60,
+    borderRadius: 30,
+    position: "absolute",
+    bottom: 2
   },
   avatarImgContainer: {
     borderColor: "#ffffff",

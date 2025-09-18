@@ -100,7 +100,7 @@ const TargetsListWithBadge: React.FC<TargetsListWithBadgeProps> = ({
       )}
 
       {displayedCategories.length === 0 && loading && (
-        <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
+        <ThemedView style={[styles.loadingContainer, { height: height - 300 }]}>
           <Image
             source={require("@/assets/images/parent/parent-back-pattern.png")}
             style={styles.topBackPattern}

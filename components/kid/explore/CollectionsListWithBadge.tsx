@@ -53,6 +53,7 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
         )
       );
     } else {
+      
       setDisplayedCategories(categoriesWithStories);
     }
   }, [currentKidCollection, categoriesWithStories]);
@@ -68,7 +69,7 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
     }
   }
   return (
-    <ThemedView style={{ paddingBottom: 150, marginBottom: 30 }}>
+    <ThemedView style={{ paddingBottom: 150, marginBottom: 30, paddingLeft: 8 }}>
       {
         (currentKidCollection as any)?.name ? (
           displayedCategories && displayedCategories.length > 0 && (
@@ -89,6 +90,7 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
                 key={index}
                 seriesCategory={category?.name}
                 tag="collections"
+                seriesData={category}
                 mode="kid"
               />
             </ThemedView>

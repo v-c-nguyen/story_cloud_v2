@@ -17,14 +17,16 @@ import LocationSelection from "./LocationSelection";
 
 interface MapListWithBadgeProps {
   charactersCategories: any[];
-  loading: boolean;
+  characterLoading: boolean;
+  landmarkLoading: boolean;
   activeTab: string
 }
 
 const { width, height } = Dimensions.get("window");
 const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
   charactersCategories,
-  loading,
+  characterLoading,
+  landmarkLoading,
   activeTab
 }) => {
   const [categoriesWithStories, setCategoriesWithStories] = React.useState<
@@ -83,7 +85,9 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
     <ThemedView style={{ paddingBottom: 55 }}>
 
       {/* Top background */}
-      {displayedCategories.length === 0 && !loading && (
+      {displayedCategories.length === 0 && 
+        ((activeTab == "characters" && !characterLoading) ||
+         (activeTab == "landmarks" && !landmarkLoading)) && (
         <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
           <Image
             source={require("@/assets/images/parent/parent-back-pattern.png")}
@@ -96,7 +100,9 @@ const MapListWithBadge: React.FC<MapListWithBadgeProps> = ({
         </ThemedView>
       )}
 
-      {displayedCategories.length === 0 && loading && (
+      {displayedCategories.length === 0 && 
+        ((characterLoading && activeTab == "characters") || 
+        (landmarkLoading && activeTab == "landmarks")) && (
         <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
           <Image
             source={require("@/assets/images/parent/parent-back-pattern.png")}

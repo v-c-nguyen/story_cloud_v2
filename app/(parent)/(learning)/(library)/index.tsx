@@ -7,7 +7,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { storyOptionsData } from "@/data/libraryData";
 import { useSeriesStore } from "@/store/seriesStore";
 import { Stack, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   FlatList,
   Image,
@@ -35,6 +35,13 @@ export default function LearningLibrary() {
   const currentSeries = useSeriesStore((s) => s.currentSeries);
   const setCurrentSeries = useSeriesStore((s) => s.setCurrentSeries);
   const router = useRouter();
+  const flatListRef = useRef<any>(null);
+  const itemLayoutsRef = useRef<Array<{ x: number; width: number }>>([]);
+  const containerWidthRef = useRef<number>(0);
+  const contentWidthRef = useRef<number>(0);
+  const lastScrollOffsetRef = useRef<number>(0);
+  const dragStartXRef = useRef<number>(0);
+  const dragStartOffsetRef = useRef<number>(0);
 
   useEffect(() => {
     setLoading(true);
@@ -108,6 +115,40 @@ export default function LearningLibrary() {
     } else {
       // Fallback: save a minimal series object
       setCurrentSeries({ id: item, name: item } as any);
+    }
+  }
+
+  function handleItemLayout(layout: { x: number; width: number }, index: number) {
+    itemLayoutsRef.current[index] = layout;
+    // recompute content width
+    contentWidthRef.current = itemLayoutsRef.current.reduce(
+      (sum, it) => sum + (it?.width ?? 0),
+      0
+    );
+  }
+
+  function clamp(n: number, min = 0, max = Number.MAX_SAFE_INTEGER) {
+    return Math.max(min, Math.min(n, max));
+  }
+
+  function scrollToSelectedIndex(index: number) {
+    if (!flatListRef.current) return;
+    const layout = itemLayoutsRef.current[index];
+    const containerW = containerWidthRef.current || 0;
+    if (layout && containerW) {
+      const target = layout.x + layout.width / 2 - containerW / 2;
+      const maxOffset = Math.max(0, contentWidthRef.current - containerW);
+      const offset = clamp(target, 0, maxOffset);
+      try {
+        flatListRef.current.scrollToOffset({ offset, animated: true });
+      } catch (e) {
+        // fallback to scrollToIndex if available
+        try {
+          flatListRef.current.scrollToIndex({ index, animated: true, viewPosition: 0.5 });
+        } catch (e2) {
+          // ignore
+        }
+      }
     }
   }
 
@@ -202,38 +243,70 @@ export default function LearningLibrary() {
                   </TouchableOpacity>
                 </Modal>
 
-                {/* Category pills */}
-                <FlatList
-                  horizontal
-                  data={categories.map((ele) => ele)}
-                  keyExtractor={(item) => item.name}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleStoryItem(item.name)}>
-                      <ThemedView
-                        style={[
-                          styles.categoryPill,
-                          currentSeries && (currentSeries as any).name === item.name
-                            ? styles.categoryPillActive
-                            : styles.categoryPillInactive,
-                        ]}
-                      >
-                        <ThemedText
+                {/* Category pills with scroll-to-selected and drag-to-scroll support */}
+                <ThemedView
+                  style={styles.categoryPillsContainer}
+                  onLayout={(e: any) => {
+                    containerWidthRef.current = e.nativeEvent.layout.width;
+                    // try to position to selected after container measured
+                    if (currentSeries) {
+                      const idx = categories.findIndex((c) => (c as any).name === (currentSeries as any).name);
+                      if (idx >= 0) scrollToSelectedIndex(idx);
+                    }
+                  }}
+                  // enable responder for mouse drag on web
+                  onStartShouldSetResponder={() => true}
+                  onResponderGrant={(e: any) => {
+                    dragStartXRef.current = e.nativeEvent.pageX;
+                    dragStartOffsetRef.current = lastScrollOffsetRef.current || 0;
+                  }}
+                  onResponderMove={(e: any) => {
+                    const dx = e.nativeEvent.pageX - dragStartXRef.current;
+                    const offset = clamp(dragStartOffsetRef.current - dx, 0, Math.max(0, contentWidthRef.current - (containerWidthRef.current || 0)));
+                    if (flatListRef.current && typeof flatListRef.current.scrollToOffset === "function") {
+                      flatListRef.current.scrollToOffset({ offset, animated: false });
+                    }
+                  }}
+                >
+                  <FlatList
+                    ref={flatListRef}
+                    horizontal
+                    data={categories.map((ele) => ele)}
+                    keyExtractor={(item) => item.name}
+                    renderItem={({ item, index }) => (
+                      <TouchableOpacity onPress={() => handleStoryItem(item.name)}>
+                        <ThemedView
+                          onLayout={(e: any) => handleItemLayout(e.nativeEvent.layout, index)}
                           style={[
-                            styles.categoryText,
-                            currentSeries &&
-                              (currentSeries as any).name === item.name
-                              ? { color: "rgba(5, 59, 74, 1)" }
-                              : null,
+                            styles.categoryPill,
+                            currentSeries && (currentSeries as any).name === item.name
+                              ? styles.categoryPillActive
+                              : styles.categoryPillInactive,
                           ]}
                         >
-                          {item.name}
-                        </ThemedText>
-                      </ThemedView>
-                    </TouchableOpacity>
-                  )}
-                  style={styles.categoryPillsContainer}
-                  showsHorizontalScrollIndicator={false}
-                />
+                          <ThemedText
+                            style={[
+                              styles.categoryText,
+                              currentSeries &&
+                                (currentSeries as any).name === item.name
+                                ? { color: "rgba(5, 59, 74, 1)" }
+                                : null,
+                            ]}
+                          >
+                            {item.name}
+                          </ThemedText>
+                        </ThemedView>
+                      </TouchableOpacity>
+                    )}
+                    style={{}}
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={(e) => {
+                      lastScrollOffsetRef.current = e.nativeEvent.contentOffset.x;
+                    }}
+                    scrollEventThrottle={16}
+                    // preserve initial measurements on content changes
+                  />
+                </ThemedView>
               </ThemedView>
 
               <ThemedView style={[styles.bottomPadding, { height: '80%' }]}>

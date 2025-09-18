@@ -1,14 +1,10 @@
-import supabase from "@/app/lib/supabase";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useStoryStore } from "@/store/storyStore";
 import { Image } from "expo-image";
 import React, { useEffect } from "react";
 import { ActivityIndicator, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import StoryItems from "./StoryItems";
 import normalize from "@/app/lib/normalize";
-import { useCharactersStore } from "@/store/charactersStore";
-import CharacterSelection from "./CharacterSelection";
 import { useCollectionsStore } from "@/store/collectionsStore";
 import CollectionSelection from "./CollectionSelection";
 
@@ -101,7 +97,7 @@ const CollectionsListWithBadge: React.FC<CollectionsListWithBadgeProps> = ({
       )}
 
       {displayedCategories.length === 0 && loading && (
-        <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
+        <ThemedView style={[styles.loadingContainer, { height: height - 300 }]}>
           <Image
             source={require("@/assets/images/parent/parent-back-pattern.png")}
             style={styles.topBackPattern}

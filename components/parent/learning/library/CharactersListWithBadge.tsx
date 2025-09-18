@@ -87,7 +87,7 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
       )}
 
       {displayedCategories.length === 0 && loading && (
-        <ThemedView style={[styles.loadingContainer, { height: height - 400 }]}>
+        <ThemedView style={[styles.loadingContainer, { height: height - 300 }]}>
           <Image
             source={require("@/assets/images/parent/parent-back-pattern.png")}
             style={styles.topBackPattern}
@@ -227,6 +227,9 @@ const styles = StyleSheet.create({
   avatarImg: {
     height: 50,
     width: 50,
+    borderRadius: 25,
+    position: "absolute",
+    bottom: 1
   },
   sectionHeader: {
     marginTop: 0,

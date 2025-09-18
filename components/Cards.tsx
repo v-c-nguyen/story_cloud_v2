@@ -29,8 +29,8 @@ interface RecentProps {
     storyId: string;
     seriesCategory: string;
     storyTitle: string;
+    featuredIllustration: string;
   };
-  image: string;
   duration?: number;
   played?: number;
   watched?: boolean;
@@ -226,9 +226,7 @@ export function StoryCard({
         <ThemedView style={styles.storyImageWrap}>
           <Image
             source={
-              recent.image
-                ? imageGen(recent.image)
-                : require("@/assets/images/kid/story-back-1.png")
+              recent.stories.featuredIllustration
             }
             style={styles.storyImage}
           />
@@ -339,7 +337,7 @@ interface StoryCard3Props {
   storyId: string;
   seriesCategory: string;
   storyTitle: string;
-  image?: string;
+  featuredIllustration?: string;
   isFavourite?: boolean;
   track?: {
     duration?: number;
@@ -488,8 +486,8 @@ export function StoryCard3({
         <ThemedView style={styles.storyImageWrap}>
           <Image
             source={
-              story.image
-                ? imageGen(story.image)
+              story.featuredIllustration
+                ? story.featuredIllustration
                 : require("@/assets/images/kid/story-back-1.png")
             }
             style={styles.storyImage}
@@ -607,7 +605,7 @@ interface StoryProps1 {
   seriesCategory: string;
   descriptionParent?: string;
   learning_categories?: any;
-  image?: string;
+  featuredIllustration?: string;
   featured?: boolean;
   isFavourite?: boolean;
 }
@@ -628,31 +626,11 @@ export function StoryCard1({
 }) {
   // Use a consistent style based on the story index
   const router = useRouter();
-  const [activeIndex, setActiveIndex] = React.useState(0);
-  const ViewRef = useRef<View>(null);
   const scrollRef = React.useRef<ScrollView>(null);
   const styleIdx = num % cardStyles.length;
   const style = cardStyles[styleIdx];
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
 
-  function FromSec(seconds: number): string {
-    const min = Math.floor(seconds / 60);
-    const sec = Math.floor(seconds % 60);
-    return `${min}:${sec}`;
-  }
-
-  const imageGen = (img: string) => {
-    switch (img) {
-      case "1":
-        return require("@/assets/images/kid/story-back-1.png");
-      case "2":
-        return require("@/assets/images/kid/story-back-2.png");
-      case "3":
-        return require("@/assets/images/kid/story-back-3.png");
-      default:
-        return null;
-    }
-  };
   // In your handler:
   const handleLeftArrow = () => {
     if (currentCardIndex > 0) {
@@ -684,9 +662,9 @@ export function StoryCard1({
   return (
     <ThemedView style={[styles.storyCard, style.bgColor == "rgb(5, 59, 74)" && { borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.2)" }, { backgroundColor: style.bgColor }]}>
       <TouchableOpacity
-      onPress={() =>
-        router.push(`/(parent)/(learning)/(library)/storyDetail?id=${story.storyId}`)
-      }
+        onPress={() =>
+          router.push(`/(parent)/(learning)/(library)/storyDetail?id=${story.storyId}`)
+        }
       >
         <ThemedView>
           <ThemedView style={{ height: 50 }}>
@@ -739,6 +717,7 @@ export function StoryCard1({
               </TouchableOpacity>
             </ThemedView>
           </ThemedView>
+
           <ThemedView
             style={{
               height: 330,
@@ -760,7 +739,7 @@ export function StoryCard1({
             >
               {/* StoryCard Content 1 */}
               <ThemedView style={{ width: 290 }}>
-                <ThemedView style={{ height: 130 }}>
+                <ThemedView style={{ height: 120 }}>
                   {/* SeriesCategory */}
                   <ThemedText
                     style={[styles.storySeries, { color: style.subTextColor }]}
@@ -775,26 +754,11 @@ export function StoryCard1({
                   </ThemedText>
                 </ThemedView>
                 {/* Story Image */}
-                <ThemedView style={[styles.storyImageWrap, { height: 200 }]}>
-                  {/* Render a series of 3 background images */}
-                  <View
-                    ref={ViewRef}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      overflow: "scroll",
-                    }}
-                  >
-                    <ThemedView style={{ flexDirection: "row" }}>
-                      {images.map((item, index) => (
-                        <Image
-                          key={index}
-                          source={item}
-                          style={styles.storyImage}
-                        />
-                      ))}
-                    </ThemedView>
-                  </View>
+                <ThemedView style={[styles.storyImageWrap, { height: 210 }]}>
+                  <Image
+                    source={story.featuredIllustration}
+                    style={styles.storyImage}
+                  />
                   {/* <Image source={story.image ? imageGen(story.image) : imageGen("1")} style={[styles.storyImage, { position: 'relative', zIndex: 4 }]} /> */}
                   <TouchableOpacity
                     style={styles.storyPlayBtn}
@@ -825,137 +789,130 @@ export function StoryCard1({
 
               {/* StoryCard Content 2 */}
               <ThemedView style={{ width: 290, position: "relative" }}>
-                <Image
-                  source={require("@/assets/images/kid/story-back-1.png")}
-                  style={styles.cardImage}
-                ></Image>
-
-
-                <ThemedView
-                  style={[
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={[
                     styles.cardContent,
                     {
-                      position: "absolute",
+                      position: "relative",
                       width: "100%",
-                      height: "100%",
+                      minHeight: 330,
+                      paddingBottom: 20,
                       backgroundColor: style.bgColor,
-                      opacity: 0.8,
                       zIndex: 1,
                       flexDirection: "column",
                       justifyContent: "center",
                     },
                   ]}
                 >
-                  <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}
+                  <Image
+                    source={story.featuredIllustration}
+                    style={styles.cardImage}
+                  ></Image>
+                  <ThemedText
+                    style={[
+                      styles.descriptionTitle,
+                      {
+                        color:
+                          style.bgColor == "rgb(5, 59, 74)"
+                            ? "rgba(248, 236, 174, 1)"
+                            : "#053B4A",
+                      },
+                    ]}
                   >
-                    <ThemedText
-                      style={[
-                        styles.descriptionTitle,
-                        {
-                          color:
-                            style.bgColor == "rgb(5, 59, 74)"
-                              ? "rgba(248, 236, 174, 1)"
-                              : "#053B4A",
-                        },
-                      ]}
-                    >
-                      Description
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        styles.descriptionText,
-                        {
-                          color:
-                            style.bgColor == "rgb(5, 59, 74)"
-                              ? "rgba(255, 255, 255, 1)"
-                              : "#053B4A",
-                        },
-                      ]}
-                    >
-                      {story.descriptionParent}
-                    </ThemedText>
-                  </ScrollView>
+                    Description
+                  </ThemedText>
+                  <ThemedText
+                    style={[
+                      styles.descriptionText,
+                      {
+                        color:
+                          style.bgColor == "rgb(5, 59, 74)"
+                            ? "rgba(255, 255, 255, 1)"
+                            : "#053B4A",
+                      },
+                    ]}
+                  >
+                    {story.descriptionParent}
+                  </ThemedText>
 
-                </ThemedView>
+                </ScrollView>
+
               </ThemedView>
 
               {/* StoryCard Content 3 */}
               <ThemedView style={{ width: 290, position: "relative" }}>
-                <Image
-                  source={require("@/assets/images/kid/story-back-1.png")}
-                  style={styles.cardImage}
-                ></Image>
-                <ThemedView
-                  style={[
+
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={[
                     styles.cardContent,
                     {
-                      position: "absolute",
+                      position: "relative",
                       width: "100%",
-                      height: "100%",
-                      flexDirection: 'column',
-                      justifyContent: 'center',
+                      minHeight: 330,
+                      paddingBottom: 20,
                       backgroundColor: style.bgColor,
-                      opacity: 0.8
+                      zIndex: 1,
+                      flexDirection: "column",
+                      justifyContent: "center",
                     },
                   ]}
                 >
-                  <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ flexDirection: 'column', justifyContent: 'center', height: '100%' }}
+                  <Image
+                    source={story.featuredIllustration}
+                    style={styles.cardImage}
+                  ></Image>
+                  <ThemedText
+                    style={[
+                      styles.descriptionTitle,
+                      {
+                        color:
+                          style.bgColor == "rgb(5, 59, 74)"
+                            ? "rgba(248, 236, 174, 1)"
+                            : "#053B4A",
+                      },
+                    ]}
                   >
-                    <ThemedText
-                      style={[
-                        styles.descriptionTitle,
-                        {
-                          color:
-                            style.bgColor == "rgb(5, 59, 74)"
-                              ? "rgba(248, 236, 174, 1)"
-                              : "#053B4A",
-                        },
-                      ]}
-                    >
-                      Learning Targets
-                    </ThemedText>
-                    <ThemedView style={{ flexDirection: "column", gap: 10 }}>
-                      {story.learning_categories &&
-                        story.learning_categories.length > 0 &&
-                        story.learning_categories.map(
-                          (item: string, index: number) => (
-                            <ThemedView
+                    Learning Targets
+                  </ThemedText>
+                  <ThemedView style={{ flexDirection: "column", gap: 10 }}>
+                    {story.learning_categories &&
+                      story.learning_categories.length > 0 &&
+                      story.learning_categories.map(
+                        (item: string, index: number) => (
+                          <ThemedView
+                            key={index}
+                            style={[
+                              styles.learningTarget,
+                              {
+                                borderColor:
+                                  style.bgColor == "rgb(5, 59, 74)"
+                                    ? "rgba(255, 255, 255, 1)"
+                                    : "#053B4A",
+                              },
+                            ]}
+                          >
+                            <ThemedText
                               key={index}
                               style={[
-                                styles.learningTarget,
+                                styles.descriptionText,
                                 {
-                                  borderColor:
+                                  fontWeight: 700,
+                                  color:
                                     style.bgColor == "rgb(5, 59, 74)"
                                       ? "rgba(255, 255, 255, 1)"
                                       : "#053B4A",
                                 },
                               ]}
                             >
-                              <ThemedText
-                                key={index}
-                                style={[
-                                  styles.descriptionText,
-                                  {
-                                    fontWeight: 700,
-                                    color:
-                                      style.bgColor == "rgb(5, 59, 74)"
-                                        ? "rgba(255, 255, 255, 1)"
-                                        : "#053B4A",
-                                  },
-                                ]}
-                              >
-                                {item}
-                              </ThemedText>
-                            </ThemedView>
-                          )
-                        )}
-                    </ThemedView>
-                  </ScrollView>
-                </ThemedView>
+                              {item}
+                            </ThemedText>
+                          </ThemedView>
+                        )
+                      )}
+                  </ThemedView>
+                </ScrollView>
               </ThemedView>
             </ScrollView>
           </ThemedView>
@@ -1282,7 +1239,7 @@ interface SeriesCardParentProps {
   series_category: string;
   description_parent?: string;
   learning_category?: any;
-  image: string;
+  featuredIllustration: string;
   isFavourite?: boolean;
 }
 export function SeriesCard_Parent({
@@ -1296,29 +1253,6 @@ export function SeriesCard_Parent({
   const scrollRef = React.useRef<ScrollView>(null);
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
   const router = useRouter();
-
-  const imageGen = (img: string) => {
-    switch (img) {
-      case "1":
-        return require("@/assets/images/kid/series-back-1.png");
-      case "2":
-        return require("@/assets/images/kid/series-back-2.png");
-      case "3":
-        return require("@/assets/images/kid/series-back-3.png");
-      case "4":
-        return require("@/assets/images/kid/series-back-4.png");
-      case "5":
-        return require("@/assets/images/kid/series-back-5.png");
-      default:
-        return null;
-    }
-  };
-  // In your handler:
-  const scrollToIndex = (idx: number) => {
-    setActiveIndex(idx);
-    if (ViewRef.current) {
-    }
-  };
 
   const handleLeftArrow = () => {
     if (currentCardIndex > 0) {
@@ -1352,6 +1286,7 @@ export function SeriesCard_Parent({
       style={[
         styles.storyCard,
         {
+          height: 420,
           backgroundColor: "#053B4A",
           borderColor: "#add7da36",
           borderWidth: 1,
@@ -1359,9 +1294,9 @@ export function SeriesCard_Parent({
       ]}
     >
       <TouchableOpacity
-      onPress={() =>
-        router.push(`/(parent)/(learning)/(library)/seriesDetail?id=${series.id}`)
-      }
+        onPress={() =>
+          router.push(`/(parent)/(learning)/(library)/seriesDetail?id=${series.id}`)
+        }
       >
         <ThemedView>
           <ThemedView style={{ height: 50 }}>
@@ -1413,7 +1348,7 @@ export function SeriesCard_Parent({
           </ThemedView>
           <ThemedView
             style={{
-              height: 300,
+              height: 330,
               flexDirection: "row",
             }}
           >
@@ -1432,20 +1367,22 @@ export function SeriesCard_Parent({
             >
               {/* Series Card Content 1 */}
               <ThemedView style={{ width: 290 }}>
-                <ThemedView style={{ height: 70 }}>
+                <ThemedView style={{ height: 100 }}>
                   {/* SeriesCategory */}
-                  <ThemedText
-                    style={[
-                      styles.storySeries,
-                      { color: "rgba(4, 143, 153, 1)", marginBottom: 5 },
-                    ]}
-                  >
-                    <GradientText text={series.name}></GradientText>
-                  </ThemedText>
-                  {/* Story Title */}
-                  <ThemedText style={[styles.storyLabel, { textAlign: "center", color: "white" }]}>
-                    {series.episode_count} Stories
-                  </ThemedText>
+                  <ThemedView style={{flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%"}}>
+                    <ThemedText
+                      style={[
+                        styles.storySeries,
+                        { color: "rgba(4, 143, 153, 1)", marginBottom: 5 },
+                      ]}
+                    >
+                      <GradientText text={series.name} ></GradientText>
+                    </ThemedText>
+                    {/* Story Title */}
+                    <ThemedText style={[styles.storyLabel, { textAlign: "center", color: "white" }]}>
+                      {series.episode_count} Stories
+                    </ThemedText>
+                  </ThemedView>
                 </ThemedView>
                 {/* Story Image */}
                 <ThemedView style={[styles.storyImageWrap, { height: 230 }]}>
@@ -1458,8 +1395,8 @@ export function SeriesCard_Parent({
                     }}
                   >
                     <Image
-                      source={require("@/assets/images/kid/series-back-1.png")}
-                      style={styles.storyImage}
+                      source={series.featuredIllustration}
+                      style={styles.seriesImage}
                     />
                   </View>
                 </ThemedView>
@@ -1467,26 +1404,27 @@ export function SeriesCard_Parent({
 
               {/* StoryCard Content 2 */}
               <ThemedView style={{ width: 290, position: "relative" }}>
-                <Image
-                  source={require("@/assets/images/kid/story-back-1.png")}
-                  style={styles.cardImage}
-                ></Image>
 
-                <ThemedView
-                  style={[
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={[
                     styles.cardContent,
                     {
-                      position: "absolute",
+                      position: "relative",
                       width: "100%",
-                      height: "100%",
-                      backgroundColor: " rgba(5, 59, 74, 1)",
-                      opacity: 0.8,
+                      minHeight: 330,
+                      paddingBottom: 20,
+                      backgroundColor: "#053B4A",
                       zIndex: 1,
                       flexDirection: "column",
                       justifyContent: "center",
                     },
                   ]}
                 >
+                  <Image
+                    source={series.featuredIllustration}
+                    style={styles.cardImage}
+                  ></Image>
                   <ThemedText
                     style={[
                       styles.descriptionTitle,
@@ -1507,30 +1445,31 @@ export function SeriesCard_Parent({
                   >
                     {series.description_parent}
                   </ThemedText>
-                </ThemedView>
+                </ScrollView>
               </ThemedView>
 
               {/* StoryCard Content 3 */}
               <ThemedView style={{ width: 290, position: "relative" }}>
-                <Image
-                  source={require("@/assets/images/kid/story-back-1.png")}
-                  style={styles.cardImage}
-                ></Image>
-                <ThemedView
-                  style={[
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={[
                     styles.cardContent,
                     {
-                      position: "absolute",
+                      position: "relative",
                       width: "100%",
-                      height: "100%",
-                      backgroundColor: " rgba(5, 59, 74, 1)",
-                      opacity: 0.8,
+                      paddingBottom: 20,
+                      minHeight: 330,
+                      backgroundColor: "#053B4A",
                       zIndex: 1,
                       flexDirection: "column",
                       justifyContent: "center",
                     },
                   ]}
                 >
+                  <Image
+                    source={series.featuredIllustration}
+                    style={styles.cardImage}
+                  ></Image>
                   <ThemedText
                     style={[
                       styles.descriptionTitle,
@@ -1571,11 +1510,11 @@ export function SeriesCard_Parent({
                         )
                       )}
                   </ThemedView>
-                </ThemedView>
+                </ScrollView>
               </ThemedView>
             </ScrollView>
           </ThemedView>
-          <ThemedView>
+          <ThemedView style={{ height: 40 }}>
             <ThemedView
               style={[styles.progressRow, { justifyContent: "space-around" }]}
             >
@@ -1718,7 +1657,7 @@ const styles = StyleSheet.create({
   },
   storyImage: {
     width: "100%",
-    height: 230,
+    height: 210,
     backgroundColor: "#eee",
   },
   storyPlayBtn: {
@@ -1787,8 +1726,13 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   cardImage: {
+    position: "absolute",
+    opacity: 0.3,
+    top: 0,
+    left: 0,
     width: "100%",
     height: "100%",
+    resizeMode: "cover",
   },
   progressRow: {
     width: "100%",
@@ -1866,7 +1810,7 @@ const styles = StyleSheet.create({
   },
   seriesImage: {
     width: "100%",
-    height: 260,
+    height: 230,
     alignSelf: "center",
     backgroundColor: "#eee",
   },

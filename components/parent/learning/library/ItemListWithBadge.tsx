@@ -1,7 +1,5 @@
-import supabase from "@/app/lib/supabase";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useStoryStore } from "@/store/storyStore";
 import { Image } from "expo-image";
 import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
@@ -10,7 +8,6 @@ import { useSeriesStore } from "@/store/seriesStore";
 import normalize from "@/app/lib/normalize";
 import { Dimensions } from "react-native";
 
-import IconArrowRightGradient from "@/assets/images/icons/arrow-right-gradient.svg"
 
 const { width, height } = Dimensions.get("window");
 interface ItemListWithBadgeProps {
@@ -76,7 +73,7 @@ const ItemListWidthBadge: React.FC<ItemListWithBadgeProps> = ({
       )}
 
       {displayedCategories.length === 0 && loading && (
-        <ThemedView style={[styles.loadingContainer, { height: height - 500 }]}>
+        <ThemedView style={[styles.loadingContainer, { height: height - 300 }]}>
           <Image
             source={require("@/assets/images/parent/parent-back-pattern.png")}
             style={styles.topBackPattern}

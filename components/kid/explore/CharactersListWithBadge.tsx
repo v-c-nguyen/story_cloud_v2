@@ -67,7 +67,7 @@ const CharactersListWithBadge: React.FC<CharactersListWithBadgeProps> = ({
     }
   }
   return (
-    <ThemedView style={{ paddingBottom: 55 }}>
+    <ThemedView style={{ paddingBottom: 55, paddingLeft: 10 }}>
       {(currentCharacter as any)?.name
         ? displayedCategories &&
         displayedCategories.length > 0 && (
@@ -150,15 +150,15 @@ function SectionHeader({
           {
             margin: 18,
             marginBottom: 10,
-            marginTop: 60,
+            marginTop: 50,
           },
         ]}
       >
         <Image source={avatar} style={[styles.avatarImg]} />
       </ThemedView>
-      <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
+      <ThemedText style={styles.sectionTitle}>{title.trim()}</ThemedText>
       <ThemedView style={styles.sectionHeader}>
-        <ThemedText style={styles.sectiondesc}>{desc}</ThemedText>
+        <ThemedText style={styles.sectiondesc}>{desc.trim()}</ThemedText>
         <TouchableOpacity onPress={() => { handleSelectedItem(title) }}>
 
           <IconAvatarRight

@@ -43,7 +43,7 @@ export default function SeriesSelection({
 
 
   return (
-    <ThemedView style={{ paddingBottom: 80, alignItems: "center", paddingLeft: 20 }}>
+    <ThemedView style={{ paddingBottom: 80, alignItems: "center" }}>
       <IconHeart
         color={"#053B4A"}
         width={26}
@@ -60,7 +60,7 @@ export default function SeriesSelection({
         <IconArrowLeft
           width={24}
           height={24}
-          color={"#fcfcfc"}
+          color={"#053B4A"}
         />
         <ThemedText style={[styles.backButtonText, { marginTop: 0, marginBottom: 0 }]}>{"Back to Explore"}</ThemedText>
       </TouchableOpacity>
