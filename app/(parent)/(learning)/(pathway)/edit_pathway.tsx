@@ -14,9 +14,11 @@ import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
+import useIsMobile from "@/hooks/useIsMobile";
 
 const HIGHLIGHT_INDEX = 0;
 export default function EditPathway() {
+  const isMobile = useIsMobile();
   const router = useRouter();
   const params = useLocalSearchParams();
   const [modalVisible, setModalVisible] = React.useState(
@@ -128,7 +130,7 @@ export default function EditPathway() {
               zIndex: 1000,
             }}
           >
-            <BottomNavBar role="parent" active="Learning" subActive="Pathway" />
+            <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Pathway" : ""} image={!isMobile ? true : false} />
           </ThemedView>
 
           <CreatPathwayModal

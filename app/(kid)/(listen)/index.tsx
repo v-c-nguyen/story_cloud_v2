@@ -53,7 +53,7 @@ export default function ParentListen() {
 
               {activeChild && (
                 <SeriesCarousel
-                  mode={"parent"}
+                  mode={"kid"}
                   activeChild={activeChild}
                 />
               )}

@@ -31,8 +31,11 @@ import { useLearningCategoryStore } from "@/store/learningCategoryStore";
 import TargetsListWithBadge from "@/components/parent/learning/library/TargetsListWithBadge";
 import IconList from "@/assets/images/icons/icon-list.svg"
 import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
+import useIsMobile from "@/hooks/useIsMobile";
+import LearningTab from "@/components/LearningTab";
 
 export default function TargetsLibrary() {
+  const isMobile = useIsMobile();
   const [categories, setCategory] = React.useState<any[]>([]);
   const storyOptions = storyOptionsData;
   const [loading, setLoading] = React.useState(false);
@@ -145,26 +148,30 @@ export default function TargetsLibrary() {
 
               {/* Header */}
               <ThemedView style={styles.topRow}>
-                <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(parent)/search-screen')}>
-                  <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.iconBtn}>
-                  <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                </TouchableOpacity>
+                {!isMobile && <LearningTab activeItem="Libaray" />}
+                <ThemedView style={{ flexDirection: "row", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                  <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(parent)/search-screen')}>
+                    <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.iconBtn}>
+                    <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                  </TouchableOpacity>
 
-                {/* Dropdown toggle */}
-                <TouchableOpacity
-                  style={styles.dropdownToggle}
-                  onPress={() => setDropdownVisible(!dropdownVisible)}
-                >
+                  {/* Dropdown toggle */}
+                  <TouchableOpacity
+                    style={styles.dropdownToggle}
+                    onPress={() => setDropdownVisible(!dropdownVisible)}
+                  >
                     <ThemedView style={styles.ActiveItemStyle}>
+
                       <IconList width={21} height={21} />
-                  </ThemedView>
-                  <ThemedText style={styles.dropdownText}>
-                    {activeItem}
-                  </ThemedText>
-                  <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
-                </TouchableOpacity>
+                    </ThemedView>
+                    <ThemedText style={styles.dropdownText}>
+                      {activeItem}
+                    </ThemedText>
+                    <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
+                  </TouchableOpacity>
+                </ThemedView>
               </ThemedView>
 
               {/* Category pills */}
@@ -261,7 +268,7 @@ export default function TargetsLibrary() {
               zIndex: 1000,
             }}
           >
-            <BottomNavBar role="parent" active="Learning" subActive="Library" />
+            <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Library" : ""} image={!isMobile ? true : false} />
           </ThemedView>
         </ThemedView>
       </SafeAreaView>

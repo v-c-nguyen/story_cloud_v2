@@ -14,8 +14,10 @@ import { useStoryStore } from '@/store/storyStore';
 import GradientText from '@/components/ui/GradientText';
 import { useSeriesStore } from '@/store/seriesStore';
 import StoryItems from '@/components/parent/learning/library/StoryItems';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function seriesDetail() {
+    const isMobile = useIsMobile();
     const router = useRouter();
     const params = useLocalSearchParams();
     const seriesId = typeof params.id === "string" ? params.id : "";
@@ -114,7 +116,7 @@ export default function seriesDetail() {
                                     </ThemedText>
                                 </ThemedView>
                             </TouchableOpacity>
-                            <ThemedView style={{width: "100%", flexDirection: "row", justifyContent: 'center'}}>
+                            <ThemedView style={{ width: "100%", flexDirection: "row", justifyContent: 'center' }}>
                                 <StoryItems
                                     seriesCategory={currentSeries?.name || ""}
                                     tag="series"
@@ -139,7 +141,7 @@ export default function seriesDetail() {
                         zIndex: 1000,
                     }}
                 >
-                    <BottomNavBar role="parent" active="Learning" subActive="Library" />
+                    <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Library" : ""} image={!isMobile ? true : false} />
                 </ThemedView>
             </SafeAreaView>
         </>

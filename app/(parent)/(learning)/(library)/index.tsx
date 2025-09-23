@@ -24,11 +24,12 @@ import IconSearch from "@/assets/images/icons/icon-search.svg";
 import IconSwap from "@/assets/images/icons/icon-swap.svg";
 import IconList from "@/assets/images/icons/icon-list.svg"
 import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
-
+import useIsMobile from "@/hooks/useIsMobile";
+import LearningTab from "@/components/LearningTab";
 export default function LearningLibrary() {
   const [categories, setCategory] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
+  const isMobile = useIsMobile();
   const storyOptions = storyOptionsData;
   const [activeItem, setActiveItem] = useState("Stories");
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -177,28 +178,30 @@ export default function LearningLibrary() {
                 ></Header>
                 {/* Header */}
                 <ThemedView style={styles.topRow}>
+                  {!isMobile && <LearningTab activeItem="Libaray" />}
+                  <ThemedView style={{flexDirection: "row", alignItems:"center", gap: 10, marginLeft: "auto"}}>
+                    <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(parent)/search-screen')}>
+                      <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.iconBtn}>
+                      <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                    </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(parent)/search-screen')}>
-                    <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.iconBtn}>
-                    <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                  </TouchableOpacity>
+                    {/* Dropdown toggle */}
+                    <TouchableOpacity
+                      style={styles.dropdownToggle}
+                      onPress={() => setDropdownVisible(!dropdownVisible)}
+                    >
+                      <ThemedView style={styles.ActiveItemStyle}>
 
-                  {/* Dropdown toggle */}
-                  <TouchableOpacity
-                    style={styles.dropdownToggle}
-                    onPress={() => setDropdownVisible(!dropdownVisible)}
-                  >
-                    <ThemedView style={styles.ActiveItemStyle}>
-
-                      <IconList width={21} height={21} />
-                    </ThemedView>
-                    <ThemedText style={styles.dropdownText}>
-                      {activeItem}
-                    </ThemedText>
-                    <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
-                  </TouchableOpacity>
+                        <IconList width={21} height={21} />
+                      </ThemedView>
+                      <ThemedText style={styles.dropdownText}>
+                        {activeItem}
+                      </ThemedText>
+                      <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
+                    </TouchableOpacity>
+                  </ThemedView>
                 </ThemedView>
 
                 {/* Dropdown modal */}
@@ -304,7 +307,7 @@ export default function LearningLibrary() {
                       lastScrollOffsetRef.current = e.nativeEvent.contentOffset.x;
                     }}
                     scrollEventThrottle={16}
-                    // preserve initial measurements on content changes
+                  // preserve initial measurements on content changes
                   />
                 </ThemedView>
               </ThemedView>
@@ -326,7 +329,7 @@ export default function LearningLibrary() {
               zIndex: 1000,
             }}
           >
-            <BottomNavBar role="parent" active="Learning" subActive="Library" />
+            <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Library" : ""} image={!isMobile ? true : false} />
           </ThemedView>
         </ThemedView>
       </SafeAreaView>
@@ -376,6 +379,11 @@ const styles = StyleSheet.create({
     marginTop: 50,
     borderRadius: 20,
     marginHorizontal: 16,
+  },
+  activeContainer: {
+    padding: 10,
+    borderRadius: "50%",
+    backgroundColor: "#F4A672"
   },
   backPattern: {
     width: "100%",
@@ -436,7 +444,6 @@ const styles = StyleSheet.create({
     borderColor: "rgba(122, 193, 198, 0.5)",
     padding: 3,
     borderRadius: 20,
-    marginLeft: "auto",
   },
   dropdownText: {
     color: "rgba(122, 193, 198, 1)",

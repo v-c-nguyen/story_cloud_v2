@@ -4,14 +4,16 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
-import { Image, SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
-
+import { SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 import IconRefresh from "@/assets/images/icons/icon-refresh.svg";
 import IconCard from "@/assets/images/icons/icon-card.svg";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function newMethod() {
     const router = useRouter();
+    const isMobile = useIsMobile();
     const [activeTab, setActiveTab] = React.useState('account');
     const [cardNumber, setCardNumber] = React.useState('');
 
@@ -46,98 +48,115 @@ export default function newMethod() {
                         <TouchableOpacity
                             style={styles.backBtn}
                             onPress={handleBackBtn}>
-                            <IconArrowLeft width={24} height={24} />
+                            <IconArrowLeft width={24} height={24} color={'rgba(122, 193, 198, 1)'}/>
                             <ThemedText style={styles.backBtnText}>To Payment Method</ThemedText>
                         </TouchableOpacity>
 
+
+
                         {/* Cloud Image */}
-                        <ThemedView style={styles.headerRocketWrap}>
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-far.png")}
-                                style={styles.imgCloudFar}
-                                resizeMode="cover"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear}
-                                resizeMode="cover"
-                            />
-                        </ThemedView>
+                        {
+                            isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-far.png")}
+                                    style={styles.imgCloudFar}
+                                    contentFit="fill"
+                                />
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-near.png")}
+                                    style={styles.imgCloudNear}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+                        {
+                            !isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group.png")}
+                                    style={styles.imgCloudTablet}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
 
                         {/* Main Content */}
-                        <ThemedView style={styles.settingContentStyle}>
-                            <ThemedView style={styles.tabContent}>
-                                <ThemedView style={styles.container}>
+                        <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
+                            <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
+                                <ThemedView style={[styles.tabContent]}>
+                                    <ThemedView style={[styles.container, {maxWidth: "80%", margin: "auto"}]}>
 
-                                    <ThemedView style={[styles.flexRow, { justifyContent: 'center', gap: 10, marginTop: 50 }]}>
-                                        <ThemedText style={styles.sectionTitle}>Add New Method</ThemedText>
-                                    </ThemedView>
-
-                                    {/* Email Section */}
-                                    <ThemedView style={{ flexDirection: 'column', gap: 15 }}>
-                                        <ThemedView>
-                                            <ThemedText style={styles.subLabel}>Card Number</ThemedText>
-                                            <ThemedView style={[styles.flexRow, {gap: 5}, styles.inputContainer]}>
-                                                <TextInput
-                                                    value={cardNumber}
-                                                    placeholder="2345 2345 2345 2345"
-                                                    style={[styles.input2, {flex: 1}]}
-                                                />
-
-                                                <IconCard width={30} height={30}
-                                                    style={styles.cardIcon}
-                                                />
-                                            </ThemedView>
+                                        <ThemedView style={[styles.flexRow, { justifyContent: 'center', gap: 10, marginTop: 50 }]}>
+                                            <ThemedText style={styles.sectionTitle}>Add New Method</ThemedText>
                                         </ThemedView>
 
-                                        <ThemedView style={styles.flexRow}>
+                                        {/* Email Section */}
+                                        <ThemedView style={{ flexDirection: 'column', gap: 15 }}>
                                             <ThemedView>
-                                                <ThemedText style={styles.subLabel}>Expiry Date</ThemedText>
-                                                <ThemedView style={[styles.flexRow, { gap: 10 }]}>
+                                                <ThemedText style={styles.subLabel}>Card Number</ThemedText>
+                                                <ThemedView style={[styles.flexRow, { gap: 5 }, styles.inputContainer]}>
                                                     <TextInput
                                                         value={cardNumber}
-                                                        placeholder="12"
-                                                        style={[styles.input, { width: 60 }]}
+                                                        placeholder="2345 2345 2345 2345"
+                                                        style={[styles.input2, { flex: 1 }]}
                                                     />
-                                                    <TextInput
-                                                        value={cardNumber}
-                                                        placeholder="12"
-                                                        style={[styles.input, { width: 60 }]}
+
+                                                    <IconCard width={30} height={30}
+                                                        style={styles.cardIcon}
                                                     />
                                                 </ThemedView>
                                             </ThemedView>
 
+                                            <ThemedView style={styles.flexRow}>
+                                                <ThemedView>
+                                                    <ThemedText style={styles.subLabel}>Expiry Date</ThemedText>
+                                                    <ThemedView style={[styles.flexRow, { gap: 10 }]}>
+                                                        <TextInput
+                                                            value={cardNumber}
+                                                            placeholder="12"
+                                                            style={[styles.input, { width: 60 }]}
+                                                        />
+                                                        <TextInput
+                                                            value={cardNumber}
+                                                            placeholder="12"
+                                                            style={[styles.input, { width: 60 }]}
+                                                        />
+                                                    </ThemedView>
+                                                </ThemedView>
+
+                                                <ThemedView>
+                                                    <ThemedText style={styles.subLabel}>CVV</ThemedText>
+                                                    <TextInput
+                                                        value={cardNumber}
+                                                        placeholder="..."
+                                                        style={[styles.input, { width: 60 }]}
+                                                    />
+                                                </ThemedView>
+
+                                            </ThemedView>
                                             <ThemedView>
-                                                <ThemedText style={styles.subLabel}>CVV</ThemedText>
+                                                <ThemedText style={styles.subLabel}>Name</ThemedText>
                                                 <TextInput
                                                     value={cardNumber}
-                                                    placeholder="..."
-                                                    style={[styles.input, { width: 60 }]}
+                                                    placeholder="Van Cong Nguyen"
+                                                    style={styles.input}
                                                 />
                                             </ThemedView>
+                                        </ThemedView>
 
-                                        </ThemedView>
-                                        <ThemedView>
-                                            <ThemedText style={styles.subLabel}>Name</ThemedText>
-                                            <TextInput
-                                                value={cardNumber}
-                                                placeholder="Van Cong Nguyen"
-                                                style={styles.input}
-                                            />
-                                        </ThemedView>
+
+                                        {/* Save Button */}
+                                        <TouchableOpacity onPress={handleSubmit}>
+                                            <ThemedView style={styles.button} >
+                                                <IconRefresh width={24} height={24} />
+                                                <ThemedText style={styles.buttonText}> Save</ThemedText>
+                                            </ThemedView>
+                                        </TouchableOpacity>
                                     </ThemedView>
-
-
-                                    {/* Save Button */}
-                                    <TouchableOpacity onPress={handleSubmit}>
-                                        <ThemedView style={styles.button} >
-                                            <IconRefresh width={24} height={24} />
-                                            <ThemedText style={styles.buttonText}> Save</ThemedText>
-                                        </ThemedView>
-                                    </TouchableOpacity>
                                 </ThemedView>
                             </ThemedView>
-
                         </ThemedView>
                     </ScrollView>
 
@@ -180,6 +199,14 @@ const styles = StyleSheet.create({
         top: 42,
         left: 0,
         zIndex: -10
+    },
+    imgCloudTablet: {
+        width: '105%',
+        height: '100%',
+        position: "absolute",
+        top: 80,
+        left: 0,
+        zIndex: -100,
     },
     settingContentStyle: {
         backgroundColor: '#fff',
@@ -264,6 +291,7 @@ const styles = StyleSheet.create({
     },
     tabContent: {
         minHeight: 500,
+        width: "100%",
         marginHorizontal: 1,
         paddingVertical: 30,
         paddingHorizontal: 10,

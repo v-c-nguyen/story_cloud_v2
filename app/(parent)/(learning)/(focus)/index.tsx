@@ -41,11 +41,14 @@ import IconSwap from "@/assets/images/icons/icon-swap.svg";
 import IconPlus from "@/assets/images/parent/icon-plus.svg";
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
 import IconSearch from "@/assets/images/icons/icon-search.svg";
+import useIsMobile from '@/hooks/useIsMobile';
+import LearningTab from '@/components/LearningTab';
 
 const HIGHLIGHT_INDEX = 0;
 export default function Index() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const isMobile = useIsMobile();
     const [modalVisible, setModalVisible] = React.useState(params.showModal === 'true');
     // Use zustand store for categories
     const { categories, setCategories } = useLearningCategoryStore();
@@ -181,21 +184,24 @@ export default function Index() {
                             <Header icon={IconLearning} role="parent" title="Learning" theme="dark"></Header>
                             {/* Header */}
                             <ThemedView style={styles.topRow}>
-                                <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(parent)/search-screen')}>
-                                    <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.iconBtn}>
-                                    <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                                </TouchableOpacity>
+                                {!isMobile && <LearningTab activeItem="Focus" />}
+                                <ThemedView style={{ flexDirection: "row", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                                    <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(parent)/search-screen')}>
+                                        <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.iconBtn}>
+                                        <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                                    </TouchableOpacity>
 
-                                {/* Dropdown toggle */}
-                                <TouchableOpacity
-                                    style={styles.dropdownToggle}
-                                    onPress={CreateNewFocus}
-                                >
-                                    <IconPlus width={18} height={20} color={'rgba(173, 215, 218, 1)'} />
-                                    <ThemedText style={styles.dropdownText}> Create New Focus </ThemedText>
-                                </TouchableOpacity>
+                                    {/* Dropdown toggle */}
+                                    <TouchableOpacity
+                                        style={styles.dropdownToggle}
+                                        onPress={CreateNewFocus}
+                                    >
+                                        <IconPlus width={18} height={20} color={'rgba(173, 215, 218, 1)'} />
+                                        <ThemedText style={styles.dropdownText}> Create New Focus </ThemedText>
+                                    </TouchableOpacity>
+                                </ThemedView>
                             </ThemedView>
 
                             {/* Category pills */}
@@ -242,7 +248,7 @@ export default function Index() {
                             zIndex: 1000,
                         }}
                     >
-                        <BottomNavBar role="parent" active="Learning" subActive="Focus" />
+                        <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Focus" : ""} image={!isMobile ? true : false} />
                     </ThemedView>
 
                     <CreatFocusModal mode={params.mode} modalVisible={modalVisible} onRemove={removeModal}></CreatFocusModal>

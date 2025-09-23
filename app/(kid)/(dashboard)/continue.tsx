@@ -15,8 +15,10 @@ import Header from "@/components/Header";
 import { useUser } from "@/app/lib/UserContext";
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function ContinueScreen() {
+  const isMobile = useIsMobile()
   const recentStories = useStoryStore((state) => state.recentStories);
   const [storiesData, setStoriesData] = useState<any>([]);
   const { child } = useUser();
@@ -38,7 +40,7 @@ export default function ContinueScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/back-pattern.png")}
+            source={require("@/assets/images/auth/back-pattern.png")}
             style={styles.topBackPattern}
             contentFit="cover"
           />
@@ -48,16 +50,28 @@ export default function ContinueScreen() {
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+            }
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            }
+            {
+              !isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            }
 
             <ThemedText style={styles.headerSubtitle}>Stories</ThemedText>
             <ThemedText style={styles.headerCountData}>
@@ -76,7 +90,7 @@ export default function ContinueScreen() {
             }}
           >
 
-            <ThemedView style={{flexDirection: "row", justifyContent: "center", marginBottom: 28}}>
+            <ThemedView style={{ flexDirection: "row", justifyContent: "center", marginBottom: 28 }}>
               <Link href="../">
                 <ThemedView style={[styles.backWrap]}>
                   <IconArrowLeft
@@ -209,6 +223,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 24,
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '150%',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: -100,
   },
   cardWrap: {
     marginBottom: 16,

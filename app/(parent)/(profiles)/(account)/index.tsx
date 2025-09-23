@@ -38,6 +38,7 @@ interface Kid {
 import IconProfile from "@/assets/images/parent/footer/icon-profile.svg"
 import IconPlus from "@/assets/images/parent/icon-plus.svg"
 import { tabData } from '@/data/parent/dashboardData';
+import useIsMobile from '@/hooks/useIsMobile';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL'
 type User = {
@@ -52,7 +53,7 @@ const AccountSettings = () => {
     const router = useRouter();
     const [user, setUser] = React.useState<User>({ id: '', email: '', name: '' });
     const tabs = tabData;
-
+    const isMobile = useIsMobile();
     const [fname, setFName] = React.useState('');
     const [lname, setLName] = React.useState('');
     const [pnumber, setPNumber] = React.useState('');
@@ -176,12 +177,14 @@ const AccountSettings = () => {
                             style={styles.topBackPattern}
                             contentFit="cover"
                         />
-
-                        <IconFrontbox
-                            width={500}
-                            height={'100%'}
-                            style={styles.profileFrontBox}
-                        />
+                        {
+                            isMobile &&
+                            <IconFrontbox
+                                width={isMobile ? 500 : "100%"}
+                                height={'100%'}
+                                style={[styles.profileFrontBox]}
+                            />
+                        }
                         {/* Header */}
                         <Header
                             icon={IconProfile}
@@ -191,158 +194,194 @@ const AccountSettings = () => {
                         ></Header>
 
                         {/* Cloud Image */}
-                        <ThemedView style={styles.headerRocketWrap}>
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-far.png")}
-                                style={styles.imgCloudFar}
-                                contentFit="fill"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear}
-                                contentFit="fill"
-                            />
-                        </ThemedView>
+                        {
+                            isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-far.png")}
+                                    style={styles.imgCloudFar}
+                                    contentFit="fill"
+                                />
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-near.png")}
+                                    style={styles.imgCloudNear}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+                        {
+                            !isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group.png")}
+                                    style={styles.imgCloudTablet}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+
 
                         {/* Main Content */}
-                        <ThemedView style={styles.settingContentStyle}>
-                            <ThemedText style={styles.settingHeader}>Settings</ThemedText>
+                        <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
+                            <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
+                                <ThemedText style={styles.settingHeader}>Settings</ThemedText>
 
-                            {/* Tab Navigation */}
-                            <TabBar
-                                tabs={tabs}
-                                activeTab={activeTab}
-                                onTabPress={handleTabPress}
-                            />
+                                {/* Tab Navigation */}
+                                <TabBar
+                                    tabs={tabs}
+                                    activeTab={activeTab}
+                                    onTabPress={handleTabPress}
+                                />
 
-                            <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
-                            <ThemedView style={styles.tabContent} >
-                                <ThemedView style={styles.container}>
+                                <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
+                                <ThemedView style={styles.tabContent} >
+                                    <ThemedView style={styles.container}>
 
-                                    {/* Parent Mode Header */}
-                                    <ThemedView style={styles.parentStyle}>
-                                        <ThemedView style={styles.modeRow}>
-                                            <IconParent2
-                                                width={45}
-                                                height={40}
-                                                style={styles.icon}
-                                            />
-                                            <ThemedText style={styles.modeText}>Parent Mode</ThemedText>
-                                        </ThemedView>
+                                        {/* Parent Mode Header */}
+                                        <ThemedView style={styles.parentStyle}>
+                                            <ThemedView style={styles.modeRow}>
+                                                <IconParent2
+                                                    width={45}
+                                                    height={40}
+                                                    style={styles.icon}
+                                                />
+                                                <ThemedText style={styles.modeText}>Parent Mode</ThemedText>
+                                            </ThemedView>
 
-                                        {/* Picture Section */}
-                                        <ThemedText style={styles.sectionTitle}>Picture</ThemedText>
+                                            {/* Picture Section */}
+                                            <ThemedText style={styles.sectionTitle}>Picture</ThemedText>
 
-
-                                        <ThemedView style={styles.avatarWrapper}>
-                                            {
-                                                avatar ?
-                                                    <Image
-                                                        source={{ uri: avatar }}
-                                                        style={styles.avatar}
-                                                    />
-                                                    :
-                                                    <IconParent3
-                                                        width={160}
-                                                        height={160}
-                                                        style={styles.avatar}
-                                                    />
-                                            }
-                                        </ThemedView>
-
-                                        <AvatarUploader
-                                            user={user}
-                                            setUser={setUser}
-                                            onUpload={(publicUrl) => onUpload(publicUrl)}
-                                        />
-                                        <ThemedText style={styles.recommendationText}>
-                                            At least 800x800px recommended{'\n'}
-                                            JPG or PNG and GIF is allowed,
-                                        </ThemedText    >
-
-                                        {/* General Info */}
-                                        <ThemedText style={styles.sectionTitle}>General</ThemedText>
-
-                                        <ThemedView style={styles.inputWrapper}>
-                                            <ThemedText style={styles.inputLabel}>First Name</ThemedText>
-                                            <TextInput
-                                                placeholder="Enter First Name"
-                                                value={fname}
-                                                onChangeText={setFName}
-                                                placeholderTextColor="rgba(5,59,74,0.20)"
-                                                style={styles.input} />
-                                        </ThemedView>
-
-                                        <ThemedView style={styles.inputWrapper}>
-                                            <ThemedText style={styles.inputLabel}>Last Name</ThemedText>
-                                            <TextInput
-                                                placeholder="Enter Last Name"
-                                                value={lname}
-                                                onChangeText={setLName}
-                                                placeholderTextColor="rgba(5,59,74,0.20)"
-                                                style={styles.input} />
-                                        </ThemedView>
-
-                                        <ThemedView style={styles.inputWrapper}>
-                                            <ThemedText style={styles.inputLabel}>Phone</ThemedText>
-                                            <TextInput
-                                                placeholder="Enter Phone"
-                                                value={pnumber}
-                                                onChangeText={setPNumber}
-                                                placeholderTextColor="rgba(5,59,74,0.20)"
-                                                style={styles.input} />
-                                        </ThemedView>
-                                    </ThemedView>
-                                    {/* All Kids */}
-
-                                    <ThemedView>
-                                        <ThemedText style={styles.sectionTitle}>All Your Kids</ThemedText>
-                                        <ThemedView>
-
-                                            {children.map((kid: Kid, index: number) => (
-                                                <ThemedView key={index} style={styles.kidContainer}>
-                                                    <ThemedView style={styles.header}>
-                                                        {
-                                                            kid.avatar_url ? <Image source={{ uri: kid.avatar_url }} style={styles.kid_avatar} /> : <IconParent3
-                                                                width={60}
-                                                                height={60}
-                                                                style={styles.kid_avatar}
+                                            <ThemedView style={{ flexDirection: isMobile ? "column" : "row", gap: 10 }}>
+                                                <ThemedView style={styles.avatarWrapper}>
+                                                    {
+                                                        avatar ?
+                                                            <Image
+                                                                source={{ uri: avatar }}
+                                                                style={styles.avatar}
                                                             />
-                                                        }
-                                                        <ThemedText style={styles.name}>{kid.name}</ThemedText>
-                                                        <ThemedView style={styles.infoIcons}>
-                                                            <IconAge width={24} height={24} />
-                                                            <ThemedText style={styles.age}>{kid.age}</ThemedText>
-                                                        </ThemedView>
-                                                        <TouchableOpacity style={styles.iconButton} onPress={() => handleEditButton(kid)}>
-                                                            <IconEdit width={24} height={24} color={"#053B4A"} />
-                                                        </TouchableOpacity>
-                                                    </ThemedView>
-
-                                                    <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                        <ThemedText style={[styles.inputLabel, { marginBottom: 0 }]}>Learning Mode</ThemedText>
-                                                        <IconInformation width={16} height={16} color={"#053B4A"} />
-                                                    </ThemedView>
-
-                                                    <ThemedView style={styles.modesStyle}>
-                                                        <ModeList active={kid} mode='light' selectActiveChild={setActiveChild} />
-                                                    </ThemedView>
+                                                            :
+                                                            <IconParent3
+                                                                width={160}
+                                                                height={160}
+                                                                style={styles.avatar}
+                                                            />
+                                                    }
                                                 </ThemedView>
-                                            ))}
-                                            <TouchableOpacity
-                                                style={[styles.addButton, children.length >= 4 && { display: 'none' }]}
-                                                onPress={handleAddButton}
-                                            >
-                                                <IconPlus width={18} height={18} />
-                                                <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Add One More Kid</ThemedText>
-                                            </TouchableOpacity>
+                                                <ThemedView style={{flexDirection: "column", justifyContent: "center"}}>
+                                                    <AvatarUploader
+                                                        user={user}
+                                                        setUser={setUser}
+                                                        onUpload={(publicUrl) => onUpload(publicUrl)}
+                                                    />
+                                                    <ThemedText style={styles.recommendationText}>
+                                                        At least 800x800px recommended{'\n'}
+                                                        JPG or PNG and GIF is allowed,
+                                                    </ThemedText    >
+                                                </ThemedView>
+                                            </ThemedView>
+
+                                            {/* General Info */}
+                                            <ThemedText style={styles.sectionTitle}>General</ThemedText>
+                                            <ThemedView style={{ flexDirection: isMobile ? "column" : "row", gap: 10 }}>
+                                                <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                                                    <ThemedText style={styles.inputLabel}>First Name</ThemedText>
+                                                    <TextInput
+                                                        placeholder="Enter First Name"
+                                                        value={fname}
+                                                        onChangeText={setFName}
+                                                        placeholderTextColor="rgba(5,59,74,0.20)"
+                                                        style={styles.input} />
+                                                </ThemedView>
+
+                                                <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                                                    <ThemedText style={styles.inputLabel}>Last Name</ThemedText>
+                                                    <TextInput
+                                                        placeholder="Enter Last Name"
+                                                        value={lname}
+                                                        onChangeText={setLName}
+                                                        placeholderTextColor="rgba(5,59,74,0.20)"
+                                                        style={styles.input} />
+                                                </ThemedView>
+                                            </ThemedView>
+
+                                            <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                                                <ThemedText style={styles.inputLabel}>Phone</ThemedText>
+                                                <TextInput
+                                                    placeholder="Enter Phone"
+                                                    value={pnumber}
+                                                    onChangeText={setPNumber}
+                                                    placeholderTextColor="rgba(5,59,74,0.20)"
+                                                    style={styles.input} />
+                                            </ThemedView>
+                                        </ThemedView>
+                                        {/* All Kids */}
+
+                                        <ThemedView>
+                                            <ThemedView style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                                                <ThemedText style={styles.sectionTitle}>All Your Kids</ThemedText>
+
+                                                {
+                                                    !isMobile &&
+                                                    <TouchableOpacity
+                                                        style={[styles.addButton, children.length >= 4 && { display: 'none' }]}
+                                                        onPress={handleAddButton}
+                                                    >
+                                                        <IconPlus width={18} height={18} color={"#053B4A"} />
+                                                        <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Add One More Kid</ThemedText>
+                                                    </TouchableOpacity>
+                                                }
+                                            </ThemedView>
+                                            <ThemedView>
+
+                                                {children.map((kid: Kid, index: number) => (
+                                                    <ThemedView key={index} style={styles.kidContainer}>
+                                                        <ThemedView style={styles.header}>
+                                                            {
+                                                                kid.avatar_url ? <Image source={{ uri: kid.avatar_url }} style={styles.kid_avatar} /> : <IconParent3
+                                                                    width={60}
+                                                                    height={60}
+                                                                    style={styles.kid_avatar}
+                                                                />
+                                                            }
+                                                            <ThemedText style={styles.name}>{kid.name}</ThemedText>
+                                                            <ThemedView style={styles.infoIcons}>
+                                                                <IconAge width={24} height={24} />
+                                                                <ThemedText style={styles.age}>{kid.age}</ThemedText>
+                                                            </ThemedView>
+                                                            <TouchableOpacity style={styles.iconButton} onPress={() => handleEditButton(kid)}>
+                                                                <IconEdit width={24} height={24} color={"#053B4A"} />
+                                                            </TouchableOpacity>
+                                                        </ThemedView>
+
+                                                        <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                                            <ThemedText style={[styles.inputLabel, { marginBottom: 0 }]}>Learning Mode</ThemedText>
+                                                            <IconInformation width={16} height={16} color={"#053B4A"} />
+                                                        </ThemedView>
+
+                                                        <ThemedView style={styles.modesStyle}>
+                                                            <ModeList active={kid} mode='light' selectActiveChild={setActiveChild} />
+                                                        </ThemedView>
+                                                    </ThemedView>
+                                                ))}
+                                                {
+                                                    isMobile &&
+                                                    <TouchableOpacity
+                                                        style={[styles.addButton, children.length >= 4 && { display: 'none' }]}
+                                                        onPress={handleAddButton}
+                                                    >
+                                                        <IconPlus width={18} height={18} color={"#053B4A"} />
+                                                        <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Add One More Kid</ThemedText>
+                                                    </TouchableOpacity>
+                                                }
+                                            </ThemedView>
+
                                         </ThemedView>
 
                                     </ThemedView>
-
                                 </ThemedView>
                             </ThemedView>
-
                         </ThemedView>
                     </ScrollView>
                 </ThemedView>
@@ -389,17 +428,25 @@ const styles = StyleSheet.create({
         left: 0,
         zIndex: -10
     },
+    imgCloudTablet: {
+        width: '105%',
+        height: '100%',
+        position: "absolute",
+        top: 80,
+        left: 0,
+        zIndex: -100,
+    },
     settingContentStyle: {
+        backgroundColor: "#fff",
         paddingHorizontal: 3,
         zIndex: 10,
         paddingBottom: 100,
-        marginTop: -100
+        marginTop: -80
     },
     profileFrontBox: {
         position: "absolute",
         top: 190,
         zIndex: 10,
-        maxWidth: 554
     },
     mainSettingStyle: {
         display: 'flex',

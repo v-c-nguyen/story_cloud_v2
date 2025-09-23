@@ -32,7 +32,7 @@ export default function AdventureStoryCarousel({
       {/* Progress bar */}
       <ThemedView style={styles.progressBar}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <ThemedView style={styles.stepsRow}>
+          <ThemedView style={[styles.stepsRow]}>
             {stories.map((story: any, idx: any) => {
               const isCompleted = story.track?.watched;
               const isActive = idx === currentIndex;
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
-    alignSelf: "center",
+    alignItems: "center",
   },
   adventureHeader: {
     color: "#FFE7A0",
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   stepsRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 18,
+    gap: 50,
     justifyContent: "center",
     marginBottom: 6,
   },
@@ -196,7 +196,9 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     fontSize: 18,
   },
-  stepNumberActive: {},
+  stepNumberActive: {
+    color: "#053B4A"
+  },
   stepLabel: {
     fontSize: 14,
     color: "#AD D7DA",
@@ -352,7 +354,7 @@ const styles = StyleSheet.create({
   },
   line: {
     height: 8,
-    width: 24,
+    width: 50,
     position: "absolute",
     left: 24,
     backgroundColor: "#fcfcfc3b",
@@ -360,14 +362,14 @@ const styles = StyleSheet.create({
   },
   completeLine: {
     height: 8,
-    width: 34,
+    width: 60,
     left: 30,
     backgroundColor: "#F4A672",
     marginHorizontal: 4,
   },
   activeLine: {
     height: 8,
-    width: 28,
+    width: 60,
     left: 30,
     backgroundColor: "#fcfcfc3b",
     marginHorizontal: 4,

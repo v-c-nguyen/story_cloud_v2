@@ -1723,8 +1723,8 @@ const styles = StyleSheet.create({
     opacity: 0.3,
     top: 0,
     left: 0,
-    width: "100%",
-    height: "100%",
+    width: "115%",
+    height: "115%",
     resizeMode: "cover",
   },
   progressRow: {

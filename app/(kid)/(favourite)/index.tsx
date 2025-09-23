@@ -21,9 +21,10 @@ import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
 import Header from "@/components/Header";
 import IconSearch from "@/assets/images/icons/icon-search.svg"
 import IconMic from "@/assets/images/icons/icon-micro.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Favourites() {
-
+  const isMobile = useIsMobile();
   const [series, setSeries] = useState<any[]>([]);
   const { child } = useUser();
   const [loading, setLoading] = useState(false);
@@ -141,16 +142,28 @@ export default function Favourites() {
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+            }
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            }
+            {
+              !isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            }
             {/* Header */}
             <ThemedView style={{ paddingTop: 25, marginTop: 15, paddingHorizontal: 16, width: '100%' }}>
               <ThemedView
@@ -168,7 +181,7 @@ export default function Favourites() {
           </ThemedView>
 
           <ThemedView style={styles.mainContent}>
-            <ThemedView style={[styles.content, {paddingBottom: 60}]}>
+            <ThemedView style={[styles.content, { paddingBottom: 60 }]}>
               {/* Tab Bar */}
               <ThemedText style={styles.subtitle}>Stories | {favoriteStories?.length} total</ThemedText>
               <ThemedView style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', paddingHorizontal: 16, paddingTop: 20, marginBottom: 80 }}>
@@ -361,6 +374,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
     borderTopWidth: 1,
     borderTopColor: '#ddd',
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '180%',
+    position: "absolute",
+    top: 50,
+    left: 0,
+    zIndex: -100,
   },
   tabItem: {
     alignItems: 'center',

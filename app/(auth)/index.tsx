@@ -26,7 +26,8 @@ export default function HomeScreen() {
 
         <Image
           source={require("@/assets/images/auth/back-pattern.png")}
-          style={styles.backPattern}
+          style={[styles.backPattern]}
+          pointerEvents="none"
           contentFit="cover"
         />
         {/* Background pattern (optional, can use SVG or ImageBackground) */}

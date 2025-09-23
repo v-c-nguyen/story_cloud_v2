@@ -14,6 +14,7 @@ import { Image } from "expo-image";
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 import Header from "@/components/Header";
 import { useUser } from "@/app/lib/UserContext";
+import useIsMobile from "@/hooks/useIsMobile";
 
 const seriesData = [
   {
@@ -49,6 +50,7 @@ const seriesData = [
 ];
 
 export default function WatchNextScreen() {
+  const isMobile = useIsMobile()
   const { child } = useUser();
   return (
     <>
@@ -60,7 +62,7 @@ export default function WatchNextScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/back-pattern.png")}
+            source={require("@/assets/images/auth/back-pattern.png")}
             style={styles.topBackPattern}
             contentFit="cover"
           />
@@ -70,16 +72,28 @@ export default function WatchNextScreen() {
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+            }
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            }
+            {
+              !isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            }
             <ThemedView style={{ flexDirection: "row", justifyContent: "center", marginTop: 60 }}>
               <Link href="../">
                 <ThemedView style={[styles.backWrap]}>
@@ -202,6 +216,14 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 16,
     paddingBottom: 24,
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '130%',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: -100,
   },
   cardWrap: {
     marginBottom: 16,

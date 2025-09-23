@@ -59,7 +59,7 @@ export default function LocationSelection({
               style={[styles.sectionTitle, styles.selectionTitleSmall]}
             >
               {(currentLocation as any)?.description ??
-                currentLocation?.description_parent}
+                currentLocation?.description_functional}
             </ThemedText>
           </View>
         </View>

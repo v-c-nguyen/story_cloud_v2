@@ -118,10 +118,18 @@ export default function ListenStory() {
             animationType="fade"
             onRequestClose={() => setStyleModalVisible(false)}
           >
-            <StoryStyleModal 
-              activeStyle={activeStyle}
-              setActiveStyle={setActiveStyle}
-              goBack={() => setStyleModalVisible(false)} />
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingVertical: 12,
+                backgroundColor: 'rgba(0,0,0,0.4)'
+              }}
+              >
+              <StoryStyleModal
+                activeStyle={activeStyle}
+                setActiveStyle={setActiveStyle}
+                goBack={() => setStyleModalVisible(false)} />
+            </ScrollView>
           </Modal>
           <ScrollView
             style={styles.rootContainer}

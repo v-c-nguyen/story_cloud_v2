@@ -14,6 +14,7 @@ import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } 
 import IconFocus from "@/assets/images/parent/icon-focus.svg"
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
 import IconInformation from "@/assets/images/parent/icon-information.svg"
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface Child {
     id: string,
@@ -23,6 +24,7 @@ interface Child {
     avatar_url: string
 }
 export default function AddFocus() {
+    const isMobile = useIsMobile();
     const router = useRouter();
     const [step, setStep] = React.useState(1);
     const [mode, setMode] = React.useState(0);
@@ -175,7 +177,7 @@ export default function AddFocus() {
                         zIndex: 1000,
                     }}
                 >
-                    <BottomNavBar role="parent" active="Learning" subActive="Focus" />
+                    <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Focus" : ""} image={!isMobile ? true : false} />
                 </ThemedView>
             </SafeAreaView>
         </>

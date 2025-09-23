@@ -1,5 +1,4 @@
 import { getSeriesByStoryId } from "@/api/series";
-import { useUser } from "@/app/lib/UserContext";
 import BottomNavBar from "@/components/BottomNavBar";
 import Header from "@/components/Header";
 import MediaPlayerCard from "@/components/MediaPlayerCard";
@@ -25,16 +24,19 @@ import {
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 import IconMusic from "@/assets/images/icons/music.svg";
+import IconMoon from "@/assets/images/parent/moon.svg"
 import StoryStyleModal from "@/components/Modals/StoryStyleModal";
-import { ThemedText } from "@/components/ThemedText";
+import { useUser } from "@/app/lib/UserContext";
 
 export default function ListenStory() {
   const router = useRouter();
+  const { child } = useUser();
   const params = useLocalSearchParams();
   const storyId = typeof params.storyId === "string" ? params.storyId : "";
   const currentStory = useStoryStore((state) => state.listeningStory);
   const setCurrentStory = useStoryStore((state) => state.setCurrentStory);
   const [loading, setLoading] = React.useState(false);
+  const modes = modesData;
   const [modalVisible, setModalVisible] = React.useState(false);
   const { activeChild, setActiveChild } = useChildrenStore();
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
@@ -42,8 +44,8 @@ export default function ListenStory() {
   const setStories = useStoryStore((state) => state.setStories);
   const stories = useStoryStore((state) => state.stories);
   const setActiveTrack = useTrackStore((state) => state.setActiveTrack);
-  const [changeMode, setChangeMode] = React.useState(true);
-  const { child } = useUser();
+  const [activeStyle, setActiveStyle] = React.useState("play");
+  const [styleModalVisible, setStyleModalVisible] = React.useState(false);
 
   React.useEffect(() => {
     async function fetchSeries() {
@@ -87,7 +89,9 @@ export default function ListenStory() {
 
   const onNext = () => {
     setCurrentStory(stories[currentCardIndex + 1]);
+
     setCurrentCardIndex(currentCardIndex + 1);
+
     setModalVisible(false);
   };
 
@@ -110,7 +114,25 @@ export default function ListenStory() {
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={{ flex: 1, display: "flex", height: 500 }}>
         <ThemedView style={{ flex: 1, display: "flex", position: "relative" }}>
-
+          <Modal
+            transparent
+            visible={styleModalVisible}
+            animationType="fade"
+            onRequestClose={() => setStyleModalVisible(false)}
+          >
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingVertical: 12,
+                backgroundColor: 'rgba(0,0,0,0.4)'
+              }}
+            >
+              <StoryStyleModal
+                activeStyle={activeStyle}
+                setActiveStyle={setActiveStyle}
+                goBack={() => setStyleModalVisible(false)} />
+            </ScrollView>
+          </Modal>
           <ScrollView
             style={styles.rootContainer}
             showsVerticalScrollIndicator={false}
@@ -118,7 +140,7 @@ export default function ListenStory() {
           >
             {/* Top background */}
             <Image
-              source={require("@/assets/images/parent/top-back-pattern.png")}
+              source={require("@/assets/images/parent/parent-back-pattern.png")}
               style={styles.topBackPattern}
               contentFit="cover"
             />
@@ -129,7 +151,6 @@ export default function ListenStory() {
 
             <ThemedView style={styles.container}>
               {/* Dots */}
-
               <ThemedView style={styles.cardFooter}>
                 <TouchableOpacity onPress={() => router.push("./")}>
                   <IconArrowLeft
@@ -141,9 +162,14 @@ export default function ListenStory() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{ position: 'relative', width: 32 }}
-                  onPress={() => setChangeMode(true)}
+                  onPress={() => setStyleModalVisible(true)}
                 >
-                  <IconMusic width={24} height={24} style={styles.rightBtn} />
+                  {
+                    activeStyle === "play" ?
+                      <IconMusic width={24} height={24} color={"white"} style={styles.rightBtn} />
+                      :
+                      <IconMoon width={24} height={24} color={"white"} style={[styles.rightBtn]} />
+                  }
                   <ThemedView style={{
                     position: 'absolute',
                     width: 20,
@@ -183,8 +209,8 @@ export default function ListenStory() {
               role="kid"
               active="Listen"
               theme="light"
-              pathway={activeChild?.mode == "pathway"}
               image={true}
+              pathway={child?.mode == "pathway"}
             />
           </ThemedView>
 
@@ -207,6 +233,7 @@ export default function ListenStory() {
 const styles = StyleSheet.create({
   cardFooter: {
     marginTop: 30,
+    paddingHorizontal: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -217,7 +244,7 @@ const styles = StyleSheet.create({
     tintColor: "white",
   },
   rightBtn: {
-    width: 32,
+    width: 24,
     height: 24,
     tintColor: "white",
   },
@@ -233,12 +260,10 @@ const styles = StyleSheet.create({
   topBackPattern: {
     width: "100%",
     height: "100%",
-    maxHeight: 1200,
     position: "absolute",
   },
   container: {
     zIndex: 100,
-    paddingHorizontal: 16,
     paddingBottom: 50,
     marginBottom: 50,
   },

@@ -22,6 +22,7 @@ import IconProfile from "@/assets/images/parent/footer/icon-profile.svg";
 import { tabData } from '@/data/parent/dashboardData';
 import IconTickBox from "@/assets/images/icons/icon-box-tick.svg"
 import IconCancel from "@/assets/images/parent/icon-cancel.svg"
+import useIsMobile from '@/hooks/useIsMobile';
 
 const starIcon = require('@/assets/images/parent/icon-star.png')
 
@@ -65,6 +66,7 @@ const plans = [
 ];
 export default function SubscriptionPlansScreen() {
     let domain = '';
+    const isMobile = useIsMobile();
     if (typeof window !== 'undefined' && Platform.OS === 'web') {
         domain = window.location.origin;
     }
@@ -193,124 +195,140 @@ export default function SubscriptionPlansScreen() {
                         ></Header>
 
                         {/* Cloud Image */}
-                        <ThemedView style={styles.headerRocketWrap}>
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-far.png")}
-                                style={styles.imgCloudFar}
-                                contentFit="cover"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear}
-                                contentFit="cover"
-                            />
-                        </ThemedView>
+                        {
+                            isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-far.png")}
+                                    style={styles.imgCloudFar}
+                                    contentFit="fill"
+                                />
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-near.png")}
+                                    style={styles.imgCloudNear}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+                        {
+                            !isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group.png")}
+                                    style={styles.imgCloudTablet}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
 
                         {/* Main Content */}
-                        <ThemedView style={styles.settingContentStyle}>
-                            <ThemedText style={styles.settingHeader}>Settings</ThemedText>
+                        <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
+                            <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
+                                <ThemedText style={styles.settingHeader}>Settings</ThemedText>
 
-                            {/* Tab Navigation */}
-                            <TabBar
-                                tabs={tabs}
-                                activeTab={'account'}
-                                onTabPress={handleTabPress}
-                            />
+                                {/* Tab Navigation */}
+                                <TabBar
+                                    tabs={tabs}
+                                    activeTab={'account'}
+                                    onTabPress={handleTabPress}
+                                />
 
-                            <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
-                            <ThemedView style={styles.tabContent} >
+                                <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
+                                <ThemedView style={[styles.tabContent, {marginBottom: 35}]} >
 
-                                {/* Main Content */}
+                                    {/* Main Content */}
 
-                                <ThemedView style={styles.container}>
-                                    {/* Header */}
-                                    <ThemedText style={styles.title}>Your Subscription Plan</ThemedText>
-                                    <ThemedText style={styles.subtitle}>Edit or upgrade your plan from here</ThemedText>
+                                    <ThemedView style={styles.container}>
+                                        {/* Header */}
+                                        <ThemedText style={styles.title}>Your Subscription Plan</ThemedText>
+                                        <ThemedText style={styles.subtitle}>Edit or upgrade your plan from here</ThemedText>
 
-                                    {/* Toggle */}
-                                    <ThemedView style={styles.toggleRow}>
-                                        <ThemedText style={[styles.toggleLabel, isMonthly && styles.activeLabel]}>Monthly</ThemedText>
-                                        <Switch
-                                            value={!isMonthly}
-                                            onValueChange={() => setIsMonthly(prev => !prev)}
-                                            trackColor={{ false: '#ccc', true: '#F4A672' }}
-                                            thumbColor="#fff"
-                                        />
-                                        <ThemedText style={[styles.toggleLabel, !isMonthly && styles.activeLabel]}>Annual</ThemedText>
-                                    </ThemedView>
-
-                                    {/* Horizontal ScrollView */}
-                                    <ScrollView
-                                        horizontal
-                                        pagingEnabled
-                                        showsHorizontalScrollIndicator={false}
-                                        onScroll={handleScroll}
-                                        scrollEventThrottle={16}
-                                        style={{ position: 'relative', flex: 1 }}
-                                    >
-                                        {plans.map((plan, index) => (
-                                            <ThemedView key={index} style={styles.card}>
-                                                <ThemedText style={styles.planTitle}>
-                                                    <ThemedText style={styles.storyCloud}>StoryCloud</ThemedText> | Explorer
-                                                </ThemedText>
-                                                <ThemedText style={styles.planName}>{plan.name}</ThemedText>
-                                                <ThemedText style={styles.planPrice}>
-                                                    ${isMonthly ? plan.priceMonthly : plan.priceAnnual}
-                                                </ThemedText>
-                                                <ThemedText style={styles.planSeats}>{plan.seats} Seat{plan.seats > 1 ? 's' : ''}</ThemedText>
-
-                                                {/* Features */}
-                                                <ThemedView style={{ marginTop: 20 }}>
-                                                    {plan.features.map((feature, idx) => (
-                                                        <ThemedView key={idx} style={styles.featureRow}>
-                                                            <IconTickBox width={24} height={24} color={"rgba(5, 59, 74, 1)"} />
-                                                            <ThemedText style={styles.featureCustomText}>{feature}</ThemedText>
-                                                        </ThemedView>
-                                                    ))}
-                                                </ThemedView>
-
-                                                {/* Button */}
-                                                <TouchableOpacity
-                                                    style={styles.planButton}
-                                                    onPress={() => handleButtonClick(plan.buttonLabel, plan)}
-                                                >
-                                                    {
-                                                        plan.buttonLabel == "Cancel Subscription" &&
-                                                        <IconCancel width={20} height={20} color={"#053B4A"} />
-                                                    }
-                                                    <ThemedText style={styles.buttonCustomText}>{plan.buttonLabel}</ThemedText>
-                                                </TouchableOpacity>
-                                            </ThemedView>
-                                        ))}
-                                    </ScrollView>
-                                    <ThemedView style={styles.dotsContainer}>
-                                        {plans.map((_, idx) => (
-                                            <ThemedView
-                                                key={idx}
-                                                style={[
-                                                    styles.dot,
-                                                    currentIndex === idx && styles.activeDot
-                                                ]}
+                                        {/* Toggle */}
+                                        <ThemedView style={styles.toggleRow}>
+                                            <ThemedText style={[styles.toggleLabel, isMonthly && styles.activeLabel]}>Monthly</ThemedText>
+                                            <Switch
+                                                value={!isMonthly}
+                                                onValueChange={() => setIsMonthly(prev => !prev)}
+                                                trackColor={{ false: '#ccc', true: '#F4A672' }}
+                                                thumbColor="#fff"
                                             />
-                                        ))}
+                                            <ThemedText style={[styles.toggleLabel, !isMonthly && styles.activeLabel]}>Annual</ThemedText>
+                                        </ThemedView>
+
+                                        {/* Horizontal ScrollView */}
+                                        <ScrollView
+                                            horizontal
+                                            pagingEnabled
+                                            showsHorizontalScrollIndicator={false}
+                                            onScroll={handleScroll}
+                                            scrollEventThrottle={16}
+                                            style={{ position: 'relative', flex: 1 }}
+                                        >
+                                            {plans.map((plan, index) => (
+                                                <ThemedView key={index} style={styles.card}>
+                                                    <ThemedText style={styles.planTitle}>
+                                                        <ThemedText style={styles.storyCloud}>StoryCloud</ThemedText> | Explorer
+                                                    </ThemedText>
+                                                    <ThemedText style={styles.planName}>{plan.name}</ThemedText>
+                                                    <ThemedText style={styles.planPrice}>
+                                                        ${isMonthly ? plan.priceMonthly : plan.priceAnnual}
+                                                    </ThemedText>
+                                                    <ThemedText style={styles.planSeats}>{plan.seats} Seat{plan.seats > 1 ? 's' : ''}</ThemedText>
+
+                                                    {/* Features */}
+                                                    <ThemedView style={{ marginTop: 20 }}>
+                                                        {plan.features.map((feature, idx) => (
+                                                            <ThemedView key={idx} style={styles.featureRow}>
+                                                                <IconTickBox width={24} height={24} color={"rgba(5, 59, 74, 1)"} />
+                                                                <ThemedText style={styles.featureCustomText}>{feature}</ThemedText>
+                                                            </ThemedView>
+                                                        ))}
+                                                    </ThemedView>
+
+                                                    {/* Button */}
+                                                    <TouchableOpacity
+                                                        style={styles.planButton}
+                                                        onPress={() => handleButtonClick(plan.buttonLabel, plan)}
+                                                    >
+                                                        {
+                                                            plan.buttonLabel == "Cancel Subscription" &&
+                                                            <IconCancel width={20} height={20} color={"#053B4A"} />
+                                                        }
+                                                        <ThemedText style={styles.buttonCustomText}>{plan.buttonLabel}</ThemedText>
+                                                    </TouchableOpacity>
+                                                </ThemedView>
+                                            ))}
+                                        </ScrollView>
+                                        <ThemedView style={styles.dotsContainer}>
+                                            {plans.map((_, idx) => (
+                                                <ThemedView
+                                                    key={idx}
+                                                    style={[
+                                                        styles.dot,
+                                                        currentIndex === idx && styles.activeDot
+                                                    ]}
+                                                />
+                                            ))}
+                                        </ThemedView>
+
+
+
+                                        {/* Modal */}
+                                        {/* Plan Updated Modal */}
+                                        <MyModal
+                                            visible={modalVisible}
+                                            title="Your Plan has been Updated"
+                                            content='Updates will be reflected in your next billing cycle'
+                                            buttonText='Back to Profile'
+                                            onClose={() => setModalVisible(false)}
+                                            starIcon={starIcon}
+                                        />
                                     </ThemedView>
 
-
-
-                                    {/* Modal */}
-                                    {/* Plan Updated Modal */}
-                                    <MyModal
-                                        visible={modalVisible}
-                                        title="Your Plan has been Updated"
-                                        content='Updates will be reflected in your next billing cycle'
-                                        buttonText='Back to Profile'
-                                        onClose={() => setModalVisible(false)}
-                                        starIcon={starIcon}
-                                    />
                                 </ThemedView>
-
                             </ThemedView>
-
                         </ThemedView>
                     </ScrollView>
                 </ThemedView>
@@ -351,6 +369,14 @@ const styles = StyleSheet.create({
         top: 42,
         left: 0,
         zIndex: -10
+    },
+    imgCloudTablet: {
+        width: '105%',
+        height: '100%',
+        position: "absolute",
+        top: 80,
+        left: 0,
+        zIndex: -100,
     },
     topBackPattern: {
         width: "100%",

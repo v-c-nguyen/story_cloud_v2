@@ -15,9 +15,11 @@ import { tabData } from '@/data/parent/dashboardData';
 import IconRefresh from "@/assets/images/icons/icon-refresh.svg";
 import IconStar from "@/assets/images/icons/icon-star.svg";
 import IconEyeClose from "@/assets/images/auth/icon-eye-close.svg";
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function LoginCredential() {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState(''); // Passwords should not be fetched or displayed
   // Fetch user email from Supabase on mount
@@ -56,7 +58,7 @@ export default function LoginCredential() {
 
   const renderStars = () => {
     return password.split('').map((_, index) => (
-      <IconStar width={18} height={18}  key={index} />
+      <IconStar width={18} height={18} key={index} />
     ));
   };
 
@@ -106,83 +108,107 @@ export default function LoginCredential() {
           ></Header>
 
           {/* Cloud Image */}
-          <ThemedView style={styles.headerRocketWrap}>
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              resizeMode="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              resizeMode="cover"
-            />
-          </ThemedView>
+
+          {/* Cloud Image */}
+          {
+            isMobile &&
+            <ThemedView style={styles.headerRocketWrap}>
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="fill"
+              />
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="fill"
+              />
+            </ThemedView>
+          }
+
+          {
+            !isMobile &&
+            <ThemedView style={styles.headerRocketWrap}>
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            </ThemedView>
+          }
+
 
           {/* Main Content */}
-          <ThemedView style={styles.settingContentStyle}>
-            <ThemedText style={styles.settingHeader}>Settings</ThemedText>
+          <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
+            <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
+              <ThemedText style={styles.settingHeader}>Settings</ThemedText>
 
-            {/* Tab Navigation */}
-            <TabBar
-              tabs={tabs}
-              activeTab={activeItem}
-              onTabPress={handleTabPress}
-            />
+              {/* Tab Navigation */}
+              <TabBar
+                tabs={tabs}
+                activeTab={activeItem}
+                onTabPress={handleTabPress}
+              />
 
-            <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
-            <ThemedView style={styles.tabContent} >
+              <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
+              <ThemedView style={styles.tabContent} >
 
-              {/* Main Content */}
+                {/* Main Content */}
 
-              <ThemedView style={styles.container}>
-                {/* Email Section */}
-                <ThemedText style={styles.label}>Email</ThemedText>
-                <ThemedText style={styles.subLabel}>Email Address</ThemedText>
-                <TextInput
-                  value={email}
-                  editable={false}
-                  style={styles.input}
-                />
+                <ThemedView style={styles.container}>
+                  {/* Email Section */}
+                  <ThemedText style={styles.label}>Email</ThemedText>
+                  <ThemedText style={styles.subLabel}>Email Address</ThemedText>
+                  <TextInput
+                    value={email}
+                    editable={false}
+                    style={styles.input}
+                  />
+                  <ThemedText style={[styles.label, { marginTop: 20 }]}>Password</ThemedText>
 
-                {/* Password Section */}
-                <ThemedText style={[styles.label, { marginTop: 20 }]}>Password</ThemedText>
-                <ThemedText style={styles.subLabel}>Password</ThemedText>
-                <ThemedView>
-                  <ThemedView style={styles.pwd_container}>
-                    <ThemedView style={styles.starRow}>
-                      {showStars ? renderStars() : <ThemedText style={styles.text}>{password}</ThemedText>}
+                  <ThemedView style={{ flexDirection: isMobile ? "column" : "row", alignItems: "center", gap: 10 }}>
+                    {/* Password Section */}
+                    <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                      <ThemedText style={styles.subLabel}>Password</ThemedText>
+                      <ThemedView>
+                        <ThemedView style={styles.pwd_container}>
+                          <ThemedView style={styles.starRow}>
+                            {showStars ? renderStars() : <ThemedText style={styles.text}>{password}</ThemedText>}
+                          </ThemedView>
+                          <TextInput
+                            style={styles.pwd_input}
+                            value={password}
+                            onChangeText={setPassword}
+                            editable={true}
+                            secureTextEntry={true}
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                          />
+                          <TouchableOpacity onPress={() => setShowStars(!showStars)}>
+                            <IconEyeClose
+                              width={24}
+                              height={24}
+                              color={"#053B4A"}
+                            />
+                          </TouchableOpacity>
+                        </ThemedView>
+                      </ThemedView>
                     </ThemedView>
-                    <TextInput
-                      style={styles.pwd_input}
-                      value={password}
-                      onChangeText={setPassword}
-                      editable={true}
-                      secureTextEntry={true}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                    />
-                    <TouchableOpacity onPress={() => setShowStars(!showStars)}>
-                      <IconEyeClose
-                        width={24}
-                        height={24}
-                        color={"#053B4A"}
-                      />
-                    </TouchableOpacity>
+
+                    {/* Change Password Button */}
+                    <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                      <TouchableOpacity onPress={handleChangePassword}>
+                        <ThemedView style={styles.button} >
+                          <IconRefresh width={24} height={24} color={"#053B4A"} />
+                          <ThemedText style={styles.buttonText}>Change Password</ThemedText>
+                        </ThemedView>
+                      </TouchableOpacity>
+                    </ThemedView>
                   </ThemedView>
                 </ThemedView>
 
-                {/* Change Password Button */}
-                <TouchableOpacity onPress={handleChangePassword}>
-                  <ThemedView style={styles.button} >
-                    <IconRefresh  width={24} height={24} color={"#053B4A"}/>
-                    <ThemedText style={styles.buttonText}>Change Password</ThemedText>
-                  </ThemedView>
-                </TouchableOpacity>
               </ThemedView>
-
             </ThemedView>
-
           </ThemedView>
         </ScrollView>
         <BottomNavBar
@@ -210,6 +236,9 @@ const styles = StyleSheet.create({
     marginTop: -56,
     position: "relative",
   },
+  inputWrapper: {
+    marginBottom: 20,
+  },
   topBackPattern: {
     width: "100%",
     height: 400,
@@ -231,12 +260,20 @@ const styles = StyleSheet.create({
     left: 0,
     zIndex: -10
   },
+  imgCloudTablet: {
+    width: '105%',
+    height: '100%',
+    position: "absolute",
+    top: 80,
+    left: 0,
+    zIndex: -100,
+  },
   settingContentStyle: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingHorizontal: 3,
     zIndex: 10,
     paddingBottom: 100,
-    marginTop: -100
+    marginTop: -80
   },
   profileFrontBox: {
     position: "absolute",
@@ -369,6 +406,7 @@ const styles = StyleSheet.create({
     color: 'rgba(5, 59, 74, 1)',
     fontSize: 28,
     fontWeight: 700,
+    lineHeight: 35,
     textAlign: 'center'
   },
 });

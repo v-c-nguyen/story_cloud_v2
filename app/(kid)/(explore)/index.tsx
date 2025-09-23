@@ -28,6 +28,7 @@ import IconCollections from "@/assets/images/parent/collections.svg"
 import IconMap from "@/assets/images/parent/map.svg"
 import IconThemes from "@/assets/images/parent/themes.svg"
 import IconCharacters from "@/assets/images/parent/characters.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 const cardsData = [
   { color: '#FFFFFF', icon: IconSeries, text: 'Series' },
@@ -39,6 +40,7 @@ const cardsData = [
 
 export default function KidExplorer() {
   const { child } = useUser();
+  const isMobile = useIsMobile();
   const [categories, setCategory] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const currentKidSeries = useSeriesStore((s) => s.currentKidSeries);
@@ -110,16 +112,28 @@ export default function KidExplorer() {
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+            }
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            }
+            {
+              !isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            }
             {/* Header */}
             <ThemedView style={{ paddingTop: 25, marginTop: 30, paddingHorizontal: 16, width: '100%' }}>
               <ThemedView
@@ -140,7 +154,6 @@ export default function KidExplorer() {
             <ThemedView style={styles.content}>
               {/* Tab Bar */}
               <CardSeries data={cardsData} active={'Series'} />
-
               {/* Series List */}
               <ItemSeries
                 ref={itemSeriesRef}
@@ -251,6 +264,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     lineHeight: 18,
   },
+  cloudgroup: {
+    position: "relative"
+  },
   headerCloudWrap: {
     display: "flex",
     alignItems: "center",
@@ -279,6 +295,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 42,
     left: 0,
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '180%',
+    position: "absolute",
+    top: 50,
+    left: 0,
+    zIndex: -100,
   },
   listContent: {
     paddingHorizontal: 16,

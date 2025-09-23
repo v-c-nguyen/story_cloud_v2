@@ -100,7 +100,9 @@ export default function ParentListen() {
               )}
 
               <ThemedText style={styles.subTitle}>Watch Next</ThemedText>
-              <WatchNext activeChild={activeChild} />
+              <ThemedView style={{marginBottom: 100}}>
+                <WatchNext activeChild={activeChild} />
+              </ThemedView>
             </ThemedView>
           </ScrollView>
           {/* Sticky Bottom Navigation */}

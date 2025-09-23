@@ -29,9 +29,11 @@ import IconHeart from "@/assets/images/parent/footer/icon-heart.svg"
 import IconStar from "@/assets/images/icons/icon-star.svg"
 import IconInformation from "@/assets/images/parent/icon-information.svg"
 import IconParentStars from "@/assets/images/icons/icon-dashboard-stars.svg"
+import IconParentTabletStars from "@/assets/images/parent/tablet_icons/Stars.svg"
 import IconClock from "@/assets/images/parent/icon-clock.svg"
 import IconLibrary from "@/assets/images/parent/icon-library.svg"
 import IconFinished from "@/assets/images/parent/icon-finished.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 
 const InsightItemsDataForDaily: InsightItemProps[] = [
@@ -75,7 +77,7 @@ const InsightItemsDataForWeek: InsightItemProps[] = [
 const windowWidth = Dimensions.get('window').width;
 
 export default function ParentDashboard() {
-
+  const isMobile = useIsMobile();
   const { user } = useUser();
   const children = useChildrenStore((state: any) => state.children);
   const setChildren = useChildrenStore((state: any) => state.setChildren);
@@ -86,6 +88,7 @@ export default function ParentDashboard() {
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
 
   useEffect(() => {
+    console.log("isMobile", isMobile);
     // Fetch children data from Supabase edge function and sync Zustand store
     async function fetchChildren() {
       if (!user?.id) return;
@@ -134,7 +137,7 @@ export default function ParentDashboard() {
           <ScrollView
             style={styles.rootContainer}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 55 }}
+            contentContainerStyle={{ paddingBottom: isMobile ? 55 : 100 }}
           >
             {/* Top background */}
             <Image
@@ -144,7 +147,7 @@ export default function ParentDashboard() {
             />
             <Image
               source={require("@/assets/images/parent/frontbox.png")}
-              style={styles.frontBox}
+              style={[styles.frontBox, !isMobile && { top: 350 }]}
               contentFit="cover"
             />
 
@@ -152,29 +155,45 @@ export default function ParentDashboard() {
             <Header role="parent"></Header>
             {/* Header */}
 
-            <ThemedView style={styles.headerRocketWrap}>
-              <IconParentStars
-                width={75}
-                height={130}
-                style={styles.headerRocket}
-              />
-              {/* Clouds */}
-              <Image
-                style={styles.imgCloudFar}
-                source={require("@/assets/images/parent/cloud-group-far.png")}
-                contentFit="fill"
-              />
-              <Image
-                style={styles.imgCloudNear}
-                source={require("@/assets/images/parent/cloud-group-near.png")}
-                contentFit="fill"
-              />
-            </ThemedView>
+            {isMobile &&
+              <ThemedView style={styles.headerRocketWrap}>
+                <IconParentStars
+                  width={75}
+                  height={130}
+                  style={styles.headerRocket}
+                />
+                <Image
+                  style={styles.imgCloudFar}
+                  source={require("@/assets/images/parent/cloud-group-far.png")}
+                  contentFit="fill"
+                />
+                <Image
+                  style={styles.imgCloudNear}
+                  source={require("@/assets/images/parent/cloud-group-near.png")}
+                  contentFit="fill"
+                />
+              </ThemedView>
+            }
+            {
+              !isMobile &&
+              <ThemedView style={styles.headerRocketWrap}>
+                <IconParentTabletStars
+                  width={138}
+                  height={208}
+                  style={styles.headerRocket}
+                />
+                <Image
+                  style={styles.imgCloudTablet}
+                  source={require("@/assets/images/parent/tablet_icons/parent_dashboard_cloud.png")}
+                  contentFit="fill"
+                />
+              </ThemedView>
+            }
             {loading ? (
               <ActivityIndicator color="#ffffff" style={{ zIndex: 999 }} />
             ) : children?.length > 0 ? (
               <ThemedView
-                style={{ marginTop: -120, marginBottom: 70, zIndex: 100 }}
+                style={[{ marginTop: -120, marginBottom: 70, zIndex: 100 }, !isMobile && { marginTop: -60 }]}
               >
                 {/* Children Tab */}
                 <ScrollView
@@ -199,7 +218,7 @@ export default function ParentDashboard() {
                     style={{ marginBottom: 20 }}
                     onPress={() => setModalVisible(true)}
                   >
-                    <IconInformation width={24} height={24} color={"#7AC1C6"}/>
+                    <IconInformation width={24} height={24} color={"#7AC1C6"} />
                   </TouchableOpacity>
                 </ThemedView>
                 <ThemedView style={styles.modesStyle}>
@@ -229,9 +248,10 @@ export default function ParentDashboard() {
                     setCurrentCardIndex(index);
                   }}
                   scrollEventThrottle={16}
+                  contentContainerStyle={{marginBottom: 50}}
                 >
                   <ThemedView style={{ flexDirection: 'row' }}>
-                    <ThemedView style={[styles.insightStyles, { width: windowWidth }]}>
+                    <ThemedView style={[styles.insightStyles, { width: isMobile ? windowWidth : windowWidth / 2 }]}>
                       <ThemedText
                         style={{
                           fontSize: 20,
@@ -253,7 +273,7 @@ export default function ParentDashboard() {
                       })}
                     </ThemedView>
 
-                    <ThemedView style={[styles.insightStyles, { width: windowWidth }]}>
+                    <ThemedView style={[styles.insightStyles, { width: isMobile ? windowWidth : windowWidth / 2 }]}>
                       <ThemedText
                         style={{
                           fontSize: 20,
@@ -263,24 +283,27 @@ export default function ParentDashboard() {
                       >
                         Weekly
                       </ThemedText>
-                      {InsightItemsDataForWeek?.map((item, index) => {
-                        return (
-                          <InsightItem
-                            key={index}
-                            value={item.value}
-                            what={item.what}
-                            avatar={item.avatar}
-                          />
-                        );
-                      })}
+                      {
+                        InsightItemsDataForWeek?.map((item, index) => {
+                          return (
+                            <InsightItem
+                              key={index}
+                              value={item.value}
+                              what={item.what}
+                              avatar={item.avatar}
+                            />
+                          );
+                        })}
                     </ThemedView>
                   </ThemedView>
                 </ScrollView>
 
-                <ThemedView style={[styles.pagination, { marginTop: 10 }]}>
-                  <ThemedView style={currentCardIndex == 0 ? styles.activeDot : styles.dot} />
-                  <ThemedView style={currentCardIndex == 1 ? styles.activeDot : styles.dot} />
-                </ThemedView>
+                {isMobile &&
+                  <ThemedView style={[styles.pagination, { marginTop: 10 }]}>
+                    <ThemedView style={currentCardIndex == 0 ? styles.activeDot : styles.dot} />
+                    <ThemedView style={currentCardIndex == 1 ? styles.activeDot : styles.dot} />
+                  </ThemedView>
+                }
 
               </ThemedView>
             ) : (
@@ -323,7 +346,7 @@ export default function ParentDashboard() {
               zIndex: 1000,
             }}
           >
-            <BottomNavBar role="parent" active="Dashboard" />
+            <BottomNavBar role="parent" active="Dashboard" image={!isMobile ? true : false}/>
           </ThemedView>
         </ThemedView>
       </SafeAreaView>
@@ -401,7 +424,7 @@ const styles = StyleSheet.create({
   },
   frontBox: {
     position: "absolute",
-    top: 225,
+    top: 220,
     zIndex: 1,
     width: "100%",
     height: 2157,
@@ -445,7 +468,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 12,
   },
-  headerRocket: { zIndex: -1 },
+  headerRocket: { zIndex: 1, top: 10 },
   headerRocketWrap: {
     display: "flex",
     width: "100%",
@@ -464,6 +487,13 @@ const styles = StyleSheet.create({
     zIndex: -100,
   },
   imgCloudNear: {
+    width: "112%",
+    height: "100%",
+    position: "absolute",
+    top: 10,
+    left: -20,
+  },
+  imgCloudTablet: {
     width: "112%",
     height: "100%",
     position: "absolute",

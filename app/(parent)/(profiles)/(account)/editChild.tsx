@@ -22,8 +22,10 @@ import IconTick from "@/assets/images/icons/icon-tick.svg";
 import IconCancel from "@/assets/images/parent/icon-cancel.svg";
 import IconTrash from "@/assets/images/icons/icon-trash.svg";
 import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
+import useIsMobile from '@/hooks/useIsMobile';
 
 const EditChild = () => {
+    const isMobile = useIsMobile();
     const router = useRouter();
     const params = useLocalSearchParams();
     const childIndex = params.index ? Number(params.index) : 0;
@@ -161,58 +163,89 @@ const EditChild = () => {
                             {/* Parent Mode Header */}
                             <ThemedView style={styles.parentStyle}>
                                 {/* Picture Section */}
-                                <ThemedText style={styles.sectionTitle}>{firstName}</ThemedText>
-
-                                <ThemedView style={styles.avatarWrapper}>
-                                    
+                                <ThemedView style={{ flexDirection: "row", justifyContent: isMobile ? "center" : "space-between", alignItems: "center" }}>
+                                    <ThemedText style={styles.sectionTitle}>{firstName}</ThemedText>
                                     {
-                                        avatar ?
-                                            <Image source={{ uri: avatar }} style={styles.avatar}/>
-                                            :
-                                            <IconDefaultAvatar width={160} height={160} />
-                                   
+                                        !isMobile &&
+                                        <ThemedView style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+
+                                            {isDirty ?
+                                                <TouchableOpacity style={[styles.addButton, { backgroundColor: "#F4A672", borderWidth: 0 }]} onPress={handleSaveButton}>
+                                                    <IconTick width={22} height={22} />
+                                                    <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Save Child</ThemedText>
+                                                </TouchableOpacity>
+                                                :
+                                                <TouchableOpacity style={[styles.addButton, { backgroundColor: "#F4A672", borderWidth: 0, marginRight: 10 }]} onPress={handleRemoveButton}>
+                                                    <IconTrash width={22} height={22} />
+                                                    <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Remove Child</ThemedText>
+                                                </TouchableOpacity>
+                                            }
+                                            <ThemedText style={{ color: "#053b4a3b", fontSize: 30 }}>|</ThemedText>
+                                            <TouchableOpacity style={[styles.addButton, { borderWidth: 0 }]} onPress={handleCancelButton}>
+                                                <IconCancel width={16} height={16} />
+                                                <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Cancel</ThemedText>
+                                            </TouchableOpacity>
+
+                                        </ThemedView>
                                     }
                                 </ThemedView>
-                                <ThemedView style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                                    <AvatarUploader
-                                        onUpload={(publicUrl) => onUpload(publicUrl)}
-                                        user={kid}
-                                        setUser={setKid}
-                                    />
-                                </ThemedView>
-                                <ThemedText style={styles.recommendationText}>
-                                    At least 800x800px recommended{'\n'}
-                                    JPG or PNG and GIF is allowed,
-                                </ThemedText>
 
+
+                                <ThemedView style={{ flexDirection: isMobile ? "column" : "row", gap: 10 }}>
+                                    <ThemedView style={styles.avatarWrapper}>
+
+                                        {
+                                            avatar ?
+                                                <Image source={{ uri: avatar }} style={styles.avatar} />
+                                                :
+                                                <IconDefaultAvatar width={160} height={160} />
+
+                                        }
+                                    </ThemedView>
+                                    <ThemedView style={{ flexDirection: "column", justifyContent: "center" }}>
+                                        <ThemedView style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                            <AvatarUploader
+                                                onUpload={(publicUrl) => onUpload(publicUrl)}
+                                                user={kid}
+                                                setUser={setKid}
+                                            />
+                                        </ThemedView>
+                                        <ThemedText style={styles.recommendationText}>
+                                            At least 800x800px recommended{'\n'}
+                                            JPG or PNG and GIF is allowed,
+                                        </ThemedText>
+                                    </ThemedView>
+                                </ThemedView>
                                 {/* General Info */}
-                                <ThemedView style={styles.inputWrapper}>
-                                    <ThemedText style={styles.inputLabel}>Name</ThemedText>
-                                    <TextInput
-                                        placeholder="Enter First Name"
-                                        placeholderTextColor="rgba(5,59,74,0.20)"
-                                        style={styles.input}
-                                        value={firstName}
-                                        onChangeText={setFirstName}
-                                    />
-                                </ThemedView>
+                                <ThemedView style={{ flexDirection: isMobile ? "column" : "row", gap: 10 }}>
+                                    <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                                        <ThemedText style={styles.inputLabel}>Name</ThemedText>
+                                        <TextInput
+                                            placeholder="Enter First Name"
+                                            placeholderTextColor="rgba(5,59,74,0.20)"
+                                            style={styles.input}
+                                            value={firstName}
+                                            onChangeText={setFirstName}
+                                        />
+                                    </ThemedView>
 
-                                <ThemedView style={styles.inputWrapper}>
-                                    <ThemedText style={styles.inputLabel}>Age</ThemedText>
-                                    <TextInput
-                                        placeholder="Enter Age"
-                                        placeholderTextColor="rgba(5,59,74,0.20)"
-                                        style={styles.input}
-                                        keyboardType="numeric"
-                                        value={age}
-                                        onChangeText={setAge}
-                                    />
+                                    <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                                        <ThemedText style={styles.inputLabel}>Age</ThemedText>
+                                        <TextInput
+                                            placeholder="Enter Age"
+                                            placeholderTextColor="rgba(5,59,74,0.20)"
+                                            style={styles.input}
+                                            keyboardType="numeric"
+                                            value={age}
+                                            onChangeText={setAge}
+                                        />
+                                    </ThemedView>
                                 </ThemedView>
                             </ThemedView>
                             {/* All Kids */}
                             <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                 <ThemedText style={[styles.inputLabel, { marginBottom: 0 }]}>Learning Mode</ThemedText>
-                                <IconInformation width={16} height={16} color={"#053B4A"}/>
+                                <IconInformation width={16} height={16} color={"#053B4A"} />
                             </ThemedView>
                             <ThemedView>
                                 <ThemedView style={styles.modesStyle}>
@@ -220,25 +253,28 @@ const EditChild = () => {
                                 </ThemedView>
                             </ThemedView>
 
-                            <ThemedView style={[styles.flexRow, { marginTop: 20 }]}>
-                                <TouchableOpacity style={styles.addButton} onPress={handleCancelButton}>
-                                    <IconCancel width={16} height={16} />
-                                    <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Cancel</ThemedText>
-                                </TouchableOpacity>
-
-                                {isDirty ?
-                                    <TouchableOpacity style={[styles.addButton,{backgroundColor: "#F4A672", borderWidth: 0}]} onPress={handleSaveButton}>
-                                        <IconTick width={22} height={22} />
-                                        <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Save Child</ThemedText>
+                            {
+                                isMobile &&
+                                <ThemedView style={[styles.flexRow, { marginTop: 20 }]}>
+                                    <TouchableOpacity style={styles.addButton} onPress={handleCancelButton}>
+                                        <IconCancel width={16} height={16} />
+                                        <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Cancel</ThemedText>
                                     </TouchableOpacity>
-                                    :
-                                    <TouchableOpacity style={styles.addButton} onPress={handleRemoveButton}>
-                                        <IconTrash width={22} height={22}/>
-                                        <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Remove Child</ThemedText>
-                                    </TouchableOpacity>
-                                }
 
-                            </ThemedView>
+                                    {isDirty ?
+                                        <TouchableOpacity style={[styles.addButton, { backgroundColor: "#F4A672", borderWidth: 0 }]} onPress={handleSaveButton}>
+                                            <IconTick width={22} height={22} />
+                                            <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Save Child</ThemedText>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={styles.addButton} onPress={handleRemoveButton}>
+                                            <IconTrash width={22} height={22} />
+                                            <ThemedText style={{ fontSize: 16, color: '#053B4A' }}>Remove Child</ThemedText>
+                                        </TouchableOpacity>
+                                    }
+
+                                </ThemedView>
+                            }
                         </ThemedView>
                     </ScrollView>
                 </ThemedView>
@@ -397,11 +433,11 @@ const styles = StyleSheet.create({
     addButton: {
         borderWidth: 1,
         borderRadius: 30,
-        width: '46%',
         borderColor: 'rgba(5, 59, 74, 0.5)',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 8,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
         gap: 10,
         justifyContent: 'center'
     },

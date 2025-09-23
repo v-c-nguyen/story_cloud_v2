@@ -18,10 +18,10 @@ interface CardProps extends Card {
   onPress: () => void;
 }
 
-const Card = ({ color, icon:Icon, text, selected, onPress }: CardProps) => (
+const Card = ({ color, icon: Icon, text, selected, onPress }: CardProps) => (
   <ThemedView style={[styles.card, { backgroundColor: color }, selected && styles.selectedCard]}>
     <ThemedView style={[styles.circle, !selected && { display: 'none' }]} />
-    <Icon width={60} height={60} style={[ selected && styles.selectedIcon]} color={selected ? '#ffffff' : color == '#053B4A' ? '#ADD7DA' : '#053B4A'} />
+    <Icon width={60} height={60} style={[selected && styles.selectedIcon]} color={selected ? '#ffffff' : color == '#053B4A' ? '#ADD7DA' : '#053B4A'} />
     <ThemedText style={[styles.text, color == "#053B4A" && { color: '#ADD7DA' }, selected && { color: '#053B4A' }]}>{text}</ThemedText>
     <TouchableOpacity style={StyleSheet.absoluteFill} onPress={onPress} />
   </ThemedView>
@@ -71,18 +71,19 @@ const CardSeries = ({ data, active }: { data: Card[], active: string }) => {
         ref={scrollRef}
         horizontal
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{margin: "auto"}}
         style={styles.container}
         onScroll={e => setScrollX(e.nativeEvent.contentOffset.x)}
         scrollEventThrottle={16}
       >
-        {data?.map((card, index) => (
-          <Card
-            key={index}
-            {...card}
-            selected={card.text === active}
-            onPress={() => handleSelectedItem({ index, card })}
-          />
-        ))}
+          {data?.map((card, index) => (
+            <Card
+              key={index}
+              {...card}
+              selected={card.text === active}
+              onPress={() => handleSelectedItem({ index, card })}
+            />
+          ))}
       </ScrollView>
     </ThemedView>
   );

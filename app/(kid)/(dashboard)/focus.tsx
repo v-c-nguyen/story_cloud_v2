@@ -10,16 +10,17 @@ import { ThemedView } from "@/components/ThemedView";
 import { RelativePathString, Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 
 import IconRocket from "@/assets/images/icons/icon-rocket.svg";
 import IconStar from "@/assets/images/icons/icon-mark-modal.svg";
 import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 // Data arrays for each section
 
@@ -57,7 +58,7 @@ const seriesData = [
 ];
 
 export default function FocusModeHome() {
-
+  const isMobile = useIsMobile();
   const router = useRouter();
   const { child } = useUser();
   const [name, setName] = useState(child?.name || "");
@@ -97,7 +98,7 @@ export default function FocusModeHome() {
           >
             {/* Top background */}
             <Image
-              source={require("@/assets/images/kid/back-pattern.png")}
+              source={require("@/assets/images/auth/back-pattern.png")}
               style={styles.topBackPattern}
               resizeMode="cover"
             />
@@ -115,24 +116,43 @@ export default function FocusModeHome() {
             <ThemedText style={styles.headerSubtitle}>
               Let’s watch something and have fun!
             </ThemedText>
-            <ThemedView style={styles.headerRocketWrap}>
-              <IconRocket
-                width={224.54}
-                height={287}
-                style={styles.headerRocket}
-              />
-              {/* Clouds */}
-              <Image
-                source={require("@/assets/images/kid/cloud-group-far.png")}
-                style={styles.imgCloudFar}
-                resizeMode="cover"
-              />
-              <Image
-                source={require("@/assets/images/kid/cloud-group-near.png")}
-                style={styles.imgCloudNear}
-                resizeMode="cover"
-              />
-            </ThemedView>
+
+            {isMobile &&
+              <ThemedView style={styles.headerRocketWrap}>
+                <IconRocket
+                  width={224.54}
+                  height={287}
+                  style={styles.headerRocket}
+                />
+                {/* Clouds */}
+                <Image
+                  source={require("@/assets/images/kid/cloud-group-far.png")}
+                  style={styles.imgCloudFar}
+                  contentFit="cover"
+                />
+                <Image
+                  source={require("@/assets/images/kid/cloud-group-near.png")}
+                  style={styles.imgCloudNear}
+                  contentFit="cover"
+                />
+              </ThemedView>
+            }
+            {!isMobile &&
+              <ThemedView style={styles.headerRocketWrap}>
+                <IconRocket
+                  width={224.54}
+                  height={287}
+                  style={styles.headerRocket}
+                />
+                {/* Clouds */}
+                <Image
+                  source={require("@/assets/images/kid/cloud-group.png")}
+                  style={styles.imgCloudTablet}
+                  contentFit="fill"
+                />
+              </ThemedView>
+            }
+
 
             <ThemedView style={{ backgroundColor: "#fcfcfc", marginTop: -26, paddingBottom: 100 }}>
               {/* Continue Watching */}
@@ -245,6 +265,14 @@ const styles = StyleSheet.create({
     paddingLeft: 36,
     marginTop: -56,
     position: "relative",
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '100%',
+    position: "absolute",
+    top: 50,
+    left: 0,
+    zIndex: -100,
   },
   imgCloudFar: {
     width: "110%",

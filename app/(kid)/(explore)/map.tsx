@@ -34,19 +34,21 @@ import IconCollections from "@/assets/images/parent/collections.svg"
 import IconMap from "@/assets/images/parent/map.svg"
 import IconThemes from "@/assets/images/parent/themes.svg"
 import IconCharacters from "@/assets/images/parent/characters.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 const cardsData = [
-  { color: '#FFFFFF', icon: IconSeries, text: 'Series' },
-  { color: '#F8ECAE', icon: IconCollections, text: 'Collections' },
-  { color: '#ADD7DA', icon: IconMap, text: 'Map' },
-  { color: '#7AC1C6', icon: IconThemes, text: 'Themes' },
-  { color: '#053B4A', icon: IconCharacters, text: 'Characters' },
+    { color: '#FFFFFF', icon: IconSeries, text: 'Series' },
+    { color: '#F8ECAE', icon: IconCollections, text: 'Collections' },
+    { color: '#ADD7DA', icon: IconMap, text: 'Map' },
+    { color: '#7AC1C6', icon: IconThemes, text: 'Themes' },
+    { color: '#053B4A', icon: IconCharacters, text: 'Characters' },
 ];
 
 export default function Map() {
     const { child } = useUser();
-      const [characterLoading, setCharacterLoading] = React.useState(false);
-      const [landmarkLoading, setlandmarkLoading] = React.useState(false);
+    const isMobile = useIsMobile();
+    const [characterLoading, setCharacterLoading] = React.useState(false);
+    const [landmarkLoading, setlandmarkLoading] = React.useState(false);
     const characters = useCharactersStore((s) => s.characters);
     const setCharacters = useCharactersStore((s) => s.setCharacters);
     const locations = useLocationsStore((s) => s.locations);
@@ -119,6 +121,7 @@ export default function Map() {
     }, []);
 
     useEffect(() => {
+        console.log(activeTab)
         if (activeTab) {
             setCategory(activeTab == "characters" ? characters : locations);
         }
@@ -191,16 +194,28 @@ export default function Map() {
 
                     <ThemedView style={styles.headerCloudWrap}>
                         {/* Clouds */}
-                        <Image
-                            source={require("@/assets/images/kid/cloud-group-far.png")}
-                            style={styles.imgCloudFar}
-                            contentFit="cover"
-                        />
-                        <Image
-                            source={require("@/assets/images/kid/cloud-group-near.png")}
-                            style={styles.imgCloudNear}
-                            contentFit="cover"
-                        />
+                        {isMobile &&
+                            <Image
+                                source={require("@/assets/images/kid/cloud-group-far.png")}
+                                style={styles.imgCloudFar}
+                                contentFit="cover"
+                            />
+                        }
+                        {isMobile &&
+                            <Image
+                                source={require("@/assets/images/kid/cloud-group-near.png")}
+                                style={styles.imgCloudNear}
+                                contentFit="cover"
+                            />
+                        }
+                        {
+                            !isMobile &&
+                            <Image
+                                source={require("@/assets/images/kid/cloud-group.png")}
+                                style={styles.imgCloudTablet}
+                                contentFit="fill"
+                            />
+                        }
                         {/* Header */}
                         <ThemedView style={{ paddingTop: 25, marginTop: 30, paddingHorizontal: 16, width: '100%' }}>
                             <ThemedView
@@ -231,13 +246,13 @@ export default function Map() {
 
                                     <ThemedView style={styles.bottomPadding}>
                                         <ThemedView style={{ marginBottom: 80 }}>
-                                            <MapWrapper 
-                                                activeTab={activeTab} 
+                                            <MapWrapper
+                                                activeTab={activeTab}
                                                 setActiveTab={setActiveTab}
                                                 characterLoading={characterLoading}
                                                 landmarkLoading={landmarkLoading}
                                                 mode="kid"
-                                                 />
+                                            />
                                         </ThemedView>
                                     </ThemedView>
                                     <ThemedView style={{ position: "relative" }}>
@@ -448,6 +463,14 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: -250,
         left: 0,
+    },
+    imgCloudTablet: {
+        width: '105%',
+        height: '180%',
+        position: "absolute",
+        top: 50,
+        left: 0,
+        zIndex: -100,
     },
     listContent: {
         paddingHorizontal: 16,

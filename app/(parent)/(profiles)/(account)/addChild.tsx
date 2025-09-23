@@ -22,6 +22,7 @@ import IconInformation from "@/assets/images/parent/icon-information.svg";
 import IconTick from "@/assets/images/icons/icon-tick.svg";
 import IconCancel from "@/assets/images/parent/icon-cancel.svg";
 import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface Child {
     name?: string;
@@ -31,6 +32,7 @@ interface Child {
 }
 
 const AddChild = () => {
+    const isMobile = useIsMobile();
     const router = useRouter();
     const addChildToStore = useChildrenStore(state => state.addChild);
     const [firstName, setFirstName] = React.useState('');
@@ -124,53 +126,83 @@ const AddChild = () => {
                         ></Header>
                         <ThemedView style={[styles.container, styles.tabContent]}>
 
+                            <MyModal
+                                visible={modalVisible}
+                                title="Your Child was added successfully!"
+                                content='You can manage kids mode in their settings'
+                                buttonText='Back to Profile'
+                                onClose={() => { setModalVisible(false), router.push('../') }}
+                                starIcon={starIcon}
+                            />
                             {/* Parent Mode Header */}
                             <ThemedView style={styles.parentStyle}>
                                 {/* Picture Section */}
-                                <ThemedText style={styles.sectionTitle}>Add New Kid</ThemedText>
-
-                                <ThemedView style={styles.avatarWrapper}>
+                                <ThemedView style={{ flexDirection: "row", justifyContent: isMobile ? "center" : "space-between", alignItems: "center" }}>
+                                    <ThemedText style={styles.sectionTitle}>Add New Kid</ThemedText>
                                     {
-                                        avatar || child.avatar_url ?
-                                            <Image source={{ uri: avatar || child.avatar_url }} style={styles.avatar}/>
-                                            :
-                                            <IconDefaultAvatar width={160} height={160} />
-                                   
+                                        !isMobile &&
+                                        <ThemedView style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                                            <TouchableOpacity style={[styles.addButton, { backgroundColor: "#F4A672", borderWidth: 0, marginRight: 10 }]} onPress={handleSaveButton}>
+                                                <IconTick width={18} height={18} />
+                                                <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Save </ThemedText>
+                                            </TouchableOpacity>
+                                            <ThemedText style={{ color: "#053b4a3b", fontSize: 30 }}>|</ThemedText>
+                                            <TouchableOpacity style={[styles.addButton, { borderWidth: 0 }]} onPress={handleCancelButton}>
+                                                <IconCancel width={18} height={18} />
+                                                <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Cancel </ThemedText>
+                                            </TouchableOpacity>
+                                        </ThemedView>
                                     }
                                 </ThemedView>
 
-                                <ThemedView style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                                    <AvatarUploader
-                                        onUpload={(publicUrl) => onUpload(publicUrl)}
-                                    />
-                                </ThemedView>
-                                <ThemedText style={styles.recommendationText}>
-                                    At least 800x800px recommended{'\n'}
-                                    JPG or PNG and GIF is allowed,
-                                </ThemedText>
+                                <ThemedView style={{ flexDirection: isMobile ? "column" : "row", gap: 10 }}>
+                                    <ThemedView style={styles.avatarWrapper}>
+                                        {
+                                            avatar || child.avatar_url ?
+                                                <Image source={{ uri: avatar || child.avatar_url }} style={styles.avatar} />
+                                                :
+                                                <IconDefaultAvatar width={160} height={160} />
 
+                                        }
+                                    </ThemedView>
+
+                                    <ThemedView style={{ flexDirection: "column", justifyContent: "center" }}>
+                                        <ThemedView style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                            <AvatarUploader
+                                                onUpload={(publicUrl) => onUpload(publicUrl)}
+                                            />
+                                        </ThemedView>
+                                        <ThemedText style={styles.recommendationText}>
+                                            At least 800x800px recommended{'\n'}
+                                            JPG or PNG and GIF is allowed,
+                                        </ThemedText>
+                                    </ThemedView>
+                                </ThemedView>
                                 {/* General Info */}
-                                <ThemedView style={styles.inputWrapper}>
-                                    <ThemedText style={styles.inputLabel}>First Name</ThemedText>
-                                    <TextInput
-                                        placeholder="Enter First Name"
-                                        placeholderTextColor="rgba(5,59,74,0.20)"
-                                        style={styles.input}
-                                        value={firstName}
-                                        onChangeText={setFirstName}
-                                    />
-                                </ThemedView>
 
-                                <ThemedView style={styles.inputWrapper}>
-                                    <ThemedText style={styles.inputLabel}>Age</ThemedText>
-                                    <TextInput
-                                        placeholder="Enter Age"
-                                        placeholderTextColor="rgba(5,59,74,0.20)"
-                                        style={styles.input}
-                                        keyboardType="numeric"
-                                        value={age}
-                                        onChangeText={text => setAge(text)}
-                                    />
+                                <ThemedView style={{ flexDirection: isMobile ? "column" : "row", gap: 10 }}>
+                                    <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                                        <ThemedText style={styles.inputLabel}>First Name</ThemedText>
+                                        <TextInput
+                                            placeholder="Enter First Name"
+                                            placeholderTextColor="rgba(5,59,74,0.20)"
+                                            style={styles.input}
+                                            value={firstName}
+                                            onChangeText={setFirstName}
+                                        />
+                                    </ThemedView>
+
+                                    <ThemedView style={[styles.inputWrapper, !isMobile && { width: "50%" }]}>
+                                        <ThemedText style={styles.inputLabel}>Age</ThemedText>
+                                        <TextInput
+                                            placeholder="Enter Age"
+                                            placeholderTextColor="rgba(5,59,74,0.20)"
+                                            style={styles.input}
+                                            keyboardType="numeric"
+                                            value={age}
+                                            onChangeText={text => setAge(text)}
+                                        />
+                                    </ThemedView>
                                 </ThemedView>
                             </ThemedView>
                             {/* All Kids */}
@@ -186,22 +218,19 @@ const AddChild = () => {
                             </ThemedView>
 
                             <ThemedView style={[styles.flexRow, { marginTop: 20 }]}>
-                                <TouchableOpacity style={styles.addButton} onPress={handleSaveButton}>
-                                    <IconTick width={18} height={18} />
-                                    <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Save </ThemedText>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.addButton} onPress={handleCancelButton}>
-                                    <IconCancel width={18} height={18} />
-                                    <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Cancel </ThemedText>
-                                </TouchableOpacity>
-                                <MyModal
-                                    visible={modalVisible}
-                                    title="Your Child was added successfully!"
-                                    content='You can manage kids mode in their settings'
-                                    buttonText='Back to Profile'
-                                    onClose={() => { setModalVisible(false), router.push('../') }}
-                                    starIcon={starIcon}
-                                />
+                                {
+                                    isMobile &&
+                                    <ThemedView style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                                        <TouchableOpacity style={[styles.addButton]} onPress={handleSaveButton}>
+                                            <IconTick width={18} height={18} />
+                                            <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Save </ThemedText>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={[styles.addButton]} onPress={handleCancelButton}>
+                                            <IconCancel width={18} height={18} />
+                                            <ThemedText style={{ fontSize: 16, color: '#053B4A' }}> Cancel </ThemedText>
+                                        </TouchableOpacity>
+                                    </ThemedView>
+                                }
                             </ThemedView>
                         </ThemedView>
                     </ScrollView>

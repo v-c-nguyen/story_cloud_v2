@@ -43,65 +43,67 @@ export const ItemSeries = forwardRef<ItemSeriesRef, ItemSeriesProps>(({ itemsDat
   }
 
   return (
-    <ThemedView>
-      <FlatList
-        data={itemsData}
-        horizontal
-        keyExtractor={(item) => item.name}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => {
-          const isSelected = selected === item.name;
-          return (
-            <TouchableOpacity onPress={() => handlePress(item)}>
-              <ThemedView
-                style={[
-                  styles.pill,
-                  isSelected && styles.pillSelected
-                ]}
-              >
-                {item.avatar_url &&
-                  <ThemedView
-                    style={[
-                      styles.avatarImgContainer,
-                    ]}
-                  >
-                    <Image
-                      source={item.avatar_url}
-                      style={styles.avatar}
-                      contentFit="cover"
-                    />
-                  </ThemedView>
-                }
-                {item.symbol &&
-                  <ThemedText
-                    style={[
-                      styles.pillText,
-                      isSelected && styles.pillTextSelected
-                    ]}>
-                    {item.symbol.trim() + ' '}
-                  </ThemedText>
-                }
-                {/* <View style={styles.avatarContainer}>
+    <ThemedView style={{ flexDirection: "row", justifyContent: "center" }}>
+      <ThemedView >
+        <FlatList
+          data={itemsData}
+          horizontal
+          keyExtractor={(item) => item.name}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.listContent]}
+          renderItem={({ item }) => {
+            const isSelected = selected === item.name;
+            return (
+              <TouchableOpacity onPress={() => handlePress(item)}>
+                <ThemedView
+                  style={[
+                    styles.pill,
+                    isSelected && styles.pillSelected
+                  ]}
+                >
+                  {item.avatar_url &&
+                    <ThemedView
+                      style={[
+                        styles.avatarImgContainer,
+                      ]}
+                    >
+                      <Image
+                        source={item.avatar_url}
+                        style={styles.avatar}
+                        contentFit="cover"
+                      />
+                    </ThemedView>
+                  }
+                  {item.symbol &&
+                    <ThemedText
+                      style={[
+                        styles.pillText,
+                        isSelected && styles.pillTextSelected
+                      ]}>
+                      {item.symbol.trim() + ' '}
+                    </ThemedText>
+                  }
+                  {/* <View style={styles.avatarContainer}>
                   <Image
                   source={item.avatar_url ? null : require("../assets/images/avatars/lara_wombat.png")}
                   style={styles.avatar}
                   contentFit="cover"
                 />
                 </View> */}
-                <ThemedText
-                  style={[
-                    styles.pillText,
-                    isSelected && styles.pillTextSelected
-                  ]}
-                >
-                  {item.name.trim()}
-                </ThemedText>
-              </ThemedView>
-            </TouchableOpacity>
-          );
-        }}
-      />
+                  <ThemedText
+                    style={[
+                      styles.pillText,
+                      isSelected && styles.pillTextSelected
+                    ]}
+                  >
+                    {item.name.trim()}
+                  </ThemedText>
+                </ThemedView>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </ThemedView>
     </ThemedView>
   );
 });

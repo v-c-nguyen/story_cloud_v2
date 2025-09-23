@@ -13,8 +13,13 @@ import IconPlus from "@/assets/images/parent/icon-plus.svg"
 import IconBallon from "@/assets/images/icons/FilledBallon.svg"
 import { useStoryStore } from '@/store/storyStore';
 import GradientText from '@/components/ui/GradientText';
+import { Dimensions } from 'react-native';
+import useIsMobile from '@/hooks/useIsMobile';
+
+const width = Dimensions.get('window').width;
 
 export default function storyDetail() {
+    const isMobile = useIsMobile();
     const router = useRouter();
     const params = useLocalSearchParams();
     const storyId = typeof params.id === "string" ? params.id : "";
@@ -87,10 +92,10 @@ export default function storyDetail() {
                         <ThemedView style={styles.mainCard}>
                             {/* Top Image */}
                             <Image
-                                source={currentStory?.featuredIllustration ? 
-                                            currentStory.featuredIllustration
-                                            :
-                                            require("@/assets/images/parent/sample-card-image.png")}
+                                source={currentStory?.featuredIllustration ?
+                                    currentStory.featuredIllustration
+                                    :
+                                    require("@/assets/images/parent/sample-card-image.png")}
                                 style={styles.cardImg}
                             />
 
@@ -184,7 +189,7 @@ export default function storyDetail() {
                         zIndex: 1000,
                     }}
                 >
-                    <BottomNavBar role="parent" active="Learning" subActive="Library" />
+                    <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Library" : ""} image={!isMobile ? true : false} />
                 </ThemedView>
             </SafeAreaView>
         </>
@@ -202,8 +207,7 @@ const styles = StyleSheet.create({
     },
     cardImg: {
         width: "100%",
-        height: 150,
-        resizeMode: "cover",
+        height: width / 2,
     },
     topBackPattern: {
         width: "100%",
@@ -418,8 +422,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginHorizontal: "auto",
-        width:48,
-        height:48,
+        width: 48,
+        height: 48,
         borderRadius: 24,
         backgroundColor: "rgba(173,215,218,1)",
     }

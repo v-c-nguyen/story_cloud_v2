@@ -4,7 +4,7 @@ import { useTrackStore } from '@/store/trackStore';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useListenStore } from '@/store/listenStore';
@@ -26,6 +26,7 @@ type MediaPlayerCardProps = {
     onAudioEnd: () => void;
 };
 
+const iniWidth = Dimensions.get('window').width;
 export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayerCardProps) {
     // Flag to ignore first playback status update after seek
     const firstStatusUpdate = useRef(true);
@@ -222,52 +223,53 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
     return (
         <>
             {/* Fullscreen Modal for landscape */}
-            <Modal visible={isFullscreen && orientation === 'landscape'} animationType="fade" transparent={true}>
-                <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
-                    {/* Overlay player UI matching attached design */}
-                    <Image
-                        source={story?.featuredIllustration ? story.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
-                        style={{ position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.7 }}
-                    />
-                    <View style={{ position: 'absolute', top: 40, left: 0, right: 0, alignItems: 'center' }}>
-                        <Text style={{ color: '#FFE7A0', fontWeight: 'bold', fontSize: 18 }}>{story?.series}</Text>
-                        <Text style={{ color: 'white', fontSize: 16, marginTop: 4 }}>
-                            #{currentIndex + 1} {story?.storyTitle}
-                        </Text>
-                    </View>
-                    {/* Controls row */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 120 }}>
-                        <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={() => handleSeek(-10)}>
-                            <IconBackward width={60} height={60} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={handlePlayPause}>
-                            {isPlay ? <IconPause width={85} height={85} /> : <IconPlay width={85} height={85} />}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={() => handleSeek(10)}>
-                            <IconForward width={60} height={60} />
-                        </TouchableOpacity>
-                    </View>
-                    {/* Bottom bar */}
-                    <View style={{ position: 'absolute', bottom: 30, left: 20, right: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <GradientSlider
-                            style={styles.slider}
-                            minimumValue={0}
-                            maximumValue={track?.duration ?? 0}
-                            value={track?.played ?? 0}
-                            onSlidingComplete={async (value: number) => {
-                                if (sound) await sound.setPositionAsync(value * 1000);
-                            }}
+            {isFullscreen && orientation === 'landscape' &&
+                <ThemedView>
+                    <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
+                        {/* Overlay player UI matching attached design */}
+                        <Image
+                            source={story?.featuredIllustration ? story.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
+                            style={{ position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.7 }}
                         />
-                        <Text style={{ color: '#FFE7A0', fontSize: 16, marginLeft: 10 }}>{formatTime((track?.played ?? 0))} / {formatTime((track?.duration ?? 0))}</Text>
-                        <TouchableOpacity style={{ marginLeft: 10 }}>
-                            <Image source={require("@/assets/images/icons/volume.png")} style={{ width: 28, height: 28, tintColor: "#FFE7A0" }} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ marginLeft: 10 }}>
-                            <Image source={require("@/assets/images/icons/expand.png")} style={{ width: 26, height: 26, tintColor: "#FFE7A0" }} />
-                        </TouchableOpacity>
+                        <View style={{ position: 'absolute', top: 40, left: 0, right: 0, alignItems: 'center' }}>
+                            <Text style={{ color: '#FFE7A0', fontWeight: 'bold', fontSize: 18 }}>{story?.series}</Text>
+                            <Text style={{ color: 'white', fontSize: 16, marginTop: 4 }}>
+                                #{currentIndex + 1} {story?.storyTitle}
+                            </Text>
+                        </View>
+                        {/* Controls row */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 120 }}>
+                            <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={() => handleSeek(-10)}>
+                                <IconBackward width={60} height={60} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={handlePlayPause}>
+                                {isPlay ? <IconPause width={85} height={85} /> : <IconPlay width={85} height={85} />}
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ marginHorizontal: 20 }} onPress={() => handleSeek(10)}>
+                                <IconForward width={60} height={60} />
+                            </TouchableOpacity>
+                        </View>
+                        {/* Bottom bar */}
+                        <View style={{ position: 'absolute', bottom: 30, left: 20, right: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <GradientSlider
+                                style={styles.slider}
+                                minimumValue={0}
+                                maximumValue={track?.duration ?? 0}
+                                value={track?.played ?? 0}
+                                onSlidingComplete={async (value: number) => {
+                                    if (sound) await sound.setPositionAsync(value * 1000);
+                                }}
+                            />
+                            <Text style={{ color: '#FFE7A0', fontSize: 16, marginLeft: 10 }}>{formatTime((track?.played ?? 0))} / {formatTime((track?.duration ?? 0))}</Text>
+                            <TouchableOpacity style={{ marginLeft: 10 }}>
+                                <Image source={require("@/assets/images/icons/volume.png")} style={{ width: 28, height: 28, tintColor: "#FFE7A0" }} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ marginLeft: 10 }}>
+                                <Image source={require("@/assets/images/icons/expand.png")} style={{ width: 26, height: 26, tintColor: "#FFE7A0" }} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </Modal>
+                </ThemedView>}
 
             {/* Fullscreen Modal */}
             <Modal visible={isFullscreen && isPlay} animationType="fade" transparent={true}>
@@ -290,7 +292,7 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                 </View>
             </Modal>
 
-            <View style={[styles.container, orientation == 'landscape' && { display: 'none' }]}>
+            <View style={[styles.container]}>
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.headerAdventure}>{story?.series}</Text>
@@ -300,14 +302,16 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                     </Text>
                 </View>
                 {/* Image */}
-                <Image
-                    source={story?.featuredIllustration ? story.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
-                    style={[styles.cardImage, isFullscreen && { width: '100%', borderRadius: 0, borderWidth: 0 }]}
-                    resizeMode="cover"
-                />
+                <ThemedView style={{ paddingHorizontal: isFullscreen ? 0 : 12 }}>
+                    <Image
+                        source={story?.featuredIllustration ? story.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
+                        style={[styles.cardImage, isFullscreen && { width: '100%', borderRadius: 0, borderWidth: 0 }]}
+                        contentFit="cover"
+                    />
+                </ThemedView>
                 <ThemedView style={[styles.pauseStyle, (isPlay || isFullscreen) && { display: 'none' }]}>
                     <TouchableOpacity style={styles.continueBtn} onPress={handlePlayPause}>
-                        <Image source={require('@/assets/images/icons/icon-play.png')} />
+                        <Image source={require('@/assets/images/icons/icon-play.png')} style={{ width: 30, height: 30 }} />
                         <ThemedText style={styles.btnText} >Continue</ThemedText>
                     </TouchableOpacity>
                 </ThemedView>
@@ -407,7 +411,7 @@ const styles = StyleSheet.create({
     },
     cardImage: {
         width: "100%",
-        height: 195,
+        height: iniWidth / 2 * 1.4,
         borderRadius: 20,
         borderWidth: 3,
         borderColor: 'rgba(250, 248, 248, 0.2)',
@@ -424,7 +428,7 @@ const styles = StyleSheet.create({
     },
     controlsRow_FS: {
         width: '100%',
-        height: 200,
+        height: iniWidth / 2 * 1.4,
         position: 'absolute',
         backgroundColor: 'rgba(rgba(5, 59, 74, 0.5))',
         top: '0%',
@@ -433,7 +437,7 @@ const styles = StyleSheet.create({
     },
     pauseStyle: {
         width: '100%',
-        height: 200,
+        height: iniWidth / 2 * 1.4,
         backgroundColor: 'rgba(rgba(5, 59, 74, 0.5))',
         justifyContent: 'center',
         alignItems: 'center',

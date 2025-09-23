@@ -156,12 +156,12 @@ export default function SeriesCarousel({
                     {item?.stories?.descriptionParent || ""}
                   </ThemedText>
                 </ThemedView>
-                <ThemedView style={{ width: "100%", height: 250 }}>
+                <ThemedView style={{ width: "100%" }}>
                   <ThemedView style={styles.imageWrap}>
                     <Image
                       source={item?.stories?.featuredIllustration ? item.stories.featuredIllustration : require("@/assets/images/parent/sample-card-image.png")}
                       style={styles.cardImage}
-                      resizeMode="cover"
+                      contentFit="cover"
                     />
                     <TouchableOpacity
                       style={styles.playButton}
@@ -292,6 +292,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: "column",
     justifyContent: "space-between",
+    backgroundColor: "rgb(5, 59, 74)",
     borderColor: "rgba(252, 252, 252, 0.2)",
     paddingVertical: 24,
     alignItems: "center",
@@ -344,14 +345,14 @@ const styles = StyleSheet.create({
   },
   imageWrap: {
     width: "100%",
-    height: 200,
+    height:  width / 2 * 1.4,
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
   },
   cardImage: {
     width: "100%",
-    height: "100%",
+    height: width / 2 * 1.4,
   },
   overlayBalloon: {
     position: "absolute",
@@ -388,6 +389,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    height: 50,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },

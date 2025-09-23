@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import React, { Component } from 'react';
-import { Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import { Modal, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { ModalContent } from '@/app/(parent)/(profiles)/(content)';
 
@@ -29,24 +29,28 @@ const MyModal: React.FC<PlanUpdatedModalProps> = ({
         onRequestClose={onClose}
     >
         <ThemedView style={styles.modalOverlay}>
-            <ThemedView style={styles.modalContent}>
-                <ThemedView style={styles.modalIconContainer}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+            >
+                <ThemedView style={styles.modalContent}>
+                    <ThemedView style={styles.modalIconContainer}>
 
-                    <Image
-                        source={require("@/assets/images/auth/back-pattern.png")}
-                        style={[[styles.backPattern]]}
-                        contentFit="cover"
-                    />
-                    <Image source={starIcon} style={{ width: 145, height: 150, margin:60 }} />
+                        <Image
+                            source={require("@/assets/images/auth/back-pattern.png")}
+                            style={[[styles.backPattern]]}
+                            contentFit="cover"
+                        />
+                        <Image source={starIcon} style={{ width: 145, height: 150, margin: 60 }} />
+                    </ThemedView>
+                    <ThemedText style={styles.modalTitle}>{title}</ThemedText>
+                    <ThemedText style={styles.modalBody}>{content}</ThemedText>
+                    <ThemedView style={styles.modalButtons}>
+                        <TouchableOpacity onPress={onClose} style={styles.modalButton}>
+                            <ThemedText style={styles.modalButtonText}>{buttonText}</ThemedText>
+                        </TouchableOpacity>
+                    </ThemedView>
                 </ThemedView>
-                <ThemedText style={styles.modalTitle}>{title}</ThemedText>
-                <ThemedText style={styles.modalBody}>{content}</ThemedText>
-                <ThemedView style={styles.modalButtons}>
-                    <TouchableOpacity onPress={onClose} style={styles.modalButton}>
-                        <ThemedText style={styles.modalButtonText}>{buttonText}</ThemedText>
-                    </TouchableOpacity>
-                </ThemedView>
-            </ThemedView>
+            </ScrollView>
         </ThemedView>
     </Modal>
 );
@@ -58,11 +62,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.4)',
         justifyContent: 'center',
         alignItems: 'center',
+        paddingVertical: 12
     },
     modalContent: {
+        maxWidth: 600,
         width: '96%',
         height: 'auto',
-        maxHeight: '100%',
         backgroundColor: 'rgba(252, 252, 252, 0.95)',
         borderRadius: 30,
         borderWidth: 2,
@@ -110,7 +115,7 @@ const styles = StyleSheet.create({
         fontWeight: 400,
     },
     backPattern: {
-        position: "absolute", width: "100%", height: "100%", tintColor: "#053b4a10", top:0
+        position: "absolute", width: "100%", height: "100%", tintColor: "#053b4a10", top: 0
     },
     topBackPattern: {
         width: "100%",

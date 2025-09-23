@@ -18,6 +18,7 @@ import IconRefresh from "@/assets/images/icons/icon-refresh.svg"
 import IconDownload from "@/assets/images/icons/icon-download.svg"
 import IconTick from "@/assets/images/icons/icon-tick.svg"
 import IconSwap from "@/assets/images/icons/icon-swap.svg"
+import useIsMobile from '@/hooks/useIsMobile';
 
 const billingData = [
     {
@@ -49,6 +50,7 @@ const billingData = [
 const tabs = tabData;
 
 const Billing = () => {
+    const isMobile = useIsMobile();
     const navigation = useNavigation();
     const router = useRouter();
     const [activeTab, setActiveTab] = React.useState('billing');
@@ -105,119 +107,137 @@ const Billing = () => {
                             theme="dark"
                         ></Header>
 
+
                         {/* Cloud Image */}
-                        <ThemedView style={styles.headerRocketWrap}>
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-far.png")}
-                                style={styles.imgCloudFar}
-                                contentFit="cover"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear}
-                                contentFit="cover"
-                            />
-                        </ThemedView>
+                        {
+                            isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-far.png")}
+                                    style={styles.imgCloudFar}
+                                    contentFit="fill"
+                                />
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-near.png")}
+                                    style={styles.imgCloudNear}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+                        {
+                            !isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group.png")}
+                                    style={styles.imgCloudTablet}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+
 
                         {/* Main Content */}
-                        <ThemedView style={styles.settingContentStyle}>
-                            <ThemedText style={styles.settingHeader}>Settings</ThemedText>
+                        <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
+                            <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
+                                <ThemedText style={styles.settingHeader}>Settings</ThemedText>
 
-                            {/* Tab Navigation */}
-                            <TabBar
-                                tabs={tabs}
-                                activeTab={activeItem}
-                                onTabPress={handleTabPress}
-                            />
+                                {/* Tab Navigation */}
+                                <TabBar
+                                    tabs={tabs}
+                                    activeTab={activeItem}
+                                    onTabPress={handleTabPress}
+                                />
 
-                            <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
+                                <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
 
-                            <ScrollView style={styles.container}>
-                                <ThemedText style={styles.sectionTitle}>Current Plan</ThemedText>
-                                {/* Current Plan */}
-                                <ThemedView style={styles.card}>
-                                    <ThemedView style={styles.rowBetween}>
-                                        <ThemedText style={styles.label}>Plan</ThemedText>
-                                        <ThemedView style={[styles.value, { flexDirection: 'row' }]}>
-                                            <ThemedText style={styles.value}> StoryCloud</ThemedText>
-                                            <ThemedText style={styles.value}> | Classroom</ThemedText>
+                                <ScrollView style={styles.container}>
+                                    <ThemedText style={styles.sectionTitle}>Current Plan</ThemedText>
+                                    {/* Current Plan */}
+                                    <ThemedView style={styles.card}>
+                                        <ThemedView style={styles.rowBetween}>
+                                            <ThemedText style={styles.label}>Plan</ThemedText>
+                                            <ThemedView style={[styles.value, { flexDirection: 'row' }]}>
+                                                <ThemedText style={styles.value}> StoryCloud</ThemedText>
+                                                <ThemedText style={styles.value}> | Classroom</ThemedText>
+                                            </ThemedView>
+                                        </ThemedView>
+                                        <ThemedView style={styles.rowBetween}>
+                                            <ThemedText style={styles.label}>Billing Cycle</ThemedText>
+                                            <ThemedText style={styles.value}>Monthly</ThemedText>
+                                        </ThemedView>
+                                        <ThemedView style={styles.rowBetween}>
+                                            <ThemedText style={styles.label}>Cost</ThemedText>
+                                            <ThemedText style={styles.value}>$90</ThemedText>
+                                        </ThemedView>
+                                        <ThemedView style={styles.rowBetween}>
+                                            <ThemedText style={styles.label}>Usage</ThemedText>
+                                            <ThemedText style={styles.value}>8 of 9 Seats</ThemedText>
                                         </ThemedView>
                                     </ThemedView>
-                                    <ThemedView style={styles.rowBetween}>
-                                        <ThemedText style={styles.label}>Billing Cycle</ThemedText>
-                                        <ThemedText style={styles.value}>Monthly</ThemedText>
-                                    </ThemedView>
-                                    <ThemedView style={styles.rowBetween}>
-                                        <ThemedText style={styles.label}>Cost</ThemedText>
-                                        <ThemedText style={styles.value}>$90</ThemedText>
-                                    </ThemedView>
-                                    <ThemedView style={styles.rowBetween}>
-                                        <ThemedText style={styles.label}>Usage</ThemedText>
-                                        <ThemedText style={styles.value}>8 of 9 Seats</ThemedText>
-                                    </ThemedView>
-                                </ThemedView>
 
-                                {/* Payment Method */}
-                                <ThemedView style={[styles.flexRow]}>
-                                    <ThemedText style={styles.sectionTitle}>Payment Method</ThemedText>
-                                    <IconStripe width={24} height={24} style={[ { marginBottom: 30 }]} />
-                                </ThemedView>
-                                <ThemedView style={styles.card}>
-                                    <ThemedView style={styles.cardRow}>
-                                        <IconCard width={30} height={30}
-                                            style={styles.cardIcon}
-                                        />
-                                        <ThemedView style={{ flexDirection: 'column', gap: 5 }}>
-                                            <ThemedText style={[styles.cardText, { fontWeight: 700 }]}>MasterCard</ThemedText>
-                                            <ThemedText style={styles.cardText}>**** 3425</ThemedText>
+                                    {/* Payment Method */}
+                                    <ThemedView style={[styles.flexRow]}>
+                                        <ThemedText style={styles.sectionTitle}>Payment Method</ThemedText>
+                                        <IconStripe width={24} height={24} style={[{ marginBottom: 30 }]} />
+                                    </ThemedView>
+                                    <ThemedView style={styles.card}>
+                                        <ThemedView style={styles.cardRow}>
+                                            <IconCard width={30} height={30}
+                                                style={styles.cardIcon}
+                                            />
+                                            <ThemedView style={{ flexDirection: 'column', gap: 5 }}>
+                                                <ThemedText style={[styles.cardText, { fontWeight: 700 }]}>MasterCard</ThemedText>
+                                                <ThemedText style={styles.cardText}>**** 3425</ThemedText>
+                                            </ThemedView>
+                                            <TouchableOpacity style={styles.changeButton} onPress={() => router.push('./PaymentMethod')}>
+                                                <IconRefresh width={20} height={20} />
+                                                <ThemedText style={styles.changeBtnText}>Change</ThemedText>
+                                            </TouchableOpacity>
                                         </ThemedView>
-                                        <TouchableOpacity style={styles.changeButton} onPress={() => router.push('./PaymentMethod')}>
-                                            <IconRefresh width={20} height={20}/>
-                                            <ThemedText style={styles.changeBtnText}>Change</ThemedText>
-                                        </TouchableOpacity>
+                                        <ThemedText style={styles.cardExpiry}>02/26</ThemedText>
                                     </ThemedView>
-                                    <ThemedText style={styles.cardExpiry}>02/26</ThemedText>
-                                </ThemedView>
 
-                                {/* Billing History */}
-                                <ThemedText style={styles.sectionTitle}>Billing History</ThemedText>
-                                <ThemedView style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 12 }}>
-                                    <ThemedView style={[styles.firstrow, { flex: 1, marginBottom: 10 }]}>
-                                        <ThemedView style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                            <ThemedText style={styles.pipe}> Invoice </ThemedText>
+                                    {/* Billing History */}
+                                    <ThemedText style={styles.sectionTitle}>Billing History</ThemedText>
+                                    <ThemedView style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 12 }}>
+                                        <ThemedView style={[styles.firstrow, { flex: 1, marginBottom: 10 }]}>
+                                            <ThemedView style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <ThemedText style={styles.pipe}> Invoice </ThemedText>
+                                                <IconSwap width={20} height={20} />
+                                            </ThemedView>
                                             <IconSwap width={20} height={20} />
                                         </ThemedView>
-                                        <IconSwap width={20} height={20} />
                                     </ThemedView>
-                                </ThemedView>
 
-                                <ThemedView style={styles.billingContainer}>
-                                    {
-                                        billingData && billingData.map((item, index) => (
-                                            <ThemedView key={index} style={styles.billingCard}>
-                                                <ThemedView style={styles.details}>
-                                                    <ThemedView style={styles.firstrow}>
-                                                        <ThemedText style={styles.title}>
-                                                            {item.product} <ThemedText style={styles.pipe}>| {item.category}</ThemedText>
-                                                        </ThemedText>
-                                                        <IconDownload width={20} height={20} />
-                                                    </ThemedView>
-                                                    <ThemedView style={styles.secondrow}>
-                                                        <ThemedText style={styles.sub}>{item.price}</ThemedText>
-                                                        <ThemedText style={styles.sub}>{item.date}</ThemedText>
-                                                        <ThemedView style={styles.status}>
-                                                            <IconTick width={18} height={18} />
-                                                            <ThemedText style={styles.statusText}>{item.status}</ThemedText>
+                                    <ThemedView style={styles.billingContainer}>
+                                        {
+                                            billingData && billingData.map((item, index) => (
+                                                <ThemedView key={index} style={styles.billingCard}>
+                                                    <ThemedView style={styles.details}>
+                                                        <ThemedView style={styles.firstrow}>
+                                                            <ThemedText style={styles.title}>
+                                                                {item.product} <ThemedText style={styles.pipe}>| {item.category}</ThemedText>
+                                                            </ThemedText>
+                                                            <IconDownload width={20} height={20} />
+                                                        </ThemedView>
+                                                        <ThemedView style={styles.secondrow}>
+                                                            <ThemedText style={styles.sub}>{item.price}</ThemedText>
+                                                            <ThemedText style={styles.sub}>{item.date}</ThemedText>
+                                                            <ThemedView style={styles.status}>
+                                                                <IconTick width={18} height={18} />
+                                                                <ThemedText style={styles.statusText}>{item.status}</ThemedText>
+                                                            </ThemedView>
                                                         </ThemedView>
                                                     </ThemedView>
                                                 </ThemedView>
-                                            </ThemedView>
-                                        ))
-                                    }
-                                </ThemedView>
+                                            ))
+                                        }
+                                    </ThemedView>
 
-                            </ScrollView>
-
+                                </ScrollView>
+                            </ThemedView>
                         </ThemedView>
                     </ScrollView>
                 </ThemedView>
@@ -248,6 +268,14 @@ const styles = StyleSheet.create({
         height: '100%',
         position: "absolute",
         top: 0,
+        left: 0,
+        zIndex: -100,
+    },
+    imgCloudTablet: {
+        width: '105%',
+        height: '100%',
+        position: "absolute",
+        top: 80,
         left: 0,
         zIndex: -100,
     },

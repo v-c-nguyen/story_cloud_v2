@@ -20,6 +20,7 @@ import IconStar from "@/assets/images/icons/icon-mark-modal.svg";
 import IconRocket from "@/assets/images/icons/icon-rocket.svg";
 import IconArrowRight from "@/assets/images/icons/arrow-right.svg";
 import Header from "@/components/Header";
+import useIsMobile from "@/hooks/useIsMobile";
 // Data arrays for each section
 
 const seriesData = [
@@ -56,7 +57,7 @@ const seriesData = [
 ];
 
 export default function FreeModeHome() {
-
+  const isMobile = useIsMobile(); ''
   const router = useRouter();
   const { child } = useUser();
   const [name, setName] = useState(child?.name || "");
@@ -74,10 +75,10 @@ export default function FreeModeHome() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 55 }}
           >
-            
+
             {/* Top background */}
             <Image
-              source={require("@/assets/images/kid/back-pattern.png")}
+              source={require("@/assets/images/auth/back-pattern.png")}
               style={styles.topBackPattern}
               contentFit="cover"
             />
@@ -122,24 +123,41 @@ export default function FreeModeHome() {
                   </ThemedText>
                 </>
             }
-            <ThemedView style={styles.headerRocketWrap}>
-              <IconRocket
-                width={224.54}
-                height={287}
-                style={styles.headerRocket}
-              />
-              {/* Clouds */}
-              <Image
-                source={require("@/assets/images/kid/cloud-group-far.png")}
-                style={styles.imgCloudFar}
-                contentFit="cover"
-              />
-              <Image
-                source={require("@/assets/images/kid/cloud-group-near.png")}
-                style={styles.imgCloudNear}
-                contentFit="cover"
-              />
-            </ThemedView>
+            {isMobile &&
+              <ThemedView style={styles.headerRocketWrap}>
+                <IconRocket
+                  width={224.54}
+                  height={287}
+                  style={styles.headerRocket}
+                />
+                {/* Clouds */}
+                <Image
+                  source={require("@/assets/images/kid/cloud-group-far.png")}
+                  style={styles.imgCloudFar}
+                  contentFit="cover"
+                />
+                <Image
+                  source={require("@/assets/images/kid/cloud-group-near.png")}
+                  style={styles.imgCloudNear}
+                  contentFit="cover"
+                />
+              </ThemedView>
+            }
+            {!isMobile &&
+              <ThemedView style={styles.headerRocketWrap}>
+                <IconRocket
+                  width={224.54}
+                  height={287}
+                  style={styles.headerRocket}
+                />
+                {/* Clouds */}
+                <Image
+                  source={require("@/assets/images/kid/cloud-group.png")}
+                  style={styles.imgCloudTablet}
+                  contentFit="fill"
+                />
+              </ThemedView>
+            }
 
             <ThemedView style={{ backgroundColor: "#fcfcfc", marginTop: -26, paddingBottom: 100 }}>
               {/* Continue Watching */}
@@ -229,6 +247,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '100%',
+    position: "absolute",
+    top: 50,
+    left: 0,
+    zIndex: -100,
   },
   headerTitle: {
     color: "#053B4A",

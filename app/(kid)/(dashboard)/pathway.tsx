@@ -20,10 +20,11 @@ import PathwayList from "@/components/kid/dashboard/PathwayList";
 
 import IconStar from "@/assets/images/icons/icon-mark-modal.svg";
 import IconRocket from "@/assets/images/icons/icon-rocket.svg";
+import useIsMobile from "@/hooks/useIsMobile";
 // Data arrays for each section
 
 export default function PathwayModeHome() {
-
+  const isMobile = useIsMobile();
   const { child } = useUser();
   const [name, setName] = useState("");
   const pathways = usePathwayStore((state) => state.pathways);
@@ -66,7 +67,7 @@ export default function PathwayModeHome() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/back-pattern.png")}
+            source={require("@/assets/images/auth/back-pattern.png")}
             style={styles.topBackPattern}
             contentFit="cover"
           />
@@ -83,24 +84,42 @@ export default function PathwayModeHome() {
           <ThemedText style={styles.headerSubtitle}>
             Let’s watch something and have fun!
           </ThemedText>
-          <ThemedView style={styles.headerRocketWrap}>
-            <IconRocket
-              width={224.54}
-              height={287}
-              style={styles.headerRocket}
-            />
-            {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
-          </ThemedView>
+
+          {isMobile &&
+            <ThemedView style={styles.headerRocketWrap}>
+              <IconRocket
+                width={224.54}
+                height={287}
+                style={styles.headerRocket}
+              />
+              {/* Clouds */}
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            </ThemedView>
+          }
+          {!isMobile &&
+            <ThemedView style={styles.headerRocketWrap}>
+              <IconRocket
+                width={224.54}
+                height={287}
+                style={styles.headerRocket}
+              />
+              {/* Clouds */}
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            </ThemedView>
+          }
 
           {/* Pathway Section */}
           <ThemedView style={{ height: '100%', backgroundColor: "#fcfcfc", marginTop: -50, paddingHorizontal: 12 }}>
@@ -183,6 +202,14 @@ const styles = StyleSheet.create({
     paddingLeft: 36,
     marginTop: -56,
     position: "relative",
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '100%',
+    position: "absolute",
+    top: 50,
+    left: 0,
+    zIndex: -100,
   },
   imgCloudFar: {
     width: "110%",

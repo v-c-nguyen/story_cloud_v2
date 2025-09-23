@@ -97,7 +97,7 @@ export default function ContentPreferences({
       <ThemedView style={{ flexDirection: 'row', gap: 15, alignItems: 'center' }}>
         <Text style={styles.label}>Story Style</Text>
         <TouchableOpacity style={{ marginBottom: 8 }} onPress={() => setModalVisible(true)}>
-          <IconInformation width={18} height={18} color={"#s053B4A"} style={styles.informationBtn} />
+          <IconInformation width={18} height={18} color={"#053B4A"} style={styles.informationBtn} />
         </TouchableOpacity>
       </ThemedView>
       <View style={styles.pillRow}>
@@ -168,7 +168,7 @@ export default function ContentPreferences({
 const styles = StyleSheet.create({
   cardContainer: {
     padding: 24,
-    paddingBottom: 35,
+    paddingBottom: 80,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 8,

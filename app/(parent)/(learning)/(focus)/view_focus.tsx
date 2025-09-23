@@ -19,9 +19,11 @@ import {
 // Data arrays for each section
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 const HIGHLIGHT_INDEX = 0;
 export default function ViewFocus() {
+    const isMobile = useIsMobile();
     const router = useRouter();
     const params = useLocalSearchParams();
     const focusId = params.id as string;
@@ -118,7 +120,7 @@ export default function ViewFocus() {
 
 
                         <ThemedView style={{ paddingBottom: 80 }}>
-                            <FocusDetailedCard focus={focusMode} handleEditButton={handleEditButton}/>
+                            <FocusDetailedCard focus={focusMode} handleEditButton={handleEditButton} />
                         </ThemedView>
                     </ScrollView>
                     {/* Sticky Bottom Navigation */}
@@ -132,7 +134,7 @@ export default function ViewFocus() {
                             zIndex: 1000,
                         }}
                     >
-                        <BottomNavBar role="parent" active="Learning" subActive="Focus" />
+                        <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Focus" : ""} image={!isMobile ? true : false} />
                     </ThemedView>
 
                     <CreatPathwayModal mode={params.mode} modalVisible={modalVisible} onRemove={removeModal}></CreatPathwayModal>

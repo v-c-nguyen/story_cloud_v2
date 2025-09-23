@@ -46,7 +46,7 @@ const StoryItems: React.FC<StoryItemsProps> = ({
       >
         {/* Parent Mode Learning --- Stories */}
         {tag == "stories" &&
-          seriesCategories?.stories.length > 0 && seriesCategories.stories
+          seriesCategories?.stories && seriesCategories?.stories.length > 0 && seriesCategories.stories
             .map((item: any, idx: number) => (
               <StoryCard1
                 key={idx}
@@ -65,13 +65,13 @@ const StoryItems: React.FC<StoryItemsProps> = ({
         {tag == "series" &&
           mode == "parent" &&
           filter != "stories" &&
-          seriesCategories?.series.length > 0 && seriesCategories.series
+          seriesCategories?.series && seriesCategories.series.length > 0 && seriesCategories.series
             .map((item: any, idx: number) => <SeriesCard_Parent key={idx} series={item} />)}
 
         {tag == "series" &&
           mode == "parent" &&
           filter != "series" &&
-          seriesCategories?.stories.length > 0 && seriesCategories.stories
+          seriesCategories?.stories && seriesCategories?.stories.length > 0 && seriesCategories.stories
             .map((item: any, idx: number) =>
               <StoryCard1
                 key={idx}
@@ -107,7 +107,7 @@ const StoryItems: React.FC<StoryItemsProps> = ({
         {tag == "collections" &&
           mode == "parent" &&
           filter != "stories" &&
-          collectionsCategories.series && collectionsCategories.series
+          collectionsCategories?.series && collectionsCategories.series.length > 0 && collectionsCategories.series
             .map((item: any, idx: number) => <SeriesCard_Parent key={idx} series={item} />)}
 
         {tag == "collections" &&
@@ -131,13 +131,13 @@ const StoryItems: React.FC<StoryItemsProps> = ({
         {tag == "characters" &&
           mode == "parent" &&
           filter != "stories" &&
-          charactersCategories && charactersCategories.series
+          charactersCategories?.series && charactersCategories.series.length > 0 && charactersCategories.series
             .map((item: any, idx: number) => <SeriesCard_Parent key={idx} series={item} />)}
 
         {tag == "characters" &&
           mode == "parent" &&
           filter != "series" &&
-          charactersCategories && charactersCategories.stories
+          charactersCategories?.stories && charactersCategories.stories.length > 0 && charactersCategories.stories
             .map((item: any, idx: number) => (
               <StoryCard1
                 key={idx}
@@ -154,7 +154,7 @@ const StoryItems: React.FC<StoryItemsProps> = ({
 
         {tag == "themes" &&
           mode == "parent" &&
-          themesCategories && themesCategories.stories
+          themesCategories?.stories && themesCategories.stories.length > 0 && themesCategories.stories
             .map((item: any, idx: number) => (
               <StoryCard1
                 key={idx}

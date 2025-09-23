@@ -29,6 +29,7 @@ import IconCollections from "@/assets/images/parent/collections.svg"
 import IconMap from "@/assets/images/parent/map.svg"
 import IconThemes from "@/assets/images/parent/themes.svg"
 import IconCharacters from "@/assets/images/parent/characters.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 const cardsData = [
   { color: '#FFFFFF', icon: IconSeries, text: 'Series' },
@@ -40,6 +41,7 @@ const cardsData = [
 
 export default function Collections() {
   const { child } = useUser();
+  const isMobile = useIsMobile();
   const [categories, setCategory] = React.useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -118,16 +120,28 @@ export default function Collections() {
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+            }
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            }
+            {
+              !isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            }
             {/* Header */}
             <ThemedView style={{ paddingTop: 25, marginTop: 30, paddingHorizontal: 16, width: '100%' }}>
               <ThemedView
@@ -217,6 +231,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 67,
     marginBottom: 66,
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '180%',
+    position: "absolute",
+    top: 50,
+    left: 0,
+    zIndex: -100,
   },
   sectionHeader: {
     marginTop: 0,

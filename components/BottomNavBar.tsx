@@ -9,6 +9,7 @@ import {
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import React, { useEffect } from "react";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function BottomNavBar({
   role = "kid",
@@ -19,6 +20,7 @@ export default function BottomNavBar({
   flag = false,
   pathway = false,
 }) {
+  const isMobile = useIsMobile();
   const router = useRouter();
   // Filter child tabs if role is kid and pathway is true
   const childTabs = role === "kid" && pathway
@@ -58,12 +60,12 @@ export default function BottomNavBar({
 
   return (
     <ThemedView style={[
-      styles.bottomNavContainer, 
-      active == "Dashboard" && role == "parent" && { height: 113 }, 
+      styles.bottomNavContainer,
+      { height: isMobile ? 178 : 245 },
+      active == "Dashboard" && role == "parent" && isMobile && { height: 113 },
       image && { backgroundColor: 'transparent' }]}
     >
-      {/* Cloud Effects */}
-
+      {/* Learning Bottom Bar Back Pattern */}
       <Image
         source={require("@/assets/images/parent/parent-back-pattern.png")}
         style={[styles.topBackPattern,
@@ -73,7 +75,7 @@ export default function BottomNavBar({
         ]}
         contentFit="cover"
       />
-      {image && (
+      {image && isMobile && (
         <Image
           source={require("@/assets/images/kid/cloud-group-bottom.png")}
           pointerEvents="none"
@@ -85,7 +87,21 @@ export default function BottomNavBar({
         ></Image>
       )}
 
-      {role == "parent" &&
+      {
+        !isMobile && image &&
+        <Image
+          source={require("@/assets/images/parent/tablet_icons/parent_footer_cloud.png")}
+          pointerEvents="none"
+          style={[
+            styles.cloudGroup,
+            theme == "darkImage" && { tintColor: "rgba(5, 59, 74, 1)" },
+            theme == "light" && {tintColor: "white"}
+          ]}
+          contentFit="fill"
+        ></Image>
+
+      }
+      { isMobile && role == "parent" &&
         parentHooterData?.map(
           (item, index) =>
             (item.items?.length ?? 0) > 0 &&
@@ -121,7 +137,7 @@ export default function BottomNavBar({
       <ThemedView
         style={[
           styles.bottomNavBar,
-          { justifyContent: "center", alignItems: 'center' },
+          { justifyContent: isMobile ? "center" : "space-evenly", alignItems: 'center' },
           theme == "light" && { backgroundColor: "red" },
           image == true && { backgroundColor: "rgba(0,0,0,0)", borderWidth: 0 },
         ]}
@@ -188,12 +204,14 @@ function NavItem({
   onPress,
   unvisibleFlag = false,
 }: NavItem) {
+  const isMobile = useIsMobile();
   return (
     <TouchableOpacity
       style={[
-        styles.navItem, 
-        active && styles.navItemActive, 
-        active && { borderColor: theme == "light" || theme == "darkImage" ? "rgba(5, 59, 74, 1)" : "#fcfcfc63" }, 
+        styles.navItem,
+        active && styles.navItemActive,
+        active && isMobile && { borderColor: theme == "light" ? "rgba(5, 59, 74, 1)" : theme == "darkImage" ? "white" : "rgba(122, 193, 198, 0.48)" },
+        active && !isMobile && { borderColor: theme == "darkImage" ? "white" : "#053B4A" },
         unvisibleFlag && { width: 0, padding: 0, borderWidth: 0 }]}
       onPress={onPress}
     >
@@ -210,10 +228,11 @@ function NavItem({
                 active
                   ? "rgba(5, 59, 74, 1)"
                   : "rgba(122, 193, 198, 1)",
-                zIndex: 10
+              zIndex: 10
             },
             theme == "darkImage" && { color: "white" },
             theme == "light" && { color: "rgba(5, 59, 74, 1)" },
+            theme != "darkImage" && !isMobile && { color: "rgba(5, 59, 74, 1)" }
           ]}
         />
       </ThemedView>
@@ -222,6 +241,7 @@ function NavItem({
           styles.navLabel,
           theme == "darkImage" && { color: "white" },
           theme == "light" && { color: "rgba(5, 59, 74, 1)" },
+          theme != "darkImage" && !isMobile && { color: "rgba(5, 59, 74, 1)" }
         ]}
       >
         {label}
@@ -284,7 +304,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: 178,
     backgroundColor: "rgba(5, 59, 74, 1)",
     justifyContent: "flex-end",
     alignItems: "center",

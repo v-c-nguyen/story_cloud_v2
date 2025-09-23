@@ -14,8 +14,10 @@ import { useStoryStore } from "@/store/storyStore";
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 import Header from "@/components/Header";
 import { useUser } from "@/app/lib/UserContext";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function JustWatchedScreen() {
+  const isMobile = useIsMobile()
   const recentStories = useStoryStore((state) => state.recentStories);
   const [storiesData, setStoriesData] = useState<any>([]);
   const { child } = useUser();
@@ -37,7 +39,7 @@ export default function JustWatchedScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/back-pattern.png")}
+            source={require("@/assets/images/auth/back-pattern.png")}
             style={styles.topBackPattern}
             contentFit="cover"
           />
@@ -47,16 +49,28 @@ export default function JustWatchedScreen() {
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+            }
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            }
+            {
+              !isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            }
             <ThemedView style={{ flexDirection: "row", justifyContent: "center", marginTop: 60 }}>
               <Link href="../">
                 <ThemedView style={[styles.backWrap]}>
@@ -89,7 +103,7 @@ export default function JustWatchedScreen() {
               ))}
               {
                 storiesData.length <= 0 &&
-                <ThemedText style={{ color: '#053B4A', textAlign: 'center', marginTop: "40%" }}>no recent data</ThemedText>
+                <ThemedText style={{ color: '#053B4A', textAlign: 'center', marginTop: isMobile ? "40%" : 30 }}>no recent data</ThemedText>
               }
             </ThemedView>
           </ThemedView>
@@ -180,6 +194,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 42,
     left: 0,
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '130%',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: -100,
   },
   listContent: {
     paddingHorizontal: 16,

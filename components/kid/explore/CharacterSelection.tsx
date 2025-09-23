@@ -37,7 +37,7 @@ export default function CharacterSelection({
     <ThemedView style={styles.selectionContainer}>
       <View style={styles.detailsSection}>
         <View style={styles.selectionHeaderRow}>
-          <View>
+          <View style={{margin: "auto"}}>
             <Image
               source={
                 (currentCharacter as any)?.avatar_url

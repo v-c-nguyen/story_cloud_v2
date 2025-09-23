@@ -21,7 +21,7 @@ const StoryStyleModal = ({
     goBack }: StoryStyleModalProps) => {
     const [style, setStyle] = React.useState(0);
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#053B4A' }}>
+        <SafeAreaView style={{ flex: 1, maxWidth: 600, borderRadius: 30, margin: "auto", backgroundColor: '#053B4A' }}>
             {/* Header */}
 
             <ThemedView style={styles.modalIconContainer}>

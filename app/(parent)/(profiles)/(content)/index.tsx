@@ -18,6 +18,7 @@ import { Image } from 'expo-image';
 import IconProfile from "@/assets/images/parent/footer/icon-profile.svg";
 import { tabData } from '@/data/parent/dashboardData';
 import supabase from '@/app/lib/supabase';
+import useIsMobile from '@/hooks/useIsMobile';
 
 const starIcon = require('@/assets/images/parent/icon-star.png')
 
@@ -39,7 +40,7 @@ export const ModalContent = () => (
 export default function Content() {
     const router = useRouter();
     const tabs = tabData;
-
+    const isMobile = useIsMobile();
     const [isMonthly, setIsMonthly] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -88,36 +89,53 @@ export default function Content() {
                         ></Header>
 
                         {/* Cloud Image */}
-                        <ThemedView style={styles.headerRocketWrap}>
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-far.png")}
-                                style={styles.imgCloudFar}
-                                contentFit="cover"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear}
-                                contentFit="cover"
-                            />
-                        </ThemedView>
+                        {
+                            isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-far.png")}
+                                    style={styles.imgCloudFar}
+                                    contentFit="fill"
+                                />
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-near.png")}
+                                    style={styles.imgCloudNear}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+                        {
+                            !isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group.png")}
+                                    style={styles.imgCloudTablet}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+
 
                         {/* Main Content */}
-                        <ThemedView style={styles.settingContentStyle}>
-                            <ThemedText style={styles.settingHeader}>Settings</ThemedText>
+                        <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
+                            <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
+                                <ThemedText style={styles.settingHeader}>Settings</ThemedText>
 
-                            {/* Tab Navigation */}
-                            <TabBar
-                                tabs={tabs}
-                                activeTab={'content'}
-                                onTabPress={handleTabPress}
-                            />
+                                {/* Tab Navigation */}
+                                <TabBar
+                                    tabs={tabs}
+                                    activeTab={'content'}
+                                    onTabPress={handleTabPress}
+                                />
 
-                            <ThemedView style={[styles.tabContent, { marginTop: 20 }]} >
+                                <ThemedView style={[styles.tabContent, { marginTop: 20 }]} >
 
-                                {/* Main Content */}
-                                <ContentPreferences setModalVisible={setModalVisible} />
+                                    {/* Main Content */}
+                                    <ContentPreferences setModalVisible={setModalVisible} />
+                                </ThemedView>
                             </ThemedView>
-
                         </ThemedView>
                     </ScrollView>
 
@@ -160,6 +178,14 @@ const styles = StyleSheet.create({
         top: 42,
         left: 0,
         zIndex: -10
+    },
+    imgCloudTablet: {
+        width: '105%',
+        height: '100%',
+        position: "absolute",
+        top: 80,
+        left: 0,
+        zIndex: -100,
     },
     topBackPattern: {
         width: "100%",
@@ -223,7 +249,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 700,
         textAlign: 'center',
-        lineHeight: 0
+        lineHeight: 35
     },
     container: {
         paddingTop: 30,

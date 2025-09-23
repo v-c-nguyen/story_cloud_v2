@@ -11,8 +11,10 @@ import Header from "@/components/Header";
 import { useUser } from "@/app/lib/UserContext";
 
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function FeaturedAdventuresScreen() {
+  const isMobile = useIsMobile()
   const featuredStories = useStoryStore((state) => state.featuredStories);
   const [storiesData, setStoriesData] = useState<Story[]>([]);
   const { child } = useUser();
@@ -35,7 +37,7 @@ export default function FeaturedAdventuresScreen() {
         >
           {/* Top background */}
           <Image
-            source={require("@/assets/images/kid/back-pattern.png")}
+            source={require("@/assets/images/auth/back-pattern.png")}
             style={styles.topBackPattern}
             contentFit="cover"
           />
@@ -45,16 +47,28 @@ export default function FeaturedAdventuresScreen() {
 
           <ThemedView style={styles.headerCloudWrap}>
             {/* Clouds */}
-            <Image
-              source={require("@/assets/images/kid/cloud-group-far.png")}
-              style={styles.imgCloudFar}
-              contentFit="cover"
-            />
-            <Image
-              source={require("@/assets/images/kid/cloud-group-near.png")}
-              style={styles.imgCloudNear}
-              contentFit="cover"
-            />
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-far.png")}
+                style={styles.imgCloudFar}
+                contentFit="cover"
+              />
+            }
+            {isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group-near.png")}
+                style={styles.imgCloudNear}
+                contentFit="cover"
+              />
+            }
+            {
+              !isMobile &&
+              <Image
+                source={require("@/assets/images/kid/cloud-group.png")}
+                style={styles.imgCloudTablet}
+                contentFit="fill"
+              />
+            }
             <ThemedView style={{ flexDirection: "row", justifyContent: "center", marginTop: 60 }}>
               <Link href="../">
                 <ThemedView style={[styles.backWrap]}>
@@ -159,6 +173,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
+    marginTop: 84,
+    marginBottom: 58,
   },
   imgArrowLeft: {
     width: 20,
@@ -190,6 +206,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 42,
     left: 0,
+  },
+  imgCloudTablet: {
+    width: '105%',
+    height: '130%',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: -100,
   },
   listContent: {
     paddingHorizontal: 16,

@@ -30,8 +30,11 @@ import { useUser } from "@/app/lib/UserContext";
 import IconList from "@/assets/images/icons/icon-list.svg"
 import IconDown from "@/assets/images/icons/icon-chevrondown.svg"
 import { useLocationsStore } from "@/store/locationsStore";
+import useIsMobile from "@/hooks/useIsMobile";
+import LearningTab from "@/components/LearningTab";
 
 export default function StorylandMapLibrary() {
+  const isMobile = useIsMobile();
   const { child } = useUser();
   const characters = useCharactersStore((s) => s.characters);
   const setCharacters = useCharactersStore((s) => s.setCharacters);
@@ -207,24 +210,30 @@ export default function StorylandMapLibrary() {
 
               {/* Header */}
               <ThemedView style={styles.topRow}>
-                <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('./(parent)/search-screen')}>
-                  <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.iconBtn}>
-                  <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
-                </TouchableOpacity>
+                {!isMobile && <LearningTab activeItem="Libaray" />}
+                <ThemedView style={{ flexDirection: "row", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                  <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(parent)/search-screen')}>
+                    <IconSearch width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.iconBtn}>
+                    <IconSwap width={20} height={20} color={'rgba(173, 215, 218, 1)'} />
+                  </TouchableOpacity>
 
-                {/* Dropdown toggle */}
-                <TouchableOpacity
-                  style={styles.dropdownToggle}
-                  onPress={() => setDropdownVisible(!dropdownVisible)}
-                >
-                  <ThemedView style={styles.ActiveItemStyle} >
-                    <IconList width={21} height={21} />
-                  </ThemedView>
-                  <ThemedText style={styles.dropdownText}>{activeItem}</ThemedText>
-                  <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
-                </TouchableOpacity>
+                  {/* Dropdown toggle */}
+                  <TouchableOpacity
+                    style={styles.dropdownToggle}
+                    onPress={() => setDropdownVisible(!dropdownVisible)}
+                  >
+                    <ThemedView style={styles.ActiveItemStyle}>
+
+                      <IconList width={21} height={21} />
+                    </ThemedView>
+                    <ThemedText style={styles.dropdownText}>
+                      {activeItem}
+                    </ThemedText>
+                    <IconDown width={16} height={16} color={"rgba(122, 193, 198, 1)"} />
+                  </TouchableOpacity>
+                </ThemedView>
               </ThemedView>
 
 
@@ -266,9 +275,9 @@ export default function StorylandMapLibrary() {
               (
                 <ThemedView style={styles.bottomPadding}>
                   <ThemedView>
-                    <MapWrapper 
-                      activeTab={activeTab} 
-                      setActiveTab={setActiveTab} 
+                    <MapWrapper
+                      activeTab={activeTab}
+                      setActiveTab={setActiveTab}
                       characterLoading={characterLoading}
                       landmarkLoading={landmarkLoading}
                       mode="parent"
@@ -362,7 +371,7 @@ export default function StorylandMapLibrary() {
               zIndex: 1000,
             }}
           >
-            <BottomNavBar role="parent" active="Learning" subActive="Library" />
+            <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Library" : ""} image={!isMobile ? true : false} />
           </ThemedView>
         </ThemedView>
       </SafeAreaView >

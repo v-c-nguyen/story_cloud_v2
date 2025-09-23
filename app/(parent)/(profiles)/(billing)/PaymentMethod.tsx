@@ -4,17 +4,19 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
-import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-
+import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import IconStripe from "@/assets/images/icons/icon-stripe.svg"
 import IconCard from "@/assets/images/icons/icon-card.svg"
 import IconTrash from "@/assets/images/icons/icon-trash.svg"
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
 import IconCheckCircle from "@/assets/images/icons/icon-tick-circle.svg"
 import IconPlus from "@/assets/images/parent/icon-plus.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function PaymentMethod() {
     const router = useRouter();
+    const isMobile = useIsMobile();
     const [activeTab, setActiveTab] = React.useState('account');
 
     const handleTabPress = (tabId: string) => {
@@ -49,90 +51,107 @@ export default function PaymentMethod() {
                         </TouchableOpacity>
 
                         {/* Cloud Image */}
-                        <ThemedView style={styles.headerRocketWrap}>
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-far.png")}
-                                style={styles.imgCloudFar}
-                                resizeMode="cover"
-                            />
-                            <Image
-                                source={require("@/assets/images/kid/cloud-group-near.png")}
-                                style={styles.imgCloudNear}
-                                resizeMode="cover"
-                            />
-                        </ThemedView>
+                        {
+                            isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-far.png")}
+                                    style={styles.imgCloudFar}
+                                    contentFit="fill"
+                                />
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group-near.png")}
+                                    style={styles.imgCloudNear}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+                        {
+                            !isMobile &&
+                            <ThemedView style={styles.headerRocketWrap}>
+                                <Image
+                                    source={require("@/assets/images/kid/cloud-group.png")}
+                                    style={styles.imgCloudTablet}
+                                    contentFit="fill"
+                                />
+                            </ThemedView>
+                        }
+
+
 
                         {/* Main Content */}
-                        <ThemedView style={styles.settingContentStyle}>
-                            <ThemedView style={styles.tabContent}>
-                                <ThemedView style={[styles.flexRow, { justifyContent: 'flex-start', gap: 10 }]}>
-                                    <ThemedText style={styles.sectionTitle}>Payment Method</ThemedText>
-                                    <IconStripe width={24} height={24} style={[{ marginBottom: 30 }]} />
-                                </ThemedView>
-                                <ThemedView style={[styles.card, styles.flexCol, styles.justifyBetween, { borderColor: 'rgba(5, 59, 74, 0.6)' }]}>
-                                    <ThemedView style={[styles.cardRow, styles.flexRow]}>
-                                        <ThemedView style={[styles.flexRow]}>
-                                            <IconCard
-                                                width={52}
-                                                height={52}
-                                                style={styles.cardIcon}
-                                            />
-                                            <ThemedText style={styles.cardText_Card}>**** 3425</ThemedText>
-                                        </ThemedView>
-                                        <TouchableOpacity>
-                                            <ThemedView style={[styles.iconButton, styles.iconButtonWithBack]}>
-                                                <IconCheckCircle
-                                                    width={20}
-                                                    height={20} />
-                                            </ThemedView>
-                                        </TouchableOpacity>
+                        <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
+                            <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
+                                <ThemedView style={styles.tabContent}>
+                                    <ThemedView style={[styles.flexRow, { justifyContent: 'flex-start', gap: 10 }]}>
+                                        <ThemedText style={styles.sectionTitle}>Payment Method</ThemedText>
+                                        <IconStripe width={24} height={24} style={[{ marginBottom: 30 }]} />
                                     </ThemedView>
-                                    <ThemedView style={styles.cardRow}>
-                                        <ThemedText style={styles.cardExpiry}>02/26</ThemedText>
-                                        <TouchableOpacity>
-                                            <ThemedView style={[styles.iconButton]}>
-                                                <IconTrash
-                                                    width={24}
-                                                    height={24}
+                                    <ThemedView style={[styles.card, styles.flexCol, styles.justifyBetween, { borderColor: 'rgba(5, 59, 74, 0.6)' }]}>
+                                        <ThemedView style={[styles.cardRow, styles.flexRow]}>
+                                            <ThemedView style={[styles.flexRow]}>
+                                                <IconCard
+                                                    width={52}
+                                                    height={52}
+                                                    style={styles.cardIcon}
                                                 />
+                                                <ThemedText style={styles.cardText_Card}>**** 3425</ThemedText>
                                             </ThemedView>
-                                        </TouchableOpacity>
-                                    </ThemedView>
-                                </ThemedView>
-                                <ThemedView style={[styles.card, styles.flexCol, styles.justifyBetween]}>
-                                    <ThemedView style={styles.cardRow}>
-                                        <ThemedView style={styles.flexRow}>
-                                            <IconCard
-                                                width={52}
-                                                height={52}
-                                                style={styles.cardIcon}
-                                            />
-                                            <ThemedText style={styles.cardText}>**** 3425</ThemedText>
+                                            <TouchableOpacity>
+                                                <ThemedView style={[styles.iconButton, styles.iconButtonWithBack]}>
+                                                    <IconCheckCircle
+                                                        width={20}
+                                                        height={20} />
+                                                </ThemedView>
+                                            </TouchableOpacity>
+                                        </ThemedView>
+                                        <ThemedView style={styles.cardRow}>
+                                            <ThemedText style={styles.cardExpiry}>02/26</ThemedText>
+                                            <TouchableOpacity>
+                                                <ThemedView style={[styles.iconButton]}>
+                                                    <IconTrash
+                                                        width={24}
+                                                        height={24}
+                                                    />
+                                                </ThemedView>
+                                            </TouchableOpacity>
                                         </ThemedView>
                                     </ThemedView>
-                                    <ThemedView style={styles.cardRow}>
-                                        <ThemedText style={styles.cardExpiry}>02/26</ThemedText>
-                                        <TouchableOpacity>
-                                            <ThemedView style={[styles.iconButton]}>
-                                                <IconTrash
-                                                    width={24}
-                                                    height={24} />
+                                    <ThemedView style={[styles.card, styles.flexCol, styles.justifyBetween]}>
+                                        <ThemedView style={styles.cardRow}>
+                                            <ThemedView style={styles.flexRow}>
+                                                <IconCard
+                                                    width={52}
+                                                    height={52}
+                                                    style={styles.cardIcon}
+                                                />
+                                                <ThemedText style={styles.cardText}>**** 3425</ThemedText>
                                             </ThemedView>
-                                        </TouchableOpacity>
-                                    </ThemedView>
-                                </ThemedView>
-
-                                <TouchableOpacity onPress={() => router.push('./new_method')}>
-                                    <ThemedView style={[styles.card, styles.flexCol, styles.justifyCenter, { borderWidth: 2, borderStyle: 'dashed' }]}>
-                                        <ThemedView style={styles.flexRow}>
-                                            <IconPlus width={18} height={18} />
-                                            <ThemedText style={styles.cardText}>Add New Method</ThemedText>
+                                        </ThemedView>
+                                        <ThemedView style={styles.cardRow}>
+                                            <ThemedText style={styles.cardExpiry}>02/26</ThemedText>
+                                            <TouchableOpacity>
+                                                <ThemedView style={[styles.iconButton]}>
+                                                    <IconTrash
+                                                        width={24}
+                                                        height={24} />
+                                                </ThemedView>
+                                            </TouchableOpacity>
                                         </ThemedView>
                                     </ThemedView>
-                                </TouchableOpacity>
 
+                                    <TouchableOpacity onPress={() => router.push('./new_method')}>
+                                        <ThemedView style={[styles.card, styles.flexCol, styles.justifyCenter, { borderWidth: 2, borderStyle: 'dashed' }]}>
+                                            <ThemedView style={styles.flexRow}>
+                                                <IconPlus width={18} height={18} />
+                                                <ThemedText style={styles.cardText}>Add New Method</ThemedText>
+                                            </ThemedView>
+                                        </ThemedView>
+                                    </TouchableOpacity>
+
+                                </ThemedView>
                             </ThemedView>
-
                         </ThemedView>
                     </ScrollView>
 
@@ -175,6 +194,14 @@ const styles = StyleSheet.create({
         top: 42,
         left: 0,
         zIndex: -10
+    },
+    imgCloudTablet: {
+        width: '105%',
+        height: '100%',
+        position: "absolute",
+        top: 80,
+        left: 0,
+        zIndex: -100,
     },
     settingContentStyle: {
         backgroundColor: '#fff',

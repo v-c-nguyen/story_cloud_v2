@@ -42,9 +42,12 @@ import IconSwap from "@/assets/images/icons/icon-swap.svg";
 import IconPlus from "@/assets/images/parent/icon-plus.svg";
 import IconLearning from "@/assets/images/parent/footer/icon-learning.svg";
 import IconSearch from "@/assets/images/icons/icon-search.svg";
+import useIsMobile from "@/hooks/useIsMobile";
+import LearningTab from "@/components/LearningTab";
 
 const HIGHLIGHT_INDEX = 0;
 export default function Index() {
+  const isMobile = useIsMobile();
   const router = useRouter();
   const params = useLocalSearchParams();
   const [modalVisible, setModalVisible] = React.useState(
@@ -179,27 +182,30 @@ export default function Index() {
               ></Header>
               {/* Header */}
               <ThemedView style={styles.topRow}>
-                <TouchableOpacity
-                  style={styles.iconBtn}
-                  onPress={() => router.push("/(parent)/search-screen")}
-                >
-                  <IconSearch width={20} height={20} color={"#7AC1C6"} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.iconBtn}>
-                  <IconSwap width={20} height={20} color={"#7AC1C6"} />
-                </TouchableOpacity>
+                {!isMobile && <LearningTab activeItem="Pathway" />}
+                <ThemedView style={{ flexDirection: "row", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                  <TouchableOpacity
+                    style={styles.iconBtn}
+                    onPress={() => router.push("/(parent)/search-screen")}
+                  >
+                    <IconSearch width={20} height={20} color={"#7AC1C6"} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.iconBtn}>
+                    <IconSwap width={20} height={20} color={"#7AC1C6"} />
+                  </TouchableOpacity>
 
-                {/* Dropdown toggle */}
-                <TouchableOpacity
-                  style={styles.dropdownToggle}
-                  onPress={CreateNewPathway}
-                >
-                  <IconPlus width={18} height={18} color={"rgba(173, 215, 218, 1)"} />
-                  <ThemedText style={styles.dropdownText}>
-                    {" "}
-                    Create New Pathway{" "}
-                  </ThemedText>
-                </TouchableOpacity>
+                  {/* Dropdown toggle */}
+                  <TouchableOpacity
+                    style={styles.dropdownToggle}
+                    onPress={CreateNewPathway}
+                  >
+                    <IconPlus width={18} height={18} color={"rgba(173, 215, 218, 1)"} />
+                    <ThemedText style={styles.dropdownText}>
+                      {" "}
+                      Create New Pathway{" "}
+                    </ThemedText>
+                  </TouchableOpacity>
+                </ThemedView>
               </ThemedView>
 
               {/* Category pills */}
@@ -255,7 +261,7 @@ export default function Index() {
               zIndex: 1000,
             }}
           >
-            <BottomNavBar role="parent" active="Learning" subActive="Pathway" />
+            <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Pathway" : ""} image={!isMobile ? true : false} />
           </ThemedView>
 
           <CreatPathwayModal

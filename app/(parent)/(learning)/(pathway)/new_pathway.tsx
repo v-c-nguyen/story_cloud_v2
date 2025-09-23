@@ -14,6 +14,7 @@ import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } 
 
 import IconPathway from "@/assets/images/parent/icon-pathway.svg";
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg"
+import useIsMobile from "@/hooks/useIsMobile";
 
 interface Child {
     id: number,
@@ -23,6 +24,7 @@ interface Child {
     avatar_url: string
 }
 export default function AddPathway() {
+    const isMobile = useIsMobile();
     const router = useRouter();
     const [step, setStep] = React.useState(1);
     const [mode, setMode] = React.useState(0);
@@ -138,7 +140,7 @@ export default function AddPathway() {
 
                     <ThemedView style={styles.mainContainer}>
                         <ThemedView style={styles.titleContainer}>
-                            <IconPathway width={24} height={24}/>
+                            <IconPathway width={24} height={24} />
                             <ThemedText style={styles.title}>New Pathway</ThemedText>
                         </ThemedView>
 
@@ -198,7 +200,7 @@ export default function AddPathway() {
                         zIndex: 1000,
                     }}
                 >
-                    <BottomNavBar role="parent" active="Learning" subActive="Pathway" />
+                    <BottomNavBar role="parent" active="Learning" subActive={isMobile ? "Pathway" : ""} image={!isMobile ? true : false} />
                 </ThemedView>
             </SafeAreaView>
         </>
