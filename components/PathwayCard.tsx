@@ -14,11 +14,20 @@ import PathwayStories from "./parent/learning/pathway/PathwayStories";
 import IconDefaultAvatar from "@/assets/images/icons/icon-parent-3.svg"
 
 interface Child {
+  progress: number;
+  children: {
+    id: string,
+    name: string,
+    age: number,
+    mode: string,
+    avatar_url?: string
+  }
+}
+
+interface LearningCategory {
   id: string,
   name: string,
-  age: number,
-  mode: string,
-  avatar_url?: string
+  description: string
 }
 
 import IconEdit from "@/assets/images/parent/icon-edit.svg";
@@ -397,17 +406,15 @@ export function PathwayDetailedCard({
 }
 export function PathwayEditCard({
   pathwayMode,
-  handleEditButton
 }: {
   pathwayMode: any,
-  handleEditButton: (id: string) => void
 }) {
   const router = useRouter();
   const [editName, setEditName] = React.useState(false);
   const [editDescription, setEditDescription] = React.useState(false);
   const [name, setName] = React.useState(pathwayMode?.name || '');
   const [description, setDescription] = React.useState(pathwayMode?.description || '');
-  const [categories, setCategories] = React.useState<string[]>([]);
+  const [categories, setCategories] = React.useState<LearningCategory[]>([]);
   const [children, setChildren] = React.useState<Child[]>([]);
   const [allCategories, setAllCategories] = React.useState<any[]>([]);
   const [allChildren, setAllChildren] = React.useState<any[]>([]);
@@ -423,12 +430,12 @@ export function PathwayEditCard({
       setDescription(pathwayMode.description);
       setCategories(
         pathwayMode?.pathway_targets
-          ? pathwayMode.pathway_targets.map((t: any) => t.learning_categories?.name)
+          ? pathwayMode.pathway_targets.map((t: any) => t.learning_categories)
           : []
       );
       setChildren(
         pathwayMode?.pathway_kids
-          ? pathwayMode.pathway_kids.map((t: any) => t.children)
+          ? pathwayMode.pathway_kids.map((t: any) => t)
           : []
       );
     }
@@ -464,25 +471,31 @@ export function PathwayEditCard({
 
   function handleTargetSelected(id: string, name: string) {
     setCategories(prev => {
-      const exists = prev.some(t => t.trim() === name.trim());
+      const exists = prev.some(t => t.name.trim() === name.trim());
       if (exists) {
-        return prev.filter(t => t.trim() !== name.trim());
+        return prev.filter(t => t.name.trim() !== name.trim());
       } else {
-        return [...prev, name];
-      }
-    });
-  }
-  function handleChildSelected(child: Child) {
-    setChildren(prev => {
-      const exists = prev.some(t => t.id === child.id);
-      if (exists) {
-        return prev.filter(t => t.id !== child.id);
-      } else {
-        return [...prev, child];
+        // Find the category object by id and add it
+        const categoryToAdd = allCategories.find((cat: LearningCategory) => cat.id === id);
+        if (categoryToAdd) {
+          return [...prev, categoryToAdd];
+        }
+        return prev;
       }
     });
   }
 
+  function handleChildSelected(child: any) {
+    setChildren(prev => {
+      const exists = prev.some(t => t.children.id === child.id);
+      if (exists) {
+        return prev.filter(t => t.children.id !== child.id);
+      } else {
+        const childAdd = { progress: 0, children: child };
+        return [...prev, childAdd];
+      }
+    });
+  }
   async function fetchChildren() {
     setLoading(true);
     try {
@@ -527,6 +540,39 @@ export function PathwayEditCard({
     }
   }
 
+  async function handleEditButton() {
+    console.log("children:", children)
+    const childrenData = {
+      name: name,
+      description: description,
+      categories: categories,
+      children: children
+    }
+    const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+    let response;
+    try {
+      const fetchResponse = await fetch(`https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/pathway-modes/${pathwayMode.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(childrenData),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: jwt ? `Bearer ${jwt}` : '',
+        }
+      });
+      const data = await fetchResponse.json();
+      if (fetchResponse.ok) {
+
+        // Add to Zustand store
+        router.push('/(parent)/(learning)/(pathway)');
+
+      } else {
+        alert(data?.error || 'Failed to save child');
+      }
+    } catch (e) {
+      // Fallback to fetch if supabase.functions.invoke fails
+      alert(e || 'Failed to save child');
+    }
+  }
   function handleInformationClicked(target: any) {
     if (target) {
       setCurrentTarget(target)
@@ -537,15 +583,77 @@ export function PathwayEditCard({
   return (
     <ThemedView style={[styles.container, { paddingBottom: 30 }]}>
       <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <ThemedView style={{
+          position: 'absolute',
+          top: -50,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.4)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 0
+        }}>
+          <ThemedView style={{ backgroundColor: '#053B4A', borderRadius: 16, borderColor: '#add7da4d', borderWidth: 1, padding: 24, width: "90%", minHeight: 200 }}>
+            <ThemedText style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 16, color: 'white' }}>
+              {modalType === 'category' ? 'Add Learning Category' : 'Add Child'}
+            </ThemedText>
+            <ScrollView
+              horizontal
+              style={{ maxHeight: 300 }}
+              showsHorizontalScrollIndicator={false}
+            >
+              <ThemedView style={{ flexDirection: 'row', gap: 10 }}>
+                {modalType === 'category' && allCategories && allCategories.length > 0 &&
+                  allCategories.map(cat => (
+                    <LearningTargetCard
+                      key={cat.id}
+                      target={{ ...cat, id: String(cat.id) }}
+                      isSelected={categories.some(t => t.name.trim() === (cat.name ?? '').trim())}
+                      onPress={() => handleTargetSelected(cat.id, cat.name)}
+                      checkIcon={IconCheck}
+                      informationIcon={IconInformation}
+                      handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
+                    />
+                  ))}
+                {modalType === "child" && allChildren && allChildren.length > 0 &&
+                  allChildren.map(child => (
+                    <ChildrenCard
+                      key={child.id}
+                      child={child}
+                      isActive={children.some(t => t.children.id === child.id)}
+                      onPress={() => handleChildSelected(child)}
+                    />
+                  ))}
+
+              </ThemedView>
+
+            </ScrollView>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 24, alignSelf: 'flex-end' }}>
+              <ThemedView style={{ backgroundColor: '#F4A672', padding: 8, paddingHorizontal: 30, borderRadius: 20 }}>
+                <ThemedText style={{ fontWeight: 400, color: '#053B4A' }}>Close</ThemedText>
+              </ThemedView>
+            </TouchableOpacity>
+          </ThemedView>
+        </ThemedView>
+      </Modal>
+      <Modal
         visible={TargetModalVisible}
         transparent
         animationType="fade"
         onRequestClose={() => setTargetModalVisible(false)}
+        style={{ zIndex: 999 }}
       >
         <LearningModuleModal
           target={currentTarget}
           onCancel={() => setTargetModalVisible(false)} />
       </Modal>
+
       <Image
         source={require("@/assets/images/parent/parent-back-pattern.png")}
         style={styles.topBackPattern}
@@ -586,7 +694,7 @@ export function PathwayEditCard({
 
                 <TouchableOpacity
                   style={styles.iconBtn}
-                  onPress={() => handleEditButton(pathwayMode.id)}
+                  onPress={() => handleEditButton()}
                 >
                   <IconCancel width={19} height={19} color={'#F4A672'} style={{ width: 18, height: 18 }} />
                 </TouchableOpacity>
@@ -751,7 +859,9 @@ export function PathwayEditCard({
                           {kid?.name}
                         </ThemedText>
                         <ThemedView style={styles.bar}></ThemedView>
-                        <ThemedText style={styles.value}>0%</ThemedText>
+                        { pathwayMode.stories && pathwayMode.stories.length > 0 &&
+                          <ThemedText style={styles.value}>{kid.progress / pathwayMode.stories.length}%</ThemedText>
+                        }
                         <ThemedText style={{ color: '#7AC1C6' }}>|</ThemedText>
                         <TouchableOpacity onPress={() => handleRemoveChild(idx)}>
                           <ThemedView style={[styles.categoryEditIconContainer, { borderRadius: 20 }]}>
@@ -800,7 +910,7 @@ export function PathwayEditCard({
               contentContainerStyle={styles.flexRow}
 
             >
-              {categories.length > 0 && categories.map((target: string, index: number) => (
+              {categories.length > 0 && categories.map((target: any, index: number) => (
                 <GradientBorderBox
                   key={index}
                   borderRadius={12}
@@ -809,7 +919,7 @@ export function PathwayEditCard({
                 >
                   <ThemedView key={index} style={[styles.flexRow]}>
                     <ThemedText style={[styles.categoryEditText]}>
-                      {target}
+                      {target.name}
                     </ThemedText>
                     <TouchableOpacity onPress={() => handleRemoveCategory(index)}>
                       <ThemedView style={styles.categoryEditIconContainer}>
@@ -839,60 +949,6 @@ export function PathwayEditCard({
             </ScrollView>
           </ThemedView>
         </ThemedView>
-        {/* Modal for adding category/child */}
-        {
-          modalVisible && (
-            <ThemedView style={{
-              position: 'absolute',
-              top: -50,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1000
-            }}>
-              <ThemedView style={{ backgroundColor: '#053B4A', borderRadius: 16, borderColor: '#add7da4d', borderWidth: 1, padding: 24, width: 300, minHeight: 200 }}>
-                <ThemedText style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 16, color: 'white' }}>
-                  {modalType === 'category' ? 'Add Learning Category' : 'Add Child'}
-                </ThemedText>
-                <ScrollView horizontal style={{ maxHeight: 300 }}>
-                  <ThemedView style={{ flexDirection: 'row', gap: 10 }}>
-                    {modalType === 'category' && allCategories && allCategories.length > 0 &&
-                      allCategories.map(cat => (
-                        <LearningTargetCard
-                          key={cat.id}
-                          target={{ ...cat, id: String(cat.id) }}
-                          isSelected={categories.some(t => t.trim() === (cat.name ?? '').trim())}
-                          onPress={() => handleTargetSelected(cat.id, cat.name)}
-                          checkIcon={IconCheck}
-                          informationIcon={IconInformation}
-                          handleInformationClicked={(target: any) => () => handleInformationClicked(target)}
-                        />
-                      ))}
-                    {modalType === "child" && allChildren && allChildren.length > 0 &&
-                      allChildren.map(child => (
-                        <ChildrenCard
-                          key={child.id}
-                          child={child}
-                          isActive={children.some(t => t.id === child.id)}
-                          onPress={() => handleChildSelected(child)}
-                        />
-                      ))}
-
-                  </ThemedView>
-
-                </ScrollView>
-                <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 24, alignSelf: 'flex-end' }}>
-                  <ThemedView style={{ backgroundColor: '#F4A672', padding: 8, paddingHorizontal: 30, borderRadius: 20 }}>
-                    <ThemedText style={{ fontWeight: 400, color: '#053B4A' }}>Close</ThemedText>
-                  </ThemedView>
-                </TouchableOpacity>
-              </ThemedView>
-            </ThemedView>
-          )
-        }
 
       </ThemedView >
     </ThemedView >

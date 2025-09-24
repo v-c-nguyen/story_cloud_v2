@@ -5,7 +5,7 @@ export async function fetchPathways() {
   // Change 'pathways' to your actual edge function name if different
   const { data, error } = await supabase.functions.invoke('pathway-modes', {
     method: 'GET',
-    headers: {
+    headers: {  
       Authorization: jwt ? `Bearer ${jwt}` : '',
     },
   });

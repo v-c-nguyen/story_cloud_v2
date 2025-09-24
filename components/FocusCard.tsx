@@ -481,7 +481,6 @@ export function FocusEditCard({ focus }: { focus: any }) {
 
                 // Add to Zustand store
                 router.push('/(parent)/(learning)/(focus)');
-                setModalVisible(true)
 
             } else {
                 alert(data?.error || 'Failed to save child');

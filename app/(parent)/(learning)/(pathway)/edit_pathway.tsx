@@ -116,7 +116,7 @@ export default function EditPathway() {
             {/* Header */}
 
             <ThemedView style={{ paddingBottom: 80 }}>
-              <PathwayEditCard pathwayMode={pathwayMode} handleEditButton={handleEditButton}/>
+              <PathwayEditCard pathwayMode={pathwayMode}/>
             </ThemedView>
           </ScrollView>
           {/* Sticky Bottom Navigation */}

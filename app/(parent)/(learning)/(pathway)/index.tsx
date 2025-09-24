@@ -66,6 +66,7 @@ export default function Index() {
       setLoading(true);
       try {
         const data = await fetchPathways();
+        console.log(data)
         setPathways(data);
         setDisplayModes(data);
       } catch (e) {

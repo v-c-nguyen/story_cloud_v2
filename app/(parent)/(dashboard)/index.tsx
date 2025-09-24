@@ -34,6 +34,8 @@ import IconClock from "@/assets/images/parent/icon-clock.svg"
 import IconLibrary from "@/assets/images/parent/icon-library.svg"
 import IconFinished from "@/assets/images/parent/icon-finished.svg"
 import useIsMobile from "@/hooks/useIsMobile";
+import { fetchPathways } from "@/app/lib/supabasePathways";
+import { usePathwayStore } from "@/store/pathwayStore";
 
 
 const InsightItemsDataForDaily: InsightItemProps[] = [
@@ -84,11 +86,13 @@ export default function ParentDashboard() {
   const [modalVisible, setModalVisible] = React.useState(false);
   const activeChild = useChildrenStore((state: any) => state.activeChild);
   const setActiveChild = useChildrenStore((state: any) => state.setActiveChild);
+  const setPathways = usePathwayStore((state: any) => state.setPathways)
   const [loading, setLoading] = React.useState(false);
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
 
   useEffect(() => {
     console.log("isMobile", isMobile);
+
     // Fetch children data from Supabase edge function and sync Zustand store
     async function fetchChildren() {
       if (!user?.id) return;
@@ -108,6 +112,7 @@ export default function ParentDashboard() {
         return;
       }
       if (data && Array.isArray(data.data)) {
+        console.log(data.data)
         setLoading(false); // Stop loading
         setChildren(data.data);
         setActiveChild(data.data[0]);
@@ -115,6 +120,23 @@ export default function ParentDashboard() {
     }
 
     fetchChildren();
+  }, []);
+
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const data = await fetchPathways();
+        console.log(data)
+        setPathways(data);
+      } catch (e) {
+        console.error("Error fetching pathways:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
   }, []);
 
   const handleChildSelect = (child: any) => {
@@ -248,7 +270,7 @@ export default function ParentDashboard() {
                     setCurrentCardIndex(index);
                   }}
                   scrollEventThrottle={16}
-                  contentContainerStyle={{marginBottom: 50}}
+                  contentContainerStyle={{ marginBottom: 50 }}
                 >
                   <ThemedView style={{ flexDirection: 'row' }}>
                     <ThemedView style={[styles.insightStyles, { width: isMobile ? windowWidth : windowWidth / 2 }]}>
@@ -346,7 +368,7 @@ export default function ParentDashboard() {
               zIndex: 1000,
             }}
           >
-            <BottomNavBar role="parent" active="Dashboard" image={!isMobile ? true : false}/>
+            <BottomNavBar role="parent" active="Dashboard" image={!isMobile ? true : false} />
           </ThemedView>
         </ThemedView>
       </SafeAreaView>

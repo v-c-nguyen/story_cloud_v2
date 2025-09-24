@@ -2,7 +2,9 @@
 import { Image } from "expo-image";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Dimensions,
+  Modal,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -23,6 +25,8 @@ import IconHeart from "@/assets/images/parent/footer/icon-heart.svg"
 import IconPlay from "@/assets/images/icons/play.svg"
 import GradientText from "./ui/GradientText";
 import IconCheck from "@/assets/images/parent/icon-check.svg"
+import AddPathwahModal from "./Modals/AddPathwayModal";
+import { Pathway, usePathwayStore } from "@/store/pathwayStore";
 
 interface RecentProps {
   stories: {
@@ -619,10 +623,12 @@ export function StoryCard1({
 }) {
   // Use a consistent style based on the story index
   const router = useRouter();
+  const [showAddStoryModal, setShowAddStoryModal] = React.useState(false)
   const scrollRef = React.useRef<ScrollView>(null);
   const styleIdx = num % cardStyles.length;
   const style = cardStyles[styleIdx];
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
+  const currentPathway = usePathwayStore((s) => s.currentPathway)
 
   // In your handler:
   const handleLeftArrow = () => {
@@ -652,8 +658,49 @@ export function StoryCard1({
     setCurrentCardIndex(idx);
   };
 
+  const handlePlusButton = () => {
+    if (currentPathway) {
+      handleAddStory(currentPathway.id)
+    } else {
+      setShowAddStoryModal(true)
+    }
+  }
+
+  async function handleAddStory(id: number) {
+    const payload = {
+      id: id,
+      story: story.storyId
+    }
+    console.log(payload)
+    try {
+      const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+      const response = await fetch(`https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/pathway-modes/addStory`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwt ? `Bearer ${jwt}` : ''
+        },
+        body: JSON.stringify(payload),
+      })
+      const result = await response.json();
+      if (!response.ok) {
+        return;
+      }
+      Alert.alert('New story added successfully');
+    } catch (error) {
+      Alert.alert('Fail to add new story');
+      return;
+    }
+    setShowAddStoryModal(false)
+  }
+
   return (
     <ThemedView style={[styles.storyCard, style.bgColor == "rgb(5, 59, 74)" && { borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.2)" }, { backgroundColor: style.bgColor }]}>
+      <AddPathwahModal
+        showAddStoryModal={showAddStoryModal}
+        setShowAddStoryModal={setShowAddStoryModal}
+        handleAddStory={handleAddStory}
+      />
       <TouchableOpacity
         onPress={() =>
           router.push(`/(parent)/(learning)/(library)/storyDetail?id=${story.storyId}`)
@@ -698,7 +745,8 @@ export function StoryCard1({
                   Story
                 </ThemedText>
               )}
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handlePlusButton()}>
                 <IconPlus
                   width={18}
                   height={18}
@@ -1362,7 +1410,7 @@ export function SeriesCard_Parent({
               <ThemedView style={{ width: 290 }}>
                 <ThemedView style={{ height: 100 }}>
                   {/* SeriesCategory */}
-                  <ThemedView style={{flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%"}}>
+                  <ThemedView style={{ flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%" }}>
                     <ThemedText
                       style={[
                         styles.storySeries,

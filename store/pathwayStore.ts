@@ -25,12 +25,16 @@ interface ParentTargets {
 }
 interface PathwayStore {
     pathways: Pathway[];
+    currentPathway: Pathway | null;
+    setCurrentPathway: (pathway: Pathway | null) => void;
     setPathways: (pathways: Pathway[]) => void;
     clearPathways: () => void;
 }
 
 export const usePathwayStore = create<PathwayStore>((set) => ({
     pathways: [],
+    currentPathway: null,
+    setCurrentPathway: (pathway) => set({ currentPathway: pathway }),
     setPathways: (pathways) => set({ pathways }),
     clearPathways: () => set({ pathways: [] }),
 }));
