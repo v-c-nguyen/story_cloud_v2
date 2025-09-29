@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export interface Story {
   storyId: string;
+  story_id?: string; // Alternative ID field
   series: string;
   storyTitle: string;
   descriptionParent?: string;

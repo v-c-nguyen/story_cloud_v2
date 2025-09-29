@@ -3,14 +3,16 @@ import { StoryCard1 } from "@/components/Cards";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useListenStore } from "@/store/listenStore";
+import { useStoryStore } from "@/store/storyStore";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 
-export default function WatchNext({ activeChild }: { activeChild: any }) {
+export default function WatchNext({ activeChild, mode }: { activeChild: any, mode: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const activeStoryId = useListenStore((state) => state.activeStoryId);
+  const featuredStories = useStoryStore((state) => state.featuredStories);
   const setSeries = useListenStore((state) => state.setSeries);
   const setStories = useListenStore((state) => state.setStories);
   const [displayStories, setDisplayStories] = useState<any[]>([]);
@@ -21,7 +23,7 @@ export default function WatchNext({ activeChild }: { activeChild: any }) {
     async function fetchSeriesWithActiveStory(activeStoryId: string) {
       setLoading(true);
       try {
-        const data = await getSeriesByStoryId(activeStoryId ?? '', activeChild.id);
+        const data = await getSeriesByStoryId(activeStoryId, activeChild.id);
         if (!isMounted) return;
         if (data && Array.isArray(data.stories)) {
           setSeries(data.series);
@@ -29,8 +31,9 @@ export default function WatchNext({ activeChild }: { activeChild: any }) {
           const index = data.stories.findIndex(
             (story: any) => story.storyId === activeStoryId
           );
-          useListenStore.getState().setCurrentIndex(index);
           setDisplayStories(index >= 0 ? data.stories.slice(index + 1) : []);
+
+          useListenStore.getState().setCurrentIndex(index);
         } else {
           setLoading(false);
           setSeries(null);
@@ -49,10 +52,10 @@ export default function WatchNext({ activeChild }: { activeChild: any }) {
       }
     }
 
-    if (activeStoryId && activeChild?.id) {
-      fetchSeriesWithActiveStory(activeStoryId);
-    } else {
+    if ((featuredStories[0] || activeStoryId) && activeChild.id) {
 
+      fetchSeriesWithActiveStory(activeStoryId ?? featuredStories[0]?.storyId);
+    } else {
       setLoading(false);
       setDisplayStories([]);
       setSeries(null);
@@ -62,12 +65,12 @@ export default function WatchNext({ activeChild }: { activeChild: any }) {
     return () => {
       isMounted = false;
     };
-  }, [activeChild, activeStoryId, setSeries, setStories]);
+  }, [activeStoryId, featuredStories]);
 
   return (
     <>
       {loading ? (
-        <ActivityIndicator color="#ffffff" style={{ zIndex: 999 }} />
+        <ActivityIndicator color={mode === "parent" ? "#ffffff" : "#053B4A"} style={{ zIndex: 999 }} />
       ) : displayStories.length > 0 ? (
         <ScrollView
           horizontal
@@ -99,7 +102,7 @@ export default function WatchNext({ activeChild }: { activeChild: any }) {
             justifyContent: "center",
           }}
         >
-          <ThemedText style={{ color: "#ffffff7a" }}>
+          <ThemedText style={{ color: mode === "parent" ? "#ffffff7a" : "#053B4A" }}>
             {" "}
             no story data{" "}
           </ThemedText>

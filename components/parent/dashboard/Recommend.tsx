@@ -10,6 +10,7 @@ import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 export default function Recommend({ activeChild, mode = "parent" }: { activeChild: any, mode?: string }) {
     const router = useRouter();
     const setFeaturedStories = useStoryStore((state) => state.setFeaturedStories);
+    const recentStories = useStoryStore((state) => state.recentStories);
     const [currentCardIndex, setCurrentCardIndex] = React.useState(0);
     const [storiesData, setStoriesData] = React.useState<any[]>([])
     const [loading, setLoading] = React.useState(false);
@@ -33,13 +34,22 @@ export default function Recommend({ activeChild, mode = "parent" }: { activeChil
                 return;
             }
             if (data && Array.isArray(data.stories)) {
-                setFeaturedStories(data.stories);
-                setStoriesData(data.stories.slice(0, 3));
+                const incoming: any[] = data.stories;
+                // build set of recent ids (storyId or id)
+                if (recentStories.length > 0) {
+                    const recentIds = recentStories.map(r => r?.story_id );
+                    console.log(recentIds, "recentIds");
+                    const filtered = incoming.filter(story => !recentIds.includes(story.storyId || story.id));
+                    setFeaturedStories(filtered);
+                    setStoriesData(filtered.slice(0, 3));
+                } else {
+                    setFeaturedStories(incoming);
+                    setStoriesData(incoming.slice(0, 3));
+                }
             }
         }
-
         fetchStories(activeChild?.id);
-    }, [activeChild])
+    }, [activeChild, recentStories])
 
     return (
         <ThemedView>

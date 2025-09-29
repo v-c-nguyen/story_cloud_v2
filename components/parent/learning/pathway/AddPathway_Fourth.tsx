@@ -43,6 +43,7 @@ export default function AddPathway_Fourth({ mode, currentStep, onPress }: { mode
                     console.error('Error fetching children:', error.message);
                 } else if (data && Array.isArray(data.data)) {
                     setChildren(data.data);
+                    console.log(data.data)
                 }
             } catch (e) {
                 console.error('Error fetching children:', e);

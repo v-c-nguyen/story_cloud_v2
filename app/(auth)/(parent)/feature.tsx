@@ -66,6 +66,7 @@ export default function ParentalAuthFeature() {
                 <ThemedText style={styles.doneText}>Done</ThemedText>
                 <IconCheck
                   style={styles.buttonIcon}
+                  color={"#F8ECAE"}
                 />
               </TouchableOpacity>
             </Link>

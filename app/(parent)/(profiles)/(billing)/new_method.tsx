@@ -3,30 +3,44 @@ import Header from "@/components/Header";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Stack, useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
+
 import IconArrowLeft from "@/assets/images/icons/arrow-left.svg";
 import IconRefresh from "@/assets/images/icons/icon-refresh.svg";
 import IconCard from "@/assets/images/icons/icon-card.svg";
 import useIsMobile from "@/hooks/useIsMobile";
+import supabase from "@/app/lib/supabase";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export default function newMethod() {
     const router = useRouter();
     const isMobile = useIsMobile();
     const [activeTab, setActiveTab] = React.useState('account');
     const [cardNumber, setCardNumber] = React.useState('');
+    const [activeUser, setActiveUser] = React.useState<any>(null);
 
-    const handleTabPress = (tabId: string) => {
-        setActiveTab(tabId);
-    };
+    useEffect(() => {
+        async function getUser() {
+            const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+            const { data: { user }, error: authError } = await supabase.auth.getUser(jwt);
+            setActiveUser(user);
+        }
+        getUser();
+    }, [])
+
 
     function handleBackBtn() {
         router.back()
     }
 
-    function handleSubmit() {
 
+    async function handleSubmit() {
+        try {
+        } catch (error) {
+
+        }
     }
 
     return (
@@ -48,7 +62,7 @@ export default function newMethod() {
                         <TouchableOpacity
                             style={styles.backBtn}
                             onPress={handleBackBtn}>
-                            <IconArrowLeft width={24} height={24} color={'rgba(122, 193, 198, 1)'}/>
+                            <IconArrowLeft width={24} height={24} color={'rgba(122, 193, 198, 1)'} />
                             <ThemedText style={styles.backBtnText}>To Payment Method</ThemedText>
                         </TouchableOpacity>
 
@@ -86,7 +100,7 @@ export default function newMethod() {
                         <ThemedView style={[styles.settingContentStyle, !isMobile && { marginTop: 70 }]}>
                             <ThemedView style={{ marginTop: isMobile ? 0 : -90 }}>
                                 <ThemedView style={[styles.tabContent]}>
-                                    <ThemedView style={[styles.container, {maxWidth: "80%", margin: "auto"}]}>
+                                    <ThemedView style={[styles.container, { maxWidth: "80%", margin: "auto" }]}>
 
                                         <ThemedView style={[styles.flexRow, { justifyContent: 'center', gap: 10, marginTop: 50 }]}>
                                             <ThemedText style={styles.sectionTitle}>Add New Method</ThemedText>

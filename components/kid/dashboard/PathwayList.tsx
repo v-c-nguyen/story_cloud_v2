@@ -1,5 +1,5 @@
 import { useUser } from "@/app/lib/UserContext";
-import { StoryCard2 } from "@/components/Cards";
+import { StoryCard, StoryCard2, StoryCard3 } from "@/components/Cards";
 import PathwayProgressBar from "@/components/PathwayProgressBar";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -8,16 +8,32 @@ import { RelativePathString, Stack, useRouter } from "expo-router";
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
 import IconAvatarRight from "@/assets/images/icons/arrow-right.svg"
+import { useEffect, useState } from "react";
 
 interface ParentKids {
-    id: string;
-    name: string;
-    avatar_url: string;
+    progress: number;
+    children: {
+        id: string;
+        name: string;
+        avatar_url: string;
+    }
 }
 
 interface ParentTargets {
     id: string;
     name: string;
+}
+interface Story {
+    storyId: string;
+    series: string;
+    storyTitle: string;
+    featuredIllustration?: string;
+    isFavourite?: boolean;
+    track?: {
+        duration?: number;
+        played?: number;
+        watched?: boolean;
+    };
 }
 interface PathwayProps {
     id: number;
@@ -28,10 +44,18 @@ interface PathwayProps {
     parent_id: string;
     parent_kids: ParentKids[];
     parent_targets: ParentTargets[];
-    stories: any[];
+    stories: Story[];
 }
 export default function PathwayList({ pathway }: { pathway: PathwayProps }) {
     const { child } = useUser();
+    const [currentChild, setCurrentChild] = useState<ParentKids | null>(null);
+
+    useEffect(() => {
+        if (pathway && pathway.parent_kids && pathway.parent_kids.length > 1 && child) {
+            const temp =  pathway.parent_kids.filter(pk => pk.children.id === child.id);
+            setCurrentChild(temp.length > 0 ? temp[0] : null);
+        }
+    }, [])
 
     return (
         <ThemedView style={{ marginBottom: 60 }}>
@@ -43,8 +67,8 @@ export default function PathwayList({ pathway }: { pathway: PathwayProps }) {
             <ThemedText style={styles.pathwaySubTitle}>
                 Story Pathway | {pathway?.stories.length} Episodes
             </ThemedText>
-            <ThemedView style={{ marginVertical: 36 }}>
-                <PathwayProgressBar total={pathway.stories.length} current={pathway.currentStep} child={child} />
+            <ThemedView style={{ marginVertical: 36, paddingLeft: 16 }}>
+                <PathwayProgressBar total={pathway.stories.length} current={currentChild ? currentChild.progress : 1} child={child} />
             </ThemedView>
             {/* Continue Watching */}
             <SectionHeader title={pathway.name} description={pathway.description} link="continue" />
@@ -56,7 +80,7 @@ export default function PathwayList({ pathway }: { pathway: PathwayProps }) {
                         contentContainerStyle={styles.cardScrollContainer}
                     >
                         {pathway?.stories.map((item, idx) => (
-                            <StoryCard2 key={idx} {...item} />
+                            <StoryCard3 key={idx} num={idx + 1} story={item} />
                         ))}
                     </ScrollView>
                     :
@@ -212,6 +236,6 @@ const styles = StyleSheet.create({
     cardScrollContainer: {
         gap: 20,
         paddingHorizontal: 16,
-        paddingBottom: 60,
+        paddingBottom: 10,
     },
 });

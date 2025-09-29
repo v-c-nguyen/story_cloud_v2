@@ -3,13 +3,14 @@ import { useStoryStore } from '@/store/storyStore';
 import { useTrackStore } from '@/store/trackStore';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useListenStore } from '@/store/listenStore';
 import GradientSlider from './ui/GradientSlider';
 import { Image } from "expo-image"
+import * as FileSystem from 'expo-file-system';
 
 import IconPlay from "@/assets/images/icons/play.svg";
 import IconForward from "@/assets/images/icons/forward.svg";
@@ -18,8 +19,6 @@ import IconPause from "@/assets/images/icons/pause.svg";
 import IconExpand from "@/assets/images/icons/expand.svg";
 import IconShrink from "@/assets/images/icons/shrink.svg";
 import IconVolume from "@/assets/images/icons/volume.svg";
-import IconMusic from "@/assets/images/icons/music.svg";
-// ...existing code...
 
 type MediaPlayerCardProps = {
     activeChild: any;
@@ -31,9 +30,15 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
     // Flag to ignore first playback status update after seek
     const firstStatusUpdate = useRef(true);
     // Track state
-    const [sound, setSound] = useState<Audio.Sound | null>(null);
+    // Keep a ref to the current sound so cleanup can always access it (unmount etc.)
+    const soundRef = useRef<Audio.Sound | null>(null);
+    // Avoid storing the Audio.Sound in state to prevent re-renders when the native object changes
     const [isPlay, setIsPlay] = useState(false);
     const [volume, setVolume] = useState(1);
+    const volumeRef = useRef<number>(1);
+    const isMountedRef = useRef(true);
+    // throttle updates from onPlaybackStatusUpdate to reduce renders
+    const lastStatusUpdateRef = useRef<number>(0);
     const currentIndex = useListenStore(state => state.currentIndex)
     const track = useTrackStore(state => state.activeTrack);
     const setActiveTrack = useTrackStore(state => state.setActiveTrack)
@@ -75,11 +80,14 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
 
     // Remove duplicate audio loading effect
     // Keep volume slider in sync with actual sound volume
+    // keep native sound volume in sync but avoid causing re-renders
     useEffect(() => {
-        if (sound) {
-            sound.setVolumeAsync(volume);
+        volumeRef.current = volume;
+        const s = soundRef.current;
+        if (s) {
+            s.setVolumeAsync(volume).catch(() => { /* ignore */ });
         }
-    }, [volume, sound]);
+    }, [volume]);
     // Helper: Save play progress to DB
     async function savePlayProgressToDB({ playedTime, totalTime, finished }: { playedTime: number, totalTime: number, finished?: boolean }) {
 
@@ -87,75 +95,152 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
         try {
             const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
 
-            // Save play progress to track table
-            const fetchResponse = await fetch('https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/track', {
+            // Use Supabase Edge Function invocation for consistency
+            const payload = {
+                storyId: story.storyId,
+                childId: activeChild.id,
+                playedTime,
+                totalTime,
+                finished: !!finished,
+            };
+
+            const { data, error } = await supabase.functions.invoke('track', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: jwt ? `Bearer ${jwt}` : '',
                 },
-                body: JSON.stringify({
-                    storyId: story.storyId,
-                    childId: activeChild.id,
-                    playedTime,
-                    totalTime,
-                    finished: !!finished,
-                })
+                body: payload,
             });
-            const data = await fetchResponse.json();
-            if (fetchResponse.ok && data) {
-                let trackData, newStory;
 
-                trackData = {
-                    storyId: data.data?.story_id || '',
-                    childId: data.data?.children_id,
-                    played: data.data?.played || 0,
-                    duration: data.data?.duration || 1,
-                    watched: data.data?.watched,
-                    audioUrl: story?.audio_s_2_5
-                }
-                newStory = {
-                    ...story,
-                    ...{ track: data.data }
-                }
-                setActiveTrack(trackData);
-                setCurrentStory(newStory)
-
-                // Add to Zustand store
-                // Redirect on success
-            } else {
-                alert(data?.error || 'Failed to save track');
+            if (error) {
+                console.error('Error saving track via edge function', error);
+                return;
             }
-            // If finished, set watched=true in DB
-            if (finished) {
-                await fetch('https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/track', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: jwt ? `Bearer ${jwt}` : '',
-                    },
-                    body: JSON.stringify({ watched: true })
-                });
+
+            if (data && data.data) {
+                const d = data.data;
+                const trackData = {
+                    storyId: d.story_id || '',
+                    childId: d.children_id,
+                    played: d.played || 0,
+                    duration: d.duration || 1,
+                    watched: d.watched,
+                    audioUrl: story?.audio_s_2_5,
+                };
+                const newStory = { ...story, track: d };
+                setActiveTrack(trackData);
+                setCurrentStory(newStory);
             }
         } catch (e) {
             console.error('Failed to save play progress', e);
         }
     }
 
+    // Debounce wrapper to avoid too many network calls
+    const saveDebounceRef = useRef<any>(null);
+    function scheduleSave(playedTime: number, totalTime: number, finished?: boolean) {
+        if (saveDebounceRef.current) {
+            clearTimeout(saveDebounceRef.current);
+        }
+        saveDebounceRef.current = setTimeout(() => {
+            savePlayProgressToDB({ playedTime, totalTime, finished });
+            saveDebounceRef.current = null;
+        }, 1500);
+    }
+
     async function loadAudio(url: string, played: number = 0) {
         try {
-            console.log("loadAudio")
+            // Unload previous sound to avoid leaks and duplicate callbacks
+            if (soundRef.current) {
+                try {
+                    // pause first to avoid playback continuing briefly
+                    try { await soundRef.current.pauseAsync(); } catch {}
+                    await soundRef.current.unloadAsync();
+                } catch (e) {
+                    console.warn('Failed to unload previous sound', e);
+                }
+                soundRef.current = null;
+            }
+
+            console.log("loadAudio - requested URL:", url);
+
+            // Try a HEAD request to check availability and log status
+            let headStatus: number | null = null;
+            try {
+                const headRes = await fetch(url, { method: 'HEAD' });
+                headStatus = headRes.status;
+                console.log('Audio HEAD status:', headStatus);
+            } catch (e) {
+                console.warn('Audio HEAD request failed:', e);
+                headStatus = null;
+            }
+
+            // If HEAD returned 200, try streaming the remote URL directly.
+            // Otherwise, fallback to downloading the file to cache and play locally.
+            let playUri = url;
+            const tryUseRemote = headStatus === 200 || headStatus === 0 || headStatus === null;
+            if (!tryUseRemote) {
+                // download-to-cache fallback
+                console.log('Falling back to download-to-cache for audio URL');
+                const fileName = url.split('/').pop()?.split('?')[0] || `audio-${Date.now()}.mp3`;
+                const cacheDir = (FileSystem as any).cacheDirectory || (FileSystem as any).documentDirectory || '';
+                const localUri = `${cacheDir}${fileName}`;
+                try {
+                    const info = await FileSystem.getInfoAsync(localUri);
+                    if (!info.exists) {
+                        // Try download without auth first
+                        try {
+                            const dl = await FileSystem.downloadAsync(url, localUri);
+                            console.log('Downloaded audio to', dl.uri, 'status:', dl.status);
+                        } catch (err) {
+                            console.warn('Download without auth failed, will retry with auth if available', err);
+                            // try with Authorization header if we have a jwt
+                            const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+                            if (jwt) {
+                                try {
+                                    const dl = await FileSystem.downloadAsync(url, localUri, { headers: { Authorization: `Bearer ${jwt}` } } as any);
+                                    console.log('Downloaded audio with auth to', dl.uri, 'status:', dl.status);
+                                } catch (err2) {
+                                    console.error('Download with auth also failed', err2);
+                                    throw err2;
+                                }
+                            } else {
+                                throw err;
+                            }
+                        }
+                    } else {
+                        console.log('Using cached audio at', localUri);
+                    }
+                    playUri = localUri;
+                } catch (downloadErr) {
+                    console.error('Failed to download audio fallback, will attempt remote play anyway', downloadErr);
+                    playUri = url; // last resort
+                }
+            }
+
+            // create and store native Audio.Sound on a ref (do not set to state)
+            console.log('Creating audio from uri:', playUri);
             const { sound: playbackObject, status } = await Audio.Sound.createAsync(
-                { uri: url },
+                { uri: playUri },
                 { shouldPlay: false },
                 onPlaybackStatusUpdate
             );
-            setSound(playbackObject);
+            // Only assign to ref to avoid extra renders
+            soundRef.current = playbackObject;
             if (status.isLoaded) {
                 console.log("loaded!!")
-                setIsLoaded(true);
-                setDuration(status.durationMillis ? status.durationMillis / 1000 : 1);
-                if (typeof status.volume === 'number') setVolume(status.volume);
+                if (isMountedRef.current) setIsLoaded(true);
+                // Only update duration in store when it changes noticeably to avoid frequent updates
+                const newDuration = status.durationMillis ? status.durationMillis / 1000 : 1;
+                // Compare against current store value and update if changed significantly
+                const prevDur = track?.duration ?? 0;
+                if (!prevDur || Math.abs(prevDur - newDuration) > 0.5) {
+                    setDuration(newDuration);
+                }
+                if (typeof status.volume === 'number') {
+                    volumeRef.current = status.volume;
+                    if (isMountedRef.current) setVolume(status.volume);
+                }
                 // Seek to played position if available
                 if (played > 0) {
                     await playbackObject.setPositionAsync(played * 1000);
@@ -168,57 +253,129 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
         }
     }
 
-    function onPlaybackStatusUpdate(status: any) {
-        if (status.isLoaded) {
-            // Ignore the first status update after seek
-            setPlayed(status.positionMillis / 1000);
-            setDuration(status.durationMillis ? status.durationMillis / 1000 : 1);
-            setIsPlay(status.isPlaying);
-            // Track progress when paused
-            if (!status.isPlaying && !status.didJustFinish && status.positionMillis > 0) {
-
-                savePlayProgressToDB({ playedTime: status.positionMillis / 1000, totalTime: status.durationMillis ? status.durationMillis / 1000 : 1 });
-            }
-            // Detect when audio finishes
-            if (status.didJustFinish && !status.isPlaying) {
-                console.log("Finished!!!", status.didJustFinish, status.isPlaying)
-                savePlayProgressToDB({ playedTime: status.durationMillis ? status.durationMillis / 1000 : 1, totalTime: status.durationMillis ? status.durationMillis / 1000 : 1, finished: true });
-                if (onAudioEnd) {
-                    onAudioEnd();
+    // Unload sound and cancel pending saves on unmount
+    useEffect(() => {
+        return () => {
+            // clear debounce
+            try {
+                if (saveDebounceRef.current) {
+                    clearTimeout(saveDebounceRef.current);
+                    saveDebounceRef.current = null;
                 }
+            } catch (e) {
+                // ignore
             }
+
+            (async () => {
+                try {
+                    if (soundRef.current) {
+                        try { await soundRef.current.pauseAsync(); } catch (e) {}
+                        try { await soundRef.current.unloadAsync(); } catch (e) { console.warn('Error unloading sound on unmount', e); }
+                        soundRef.current = null;
+                    }
+                } catch (e) {
+                    console.warn('Error during audio cleanup on unmount', e);
+                }
+            })();
+            isMountedRef.current = false;
+        };
+    }, []);
+
+    function onPlaybackStatusUpdate(status: any) {
+        if (!status || !status.isLoaded) return;
+
+        const now = Date.now();
+        // Always handle finished immediately
+        if (status.didJustFinish && !status.isPlaying) {
+            savePlayProgressToDB({ playedTime: status.durationMillis ? status.durationMillis / 1000 : 1, totalTime: status.durationMillis ? status.durationMillis / 1000 : 1, finished: true });
+            if (onAudioEnd) onAudioEnd();
+            // Update play state
+            if (isMountedRef.current) setIsPlay(false);
+            return;
+        }
+
+        // Throttle frequent updates to at most once per 300ms
+        const last = lastStatusUpdateRef.current || 0;
+        if (now - last < 300) return;
+        lastStatusUpdateRef.current = now;
+
+        // Ignore the first status update after seek
+        if (firstStatusUpdate.current) {
+            firstStatusUpdate.current = false;
+        }
+
+        // Update UI/state in a rate-limited way
+        const playedSecs = status.positionMillis / 1000;
+        const durationSecs = status.durationMillis ? status.durationMillis / 1000 : 1;
+            if (isMountedRef.current) {
+                setPlayed(playedSecs);
+                // Only update duration if it changed significantly compared to store
+                const prevD = track?.duration ?? 0;
+                if (!prevD || Math.abs(prevD - durationSecs) > 0.5) setDuration(durationSecs);
+                setIsPlay(!!status.isPlaying);
+            }
+
+        // If paused (not finished), schedule a debounced save
+        if (!status.isPlaying && !status.didJustFinish && status.positionMillis > 0) {
+            scheduleSave(playedSecs, durationSecs, false);
         }
     }
 
-    const handlePlayPause = async () => {
-        if (!sound) return;
-        if (isPlay) {
-            await sound.pauseAsync();
-        } else {
-            await sound.playAsync();
+    const handlePlayPause = useCallback(async () => {
+        const s = soundRef.current;
+        if (!s) return;
+        try {
+            if (isPlay) {
+                await s.pauseAsync();
+                if (isMountedRef.current) setIsPlay(false);
+            } else {
+                await s.playAsync();
+                if (isMountedRef.current) setIsPlay(true);
+            }
+        } catch (e) {
+            console.warn('Play/pause failed', e);
         }
-    };
+    }, [isPlay]);
 
-    const handleSeek = async (seconds: number) => {
-        if (!sound) return;
+    const handleSeek = useCallback(async (seconds: number) => {
+        const s = soundRef.current;
+        if (!s) return;
         let newTime = (track?.played ?? 0) + seconds;
         if (newTime < 0) newTime = 0;
         if (newTime > (track?.duration ?? 0)) newTime = (track?.duration ?? 0);
-        await sound.setPositionAsync(newTime * 1000);
-    };
+        try {
+            await s.setPositionAsync(newTime * 1000);
+            setPlayed(newTime);
+        } catch (e) {
+            console.warn('Seek failed', e);
+        }
+    }, [track?.played, track?.duration]);
+
+    const handleSeekForward = useCallback(() => handleSeek(10), [handleSeek]);
+    const handleSeekBackward = useCallback(() => handleSeek(-10), [handleSeek]);
 
 
     // Volume control
-    const handleVolumeChange = (value: number) => {
-        setVolume(value);
-    };
+    // update native volume immediately but update UI state throttled
+    const volumeUpdateTimeout = useRef<any>(null);
+    const handleVolumeChange = useCallback((value: number) => {
+        volumeRef.current = value;
+        const s = soundRef.current;
+        if (s) s.setVolumeAsync(value).catch(() => {});
+        // throttle UI updates
+        if (volumeUpdateTimeout.current) clearTimeout(volumeUpdateTimeout.current);
+        volumeUpdateTimeout.current = setTimeout(() => {
+            if (isMountedRef.current) setVolume(value);
+            volumeUpdateTimeout.current = null;
+        }, 200);
+    }, []);
 
     // Format seconds to mm:ss
-    const formatTime = (s: number) => {
+    const formatTime = useCallback((s: number) => {
         const m = Math.floor(s / 60);
         const sec = Math.floor(s % 60);
         return `${m}:${sec < 10 ? "0" : ""}${sec}`;
-    };
+    }, []);
 
     return (
         <>
@@ -257,7 +414,8 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                                 maximumValue={track?.duration ?? 0}
                                 value={track?.played ?? 0}
                                 onSlidingComplete={async (value: number) => {
-                                    if (sound) await sound.setPositionAsync(value * 1000);
+                                    const s = soundRef.current;
+                                    if (s) await s.setPositionAsync(value * 1000);
                                 }}
                             />
                             <Text style={{ color: '#FFE7A0', fontSize: 16, marginLeft: 10 }}>{formatTime((track?.played ?? 0))} / {formatTime((track?.duration ?? 0))}</Text>
@@ -278,8 +436,9 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                         style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
                         activeOpacity={0.8}
                         onPress={async () => {
-                            if (sound && isPlay) {
-                                await sound.pauseAsync();
+                            const s = soundRef.current;
+                            if (s && isPlay) {
+                                await s.pauseAsync();
                                 setIsPlay(false);
                             }
                         }}
@@ -326,7 +485,8 @@ export default function MediaPlayerCard({ activeChild, onAudioEnd }: MediaPlayer
                             maximumValue={track?.duration ?? 0}
                             value={track?.played ?? 0}
                             onSlidingComplete={async (value: number) => {
-                                if (sound) await sound.setPositionAsync(value * 1000);
+                                const s = soundRef.current;
+                                if (s) await s.setPositionAsync(value * 1000);
                             }}
                         />
                         <Text style={styles.timeText}>{formatTime((track?.played ?? 0))} / {formatTime((track?.duration ?? 0))}</Text>

@@ -11,6 +11,7 @@ import { useLearningCategoryStore } from "@/store/learningCategoryStore";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
@@ -228,7 +229,7 @@ export default function Index() {
 
             <ThemedView style={{ paddingBottom: 100, marginBottom: 50 }}>
               {loading ? (
-                <ThemedText>Loading pathways...</ThemedText>
+                <ActivityIndicator size="small" color="#ffffff" style={{ marginTop: 200 }} />
               ) : displayModes.length > 0 ? (
                 displayModes.map((pathway, idx) => (
                   <PathwayCard

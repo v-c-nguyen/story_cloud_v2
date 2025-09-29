@@ -159,7 +159,7 @@ export default function ParentDashboard() {
           <ScrollView
             style={styles.rootContainer}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: isMobile ? 55 : 100 }}
+            contentContainerStyle={{ paddingBottom: isMobile ? 0 : 100 }}
           >
             {/* Top background */}
             <Image

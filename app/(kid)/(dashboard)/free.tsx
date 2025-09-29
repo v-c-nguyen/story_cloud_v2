@@ -21,40 +21,9 @@ import IconRocket from "@/assets/images/icons/icon-rocket.svg";
 import IconArrowRight from "@/assets/images/icons/arrow-right.svg";
 import Header from "@/components/Header";
 import useIsMobile from "@/hooks/useIsMobile";
+import WatchNext from "@/components/parent/dashboard/WatchNext";
 // Data arrays for each section
 
-const seriesData = [
-  {
-    title: "KAI’S LIVING ADVENTURE",
-    image: "1",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S CLIMATE QUEST",
-    image: "2",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S INVESTIGATION STATION",
-    image: "3",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S BIG ADVENTURES",
-    image: "4",
-    count: 8,
-    isFavorite: true,
-  },
-  {
-    title: "KAI’S NEIGHBORHOOD ADVENTURES",
-    image: "5",
-    count: 8,
-    isFavorite: true,
-  },
-];
 
 export default function FreeModeHome() {
   const isMobile = useIsMobile(); ''
@@ -115,6 +84,7 @@ export default function FreeModeHome() {
                     <IconStar
                       width={84}
                       height={90}
+                      color={"#053B4A"}
                       style={styles.headerStar}
                     />
                   </ThemedView>
@@ -166,15 +136,7 @@ export default function FreeModeHome() {
 
               {/* Watch Next */}
               <SectionHeader title="Watch Next" link="next" />
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.cardScrollContainer}
-              >
-                {seriesData.map((item, idx) => (
-                  <SeriesCard key={idx} {...item} />
-                ))}
-              </ScrollView>
+              <WatchNext activeChild={child?.id} mode="kid"/>
 
               {/* Featured Adventures */}
               <SectionHeader title="Featured Adventures" link="featured" />

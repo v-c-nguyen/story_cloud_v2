@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontWeight: "700",
     lineHeight: 24,
+    textAlign: "center"
   },
   selectionTitleLarge: {
     marginTop: 0,

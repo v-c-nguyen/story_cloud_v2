@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   ScrollView,
@@ -94,11 +95,12 @@ export default function WhoAreYouScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
-        <Image
-          source={require("@/assets/images/auth/back-pattern.png")}
-          style={styles.backPattern}
-          contentFit="cover"
-        />
+                  <Image
+                    source={require("@/assets/images/auth/back-pattern.png")}
+                    style={styles.backPattern}
+                    contentFit='cover'
+                    pointerEvents="none"
+                  />
         <ThemedView style={styles.subContainer}>
           {/* Title */}
           <ThemedView style={styles.titleContainer}>
@@ -111,7 +113,7 @@ export default function WhoAreYouScreen() {
             style={{ position: "absolute", top: 180, width: "100%", zIndex: 5 }}
           >
             {loading ? (
-              <ThemedText>Loading...</ThemedText>
+              <ActivityIndicator size="large" color="#053B4A" style={{ marginTop: 30 }} />
             ) : (
               <ScrollView
                 horizontal
@@ -122,6 +124,7 @@ export default function WhoAreYouScreen() {
                   <TouchableHighlight
                     key={child.id || idx}
                     onPress={(e) => handleChildSelect(child.id)}
+                    style={{ marginHorizontal: "auto" }}
                   >
                     <ThemedView style={styles.childCard}>
                       {
@@ -149,12 +152,13 @@ export default function WhoAreYouScreen() {
             )}
             {/* Dots */}
             <ThemedView style={styles.dotsContainer}>
-              {children.map((_, idx) => (
-                <ThemedView
-                  key={idx}
-                  style={idx === 0 ? styles.dotActive : styles.dotInactive}
-                />
-              ))}
+              {children && children.length > 1 &&
+                children.map((_, idx) => (
+                  <ThemedView
+                    key={idx}
+                    style={idx === 0 ? styles.dotActive : styles.dotInactive}
+                  />
+                ))}
             </ThemedView>
           </ThemedView>
 
@@ -235,7 +239,9 @@ const styles = StyleSheet.create({
   },
   childrenRow: {
     flexDirection: "row",
+    justifyContent: "center",
     gap: 20,
+    minWidth: "100%",
     paddingHorizontal: 50,
   },
   childCard: {
@@ -245,6 +251,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(4,58,73,0.20)",
     paddingHorizontal: 60,
     paddingVertical: 40,
+    justifyContent: "center",
     alignItems: "center",
     gap: 25,
   },

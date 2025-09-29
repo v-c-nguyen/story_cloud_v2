@@ -44,6 +44,7 @@ export default function PathwayModeHome() {
           }
         });
         const data = await res.json();
+        console.log(data)
         setPathways(data);
       } catch (e) {
         // handle error
@@ -79,6 +80,7 @@ export default function PathwayModeHome() {
               width={84}
               height={90}
               style={styles.headerStar}
+              color={"#053B4A"}
             />
           </ThemedView>
           <ThemedText style={styles.headerSubtitle}>

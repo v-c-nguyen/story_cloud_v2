@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
@@ -44,6 +44,9 @@ import IconTop from "@/assets/images/parent/icon-top.svg"
 import IconInformation from "@/assets/images/parent/icon-information.svg"
 import IconCheck from "@/assets/images/parent/icon-check.svg"
 import LearningModuleModal from "./Modals/LearningModuleMode";
+import { usePathwayStore } from "@/store/pathwayStore";
+import { stories } from "@/data/storyData";
+import { Story } from "@/store/storyStore";
 
 export function PathwayCard({
   pathway,
@@ -54,8 +57,14 @@ export function PathwayCard({
   handleViewButton: (id: string) => void;
   handleEditButton: (id: string) => void;
 }) {
+  const [stories, setStories] = useState<Story[]>([])
+  useEffect(() => {
+    if (pathway && pathway.stories) {
+      setStories(pathway.stories)
+    }
+  }, [])
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView >
       <Image
         source={require("@/assets/images/parent/parent-back-pattern.png")}
         style={styles.topBackPattern}
@@ -64,10 +73,13 @@ export function PathwayCard({
       <ThemedView style={styles.overview}>
         <IconPathway width={27} height={27} />
         <ThemedText style={styles.title}>{pathway.name}</ThemedText>
-        <ThemedView style={[styles.flexRow]}>
-          <IconStep width={24} height={24} />
-          <ThemedText style={styles.subtitle}>3 Steps</ThemedText>
-        </ThemedView>
+        {
+          stories && stories.length > 0 &&
+          <ThemedView style={[styles.flexRow]}>
+            <IconStep width={24} height={24} color={"#9fd3c7"}/>
+            <ThemedText style={styles.subtitle}>{stories.length} Steps</ThemedText>
+          </ThemedView>
+        }
       </ThemedView>
 
       <ThemedView style={styles.pathwayCard}>
@@ -105,58 +117,13 @@ export function PathwayCard({
           </ThemedView>
         </ThemedView>
 
-        <ThemedView style={styles.cardTextContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContainer}
-          >
-            {/* Card 1: Social & Empathy Lessons */}
-            <ThemedView style={styles.card}>
-              <ThemedView style={styles.cardTop}>
-                <ThemedText style={styles.cardTitle}>
-                  Social & Empathy Lessons
-                </ThemedText>
-                <ThemedText style={styles.cardSubText}>3 Series</ThemedText>
-                <ThemedText style={styles.cardSubText}>3 Stories</ThemedText>
-              </ThemedView>
-              <Image
-                source={require("@/assets/images/kid/series-back-1.png")} // Replace with your image
-                style={styles.cardImage}
-              />
-            </ThemedView>
 
-            {/* Connector */}
-            <ThemedView style={styles.connector}>
-              <ThemedView style={styles.circle1} />
-              <ThemedView style={styles.line} />
-              <ThemedView style={styles.circle2} />
-            </ThemedView>
+        {/* Stories for the pathway mode */}
 
-            {/* Card 2: Story */}
-            <ThemedView style={styles.card}>
-              <Image
-                source={require("@/assets/images/kid/series-back-2.png")} // Replace with your image
-                style={styles.cardImage}
-              />
-              <ThemedView style={styles.storyContent}>
-                <ThemedView style={styles.badge}>
-                  <ThemedText style={styles.badgeText}>1</ThemedText>
-                </ThemedView>
-                <ThemedText style={styles.storyIndex}>#4</ThemedText>
-                <ThemedText style={styles.storyLabel}>
-                  UNDERWATER ADVENTURES
-                </ThemedText>
-                <ThemedText style={styles.storyTitle}>
-                  Petal Tales: The Search for Rainbow Flowers
-                </ThemedText>
-                <ThemedText style={styles.storyDuration}>12 min</ThemedText>
-              </ThemedView>
-            </ThemedView>
-          </ScrollView>
-        </ThemedView>
+        <PathwayStories pathwayMode={pathway} stories={stories} setStories={setStories} />
+
       </ThemedView>
-    </ThemedView>
+    </ThemedView >
   );
 }
 
@@ -168,14 +135,21 @@ export function PathwayDetailedCard({
   handleEditButton: (id: string) => void
 }) {
   const router = useRouter();
+  const [stories, setStories] = useState<Story[]>([])
   const formattedDate = pathwayMode?.created_at
     ? new Date(pathwayMode.created_at).toLocaleDateString()
     : "";
+
+  useEffect(() => {
+    if (pathwayMode && pathwayMode.stories) {
+      setStories(pathwayMode.stories)
+    }
+  }, [])
   function handleBack() {
     router.navigate("./");
   }
   return (
-    <ThemedView style={[styles.container, { paddingBottom: 30 }]}>
+    <ThemedView style={[{ paddingBottom: 30 }]}>
       <Image
         source={require("@/assets/images/parent/parent-back-pattern.png")}
         style={styles.topBackPattern}
@@ -184,10 +158,13 @@ export function PathwayDetailedCard({
       <ThemedView style={[styles.overview, { alignItems: "center" }]}>
         <IconPathway width={27} height={27} />
         <ThemedText style={styles.title}>{pathwayMode?.name}</ThemedText>
-        <ThemedView style={[styles.flexRow]}>
-          <IconStep width={24} height={24} />
-          <ThemedText style={styles.subtitle}>3 Steps</ThemedText>
-        </ThemedView>
+        {
+          stories && stories.length > 0 &&
+          <ThemedView style={[styles.flexRow]}>
+            <IconStep width={24} height={24} color={"#9fd3c7"}/>
+            <ThemedText style={styles.subtitle}>{stories.length} Steps</ThemedText>
+          </ThemedView>
+        }
       </ThemedView>
 
       <ThemedView style={styles.pathwayCard}>
@@ -285,91 +262,49 @@ export function PathwayDetailedCard({
                 <GradientText text="Children" />
               </ThemedView>
 
-              {pathwayMode?.pathway_kids &&
-                pathwayMode?.pathway_kids.length > 0 &&
-                pathwayMode?.pathway_kids.map((kid: any, idx: number) => (
-                  <GradientBorderBox
-                    key={idx}
-                    borderRadius={24}
-                    borderWidth={1}
-                    style={styles.progressBar}
-                    innerStyle={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 10,
-                      paddingHorizontal: 4,
-                      paddingVertical: 4,
-                      width: 'auto'
-                    }}
-                  >
-                    {
-                      kid.children?.avatar_url ?
-                        <Image source={{ uri: kid.children?.avatar_url }} style={styles.avatar} />
-                        :
-                        <IconDefaultAvatar width={35} height={35} />
 
-                    }
-                    <ThemedText style={styles.name}>
-                      {kid.children?.name}
-                    </ThemedText>
-                    <ThemedView style={styles.bar}></ThemedView>
-                    <ThemedText style={styles.value}>0%</ThemedText>
-                  </GradientBorderBox>
+              {
+                pathwayMode?.pathway_kids && pathwayMode?.pathway_kids.length > 0 &&
+                pathwayMode?.pathway_kids && pathwayMode?.pathway_kids.map((kid: any, idx: number) => (
+                  <ThemedView key={idx} style={{ flexDirection: 'row', marginTop: 10 }}>
+                    <ThemedView>
+                      <GradientBorderBox
+                        borderRadius={24}
+                        borderWidth={1}
+                        style={styles.progressBar}
+                        innerStyle={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 10,
+                          paddingHorizontal: 4,
+                          paddingVertical: 4
+                        }}
+                      >
+                        {
+                          kid.children?.avatar_url ?
+                            <Image source={{ uri: kid.children?.avatar_url }} style={styles.avatar} />
+                            :
+                            <IconDefaultAvatar width={35} height={35} />
+
+                        }
+                        <ThemedText style={styles.name}>
+                          {kid?.children.name}
+                        </ThemedText>
+                        <ThemedView style={styles.bar}></ThemedView>
+                        {pathwayMode.stories && pathwayMode.stories.length > 0 &&
+                          <ThemedText style={styles.value}>{kid.progress / pathwayMode.stories.length}%</ThemedText>
+                        }
+                      </GradientBorderBox>
+                    </ThemedView>
+                  </ThemedView>
+
                 ))}
             </ThemedView>
           </ThemedView>
         </ThemedView>
 
-        <ThemedView style={styles.cardTextContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContainer}
-          >
-            {/* Card 1: Social & Empathy Lessons */}
-            <ThemedView style={styles.card}>
-              <ThemedView style={styles.cardTop}>
-                <ThemedText style={styles.cardTitle}>
-                  Social & Empathy Lessons
-                </ThemedText>
-                <ThemedText style={styles.cardSubText}>3 Series</ThemedText>
-                <ThemedText style={styles.cardSubText}>3 Stories</ThemedText>
-              </ThemedView>
-              <Image
-                source={require("@/assets/images/kid/series-back-1.png")} // Replace with your image
-                style={styles.cardImage}
-              />
-            </ThemedView>
-
-            {/* Connector */}
-            <ThemedView style={styles.connector}>
-              <ThemedView style={styles.circle1} />
-              <ThemedView style={styles.line} />
-              <ThemedView style={styles.circle2} />
-            </ThemedView>
-
-            {/* Card 2: Story */}
-            <ThemedView style={styles.card2}>
-              <Image
-                source={require("@/assets/images/kid/series-back-2.png")} // Replace with your image
-                style={styles.cardImage2}
-              />
-              <ThemedView style={styles.storyContent}>
-                <ThemedView style={styles.badge}>
-                  <ThemedText style={styles.badgeText}>1</ThemedText>
-                </ThemedView>
-                <ThemedText style={styles.storyIndex}>#4</ThemedText>
-                <ThemedText style={styles.storyLabel}>
-                  UNDERWATER ADVENTURES
-                </ThemedText>
-                <ThemedText style={styles.storyTitle}>
-                  Petal Tales: The Search for Rainbow Flowers
-                </ThemedText>
-                <ThemedText style={styles.storyDuration}>12 min</ThemedText>
-              </ThemedView>
-            </ThemedView>
-          </ScrollView>
-        </ThemedView>
+        {/* Stories for the pathway mode */}
+        <PathwayStories pathwayMode={pathwayMode} stories={stories} setStories={setStories} />
 
         <ThemedView style={styles.lengthContainer}>
           <ThemedView style={[styles.flexCol, { width: "100%" }]}>
@@ -416,6 +351,7 @@ export function PathwayEditCard({
   const [description, setDescription] = React.useState(pathwayMode?.description || '');
   const [categories, setCategories] = React.useState<LearningCategory[]>([]);
   const [children, setChildren] = React.useState<Child[]>([]);
+  const [stories, setStories] = React.useState<Story[]>([])
   const [allCategories, setAllCategories] = React.useState<any[]>([]);
   const [allChildren, setAllChildren] = React.useState<any[]>([]);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -423,6 +359,7 @@ export function PathwayEditCard({
   const [loading, setLoading] = React.useState(false);
   const [currentTarget, setCurrentTarget] = React.useState(null);
   const [TargetModalVisible, setTargetModalVisible] = React.useState(false);
+  const setCurrentPathway = usePathwayStore((state) => state.setCurrentPathway);
 
   useEffect(() => {
     if (pathwayMode) {
@@ -438,6 +375,7 @@ export function PathwayEditCard({
           ? pathwayMode.pathway_kids.map((t: any) => t)
           : []
       );
+      setStories(pathwayMode?.stories)
     }
   }, [pathwayMode])
 
@@ -546,7 +484,8 @@ export function PathwayEditCard({
       name: name,
       description: description,
       categories: categories,
-      children: children
+      children: children,
+      stories: stories.length > 0 ? stories.map(story => story.storyId) : []
     }
     const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
     let response;
@@ -580,8 +519,13 @@ export function PathwayEditCard({
     }
   }
 
+  const handleAddStory = () => {
+    setCurrentPathway(pathwayMode);
+    router.push('/(parent)/(learning)/(library)');
+  }
+
   return (
-    <ThemedView style={[styles.container, { paddingBottom: 30 }]}>
+    <ThemedView style={[{ paddingBottom: 30 }]}>
       <Modal
         visible={modalVisible}
         transparent
@@ -663,10 +607,10 @@ export function PathwayEditCard({
         <IconPathway width={27} height={27} />
         <ThemedText style={styles.title}>{pathwayMode?.name}</ThemedText>
         {
-          pathwayMode && pathwayMode.length > 0 &&
+          stories && stories.length > 0 &&
           <ThemedView style={[styles.flexRow]}>
-            <IconStep />
-            <ThemedText style={styles.subtitle}>{pathwayMode?.stories.length()} Steps</ThemedText>
+            <IconStep width={24} height={24} color={"#9fd3c7"} />
+            <ThemedText style={styles.subtitle}>{stories?.length} Steps</ThemedText>
           </ThemedView>
         }
       </ThemedView>
@@ -856,10 +800,10 @@ export function PathwayEditCard({
 
                         }
                         <ThemedText style={styles.name}>
-                          {kid?.name}
+                          {kid?.children.name}
                         </ThemedText>
                         <ThemedView style={styles.bar}></ThemedView>
-                        { pathwayMode.stories && pathwayMode.stories.length > 0 &&
+                        {pathwayMode.stories && pathwayMode.stories.length > 0 &&
                           <ThemedText style={styles.value}>{kid.progress / pathwayMode.stories.length}%</ThemedText>
                         }
                         <ThemedText style={{ color: '#7AC1C6' }}>|</ThemedText>
@@ -897,7 +841,7 @@ export function PathwayEditCard({
         </ThemedView>
 
         {/* Stories for the pathway mode */}
-        <PathwayStories pathwayMode={pathwayMode} />
+        <PathwayStories pathwayMode={pathwayMode} mode="edit" stories={stories} setStories={setStories} />
 
         {/* Edit Learning Categories */}
         <ThemedView style={styles.lengthContainer}>
@@ -955,9 +899,6 @@ export function PathwayEditCard({
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   topBackPattern: {
     width: "100%",
     height: "100%",

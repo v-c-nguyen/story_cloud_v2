@@ -10,6 +10,7 @@ import { Stack, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
 import {
+    ActivityIndicator,
     Alert,
     Dimensions,
     Platform, SafeAreaView, ScrollView,
@@ -24,66 +25,59 @@ import IconTickBox from "@/assets/images/icons/icon-box-tick.svg"
 import IconCancel from "@/assets/images/parent/icon-cancel.svg"
 import useIsMobile from '@/hooks/useIsMobile';
 
+interface Plan {
+    id: string;
+    name: string;
+    priceMonthly: number;
+    priceAnnual: number;
+    seats: number;
+    features: string[];
+    type: string;
+    buttonLabel: string;
+}
+
 const starIcon = require('@/assets/images/parent/icon-star.png')
 
 const { width } = Dimensions.get('window');
 
-const plans = [
-    {
-        name: 'Basic',
-        priceMonthly: 8.99,
-        priceAnnual: 89.99,
-        seats: 1,
-        features: [
-            'Listen Mode',
-            'Creative Learning',
-            'Premium Accessibility',
-            'Cutting Edge Content',
-            'Dual Mode Experience',
-            'Interactive Learning',
-            'Character-Driven Adventures',
-            'Anytime, Anywhere',
-        ],
-        buttonLabel: 'Cancel Subscription',
-    },
-    {
-        name: 'Advanced',
-        priceMonthly: 14.99,
-        priceAnnual: 149.99,
-        seats: 5,
-        features: [
-            'Read Mode',
-            'Watch Mode',
-            'Advanced Learning',
-            'Cutting Edge Content',
-            'Dual Mode Experience',
-            'Interactive Learning',
-            'Character-Driven Adventures',
-            'Anytime, Anywhere',
-        ],
-        buttonLabel: 'Update Subscription',
-    },
-];
 export default function SubscriptionPlansScreen() {
-    let domain = '';
     const isMobile = useIsMobile();
-    if (typeof window !== 'undefined' && Platform.OS === 'web') {
-        domain = window.location.origin;
-    }
     const router = useRouter();
     const [isMonthly, setIsMonthly] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
+    const [plans, SetPlans] = useState<Plan[]>([]);
+    const [loading, setLoading] = useState(false);
 
     // Show modal if URL contains ?status=success (web only)
+
     useEffect(() => {
-        let domain = '';
-        if (typeof window !== 'undefined' && Platform.OS === 'web') {
-            domain = window.location.origin;
-        } else {
-            domain = 'https://storycloud.com'; // Replace with your tunnel URL
+        // Prefill parent info when user changes
+        async function getPlans() {
+            setLoading(true);
+            const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+            const { data, error } = await supabase.functions.invoke('supbscription-plans', {
+                method: 'GET',
+                headers: {
+                    Authorization: jwt ? `Bearer ${jwt}` : '',
+                },
+            });
+            if (error) {
+                setLoading(false);
+                alert('Error fetching children:' + error.message);
+                return;
+            }
+            if (data) {
+                setLoading(false);
+                console.log(data.data)
+                SetPlans(data);
+            }
         }
+
+        getPlans();
     }, []);
+
+
 
     // Show modal if URL contains ?status=success
 
@@ -95,51 +89,68 @@ export default function SubscriptionPlansScreen() {
         setCurrentIndex(newIndex);
     };
 
+    const subscribeToPlan = async ({userId, plan}: {userId: string, plan: Plan}) => {
+        const res = await fetch("https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/create-subscription", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, planName: plan.name, planStyle: plan.type, planInterval: isMonthly ? 'month' : 'year',}),
+        });
 
-    const handleButtonClick = async (label: string, plan: any) => {
-        if (label === 'Update Subscription') {
+        const { status } = await res.json();
+        if (status === "active" || status === "trialing") {
+            alert("Subscription started!");
+        } else {
+            alert("Payment pending or failed");
+        }
+    };
+
+    const handleButtonClick = async (index: number, plan: any) => {
+        if (index === 0) {
             try {
                 // Call your Supabase Edge Function to create a Stripe Checkout session
-                const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
-                const res = await fetch('https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/create-stripe-checkout', {
-                    method: "POST",
-                    headers: {
-                        Authorization: jwt ? `Bearer ${jwt}` : '',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        plan: plan.name,
-                        interval: isMonthly ? 'month' : 'year',
-                        success_url: `myapp://subscription-success`,
-                        cancel_url: `myapp://subscription-cancel`,
-                    }),
-                });
+                // const jwt = supabase.auth.getSession && (await supabase.auth.getSession())?.data?.session?.access_token;
+                // const res = await fetch('https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/create-stripe-checkout', {
+                //     method: "POST",
+                //     headers: {
+                //         Authorization: jwt ? `Bearer ${jwt}` : '',
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({
+                //         plan: plan.name,
+                //         interval: isMonthly ? 'month' : 'year',
+                //         success_url: `myapp://subscription-success`,
+                //         cancel_url: `myapp://subscription-cancel`,
+                //     }),
+                // });
 
-                const { url, error } = await res.json();
+                // const { url, error } = await res.json();
 
-                if (!url || typeof url !== "string") {
-                    Alert.alert("Stripe Error", error || "No checkout URL returned.");
-                    return;
-                }
+                // if (!url || typeof url !== "string") {
+                //     Alert.alert("Stripe Error", error || "No checkout URL returned.");
+                //     return;
+                // }
 
-                // Open Stripe Checkout in an in-app browser
-                const result = await WebBrowser.openAuthSessionAsync(url, `myapp://subscription-success`);
-                if (result.type === 'success') {
-                    setModalVisible(true);
-                }
+                // // Open Stripe Checkout in an in-app browser
+                // const result = await WebBrowser.openAuthSessionAsync(url, `myapp://subscription-success`);
+                // if (result.type === 'success') {
+                //     setModalVisible(true);
+                // }
+                const userResponse = await supabase.auth.getUser();
+                subscribeToPlan({userId: userResponse.data.user?.id || '', plan});
 
             } catch (err: any) {
                 Alert.alert('Stripe Error', err.message || 'Could not start checkout.');
             }
-        } else if (label === 'Cancel Subscription') {
-            await fetch('https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/cancel-stripe-checkout', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    subscription_id: "sub_1PabcXYZ" // from Stripe's webhook or customer portal
-                })
-            });
         }
+        // else if (index === 'Cancel Subscription') {
+        //     await fetch('https://fzmutsehqndgqwprkxrm.supabase.co/functions/v1/cancel-stripe-checkout', {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify({
+        //             subscription_id: "sub_1PabcXYZ" // from Stripe's webhook or customer portal
+        //         })
+        //     });
+        // }
     };
 
     const handleTabPress = (tabId: string) => {
@@ -236,7 +247,7 @@ export default function SubscriptionPlansScreen() {
                                 />
 
                                 <DropDownMenu activeItem={activeTab} onSelect={(item) => handleItemProcess(item)} />
-                                <ThemedView style={[styles.tabContent, {marginBottom: 35}]} >
+                                <ThemedView style={[styles.tabContent, { marginBottom: 35 }]} >
 
                                     {/* Main Content */}
 
@@ -258,61 +269,68 @@ export default function SubscriptionPlansScreen() {
                                         </ThemedView>
 
                                         {/* Horizontal ScrollView */}
-                                        <ScrollView
-                                            horizontal
-                                            pagingEnabled
-                                            showsHorizontalScrollIndicator={false}
-                                            onScroll={handleScroll}
-                                            scrollEventThrottle={16}
-                                            style={{ position: 'relative', flex: 1 }}
-                                        >
-                                            {plans.map((plan, index) => (
-                                                <ThemedView key={index} style={styles.card}>
-                                                    <ThemedText style={styles.planTitle}>
-                                                        <ThemedText style={styles.storyCloud}>StoryCloud</ThemedText> | Explorer
-                                                    </ThemedText>
-                                                    <ThemedText style={styles.planName}>{plan.name}</ThemedText>
-                                                    <ThemedText style={styles.planPrice}>
-                                                        ${isMonthly ? plan.priceMonthly : plan.priceAnnual}
-                                                    </ThemedText>
-                                                    <ThemedText style={styles.planSeats}>{plan.seats} Seat{plan.seats > 1 ? 's' : ''}</ThemedText>
+                                        {
+                                            loading ?
+                                                <ActivityIndicator size="small" color="#053B4A" style={{ marginTop: 50 }} />
+                                                :
+                                                <ThemedView>
+                                                    <ScrollView
+                                                        horizontal
+                                                        pagingEnabled
+                                                        showsHorizontalScrollIndicator={false}
+                                                        onScroll={handleScroll}
+                                                        scrollEventThrottle={16}
+                                                        style={{ position: 'relative', flex: 1 }}
+                                                    >
+                                                        {plans.map((plan, index) => (
+                                                            <ThemedView key={index} style={styles.card}>
+                                                                <ThemedView style={{ flexDirection: "column", gap: 5 }}>
+                                                                    <ThemedText style={styles.planTitle}>
+                                                                        <ThemedText style={styles.storyCloud}>StoryCloud</ThemedText> | {plan.name}
+                                                                    </ThemedText>
+                                                                    <ThemedText style={styles.planName}>{plan.type}</ThemedText>
+                                                                    <ThemedText style={styles.planPrice}>
+                                                                        ${isMonthly ? plan.priceMonthly : plan.priceAnnual}
+                                                                    </ThemedText>
+                                                                    <ThemedText style={styles.planSeats}>{plan.seats} Seat{plan.seats > 1 ? 's' : ''}</ThemedText>
+                                                                </ThemedView>
+                                                                {/* Features */}
+                                                                <ThemedView style={{ marginTop: 20 }}>
+                                                                    {plan.features.map((feature, idx) => (
+                                                                        <ThemedView key={idx} style={styles.featureRow}>
+                                                                            <IconTickBox width={24} height={24} color={"rgba(5, 59, 74, 1)"} />
+                                                                            <ThemedText style={styles.featureCustomText}>{feature}</ThemedText>
+                                                                        </ThemedView>
+                                                                    ))}
+                                                                </ThemedView>
 
-                                                    {/* Features */}
-                                                    <ThemedView style={{ marginTop: 20 }}>
-                                                        {plan.features.map((feature, idx) => (
-                                                            <ThemedView key={idx} style={styles.featureRow}>
-                                                                <IconTickBox width={24} height={24} color={"rgba(5, 59, 74, 1)"} />
-                                                                <ThemedText style={styles.featureCustomText}>{feature}</ThemedText>
+                                                                {/* Button */}
+                                                                <TouchableOpacity
+                                                                    style={styles.planButton}
+                                                                    onPress={() => handleButtonClick(index, plan)}
+                                                                >
+                                                                    {
+                                                                        plan.buttonLabel == "Cancel Subscription" &&
+                                                                        <IconCancel width={20} height={20} color={"#053B4A"} />
+                                                                    }
+                                                                    <ThemedText style={styles.buttonCustomText}>{index == 0 ? "14 Day Free Trial | Start Now" : "Coming Soon"}</ThemedText>
+                                                                </TouchableOpacity>
                                                             </ThemedView>
                                                         ))}
+                                                    </ScrollView>
+                                                    <ThemedView style={styles.dotsContainer}>
+                                                        {plans.map((_, idx) => (
+                                                            <ThemedView
+                                                                key={idx}
+                                                                style={[
+                                                                    styles.dot,
+                                                                    currentIndex === idx && styles.activeDot
+                                                                ]}
+                                                            />
+                                                        ))}
                                                     </ThemedView>
-
-                                                    {/* Button */}
-                                                    <TouchableOpacity
-                                                        style={styles.planButton}
-                                                        onPress={() => handleButtonClick(plan.buttonLabel, plan)}
-                                                    >
-                                                        {
-                                                            plan.buttonLabel == "Cancel Subscription" &&
-                                                            <IconCancel width={20} height={20} color={"#053B4A"} />
-                                                        }
-                                                        <ThemedText style={styles.buttonCustomText}>{plan.buttonLabel}</ThemedText>
-                                                    </TouchableOpacity>
                                                 </ThemedView>
-                                            ))}
-                                        </ScrollView>
-                                        <ThemedView style={styles.dotsContainer}>
-                                            {plans.map((_, idx) => (
-                                                <ThemedView
-                                                    key={idx}
-                                                    style={[
-                                                        styles.dot,
-                                                        currentIndex === idx && styles.activeDot
-                                                    ]}
-                                                />
-                                            ))}
-                                        </ThemedView>
-
+                                        }
 
 
                                         {/* Modal */}
@@ -489,6 +507,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingTop: 50,
         marginHorizontal: 5,
+        height: "100%",
         gap: 10,
         justifyContent: 'space-between',
         overflow: 'hidden'

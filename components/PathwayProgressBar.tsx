@@ -31,7 +31,9 @@ export default function PathwayProgressBar({ total, current = 1, child }: { tota
     <ThemedView style={progressStyles.container}>
 
       {total > 0 &&
-        <ScrollView>
+        <ScrollView 
+          horizontal
+          showsHorizontalScrollIndicator={false}>
           <ThemedView style={{ position: 'relative', width: '100%' }}>
             {/* Progress Bar Background */}
             <ThemedView style={progressStyles.nameAvatarWrap}>
@@ -52,8 +54,8 @@ export default function PathwayProgressBar({ total, current = 1, child }: { tota
             {/* Steps */}
             <ThemedView style={progressStyles.stepsRow}>
 
-              <ThemedView style={[progressStyles.barBg, { width: 92 * (total + 1) }]} >
-                <ThemedView style={[progressStyles.barFill, { width: 92 * (current - 1) }]} />
+              <ThemedView style={[progressStyles.barBg, { width: 90 * (total + 1) }]} >
+                <ThemedView style={[progressStyles.barFill, { width: 90 * (current - 1) }]} />
               </ThemedView>
               {steps.map((step, idx) => (
                 <ThemedView key={idx} style={progressStyles.stepWrap}>
@@ -76,7 +78,7 @@ export default function PathwayProgressBar({ total, current = 1, child }: { tota
                             : { backgroundColor: "#FCFCFC", borderColor: '#00000000', width: 38, height: 38, margin: 2 },
                       ]}
                     >
-                      <FootIcon color="#053B4A" />
+                      <IconFoot color={"#053B4A"}  />
                     </ThemedView>
                   </LinearGradient>
                   {/* Step Number */}

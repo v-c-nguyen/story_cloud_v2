@@ -5,12 +5,18 @@ import { ThemedText } from '../../../ThemedText';
 import GradientText from '../../../ui/GradientText';
 
 import IconStep from "@/assets/images/parent/icon-step.svg"
+import IconStepGradient from "@/assets/images/parent/icon-step-gradient.svg"
 import IconCancel from "@/assets/images/parent/icon-cancel.svg"
 import IconPlus from "@/assets/images/parent/icon-plus.svg"
-import { usePathwayStore } from '@/store/pathwayStore';
+import { Pathway, usePathwayStore } from '@/store/pathwayStore';
 import { useRouter } from 'expo-router';
+import { Story } from '@/store/storyStore';
 
-export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
+export default function PathwayStories({
+    pathwayMode,
+    stories,
+    setStories,
+    mode = "" }: { pathwayMode: Pathway, stories: Story[], setStories: (stories: Story[]) => void, mode?: string }) {
     const router = useRouter();
     const [selectedStep, setSelectedStep] = React.useState(0);
     const setCurrentPathway = usePathwayStore((state) => state.setCurrentPathway);
@@ -18,51 +24,57 @@ export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
         setCurrentPathway(pathwayMode);
         router.push('/(parent)/(learning)/(library)');
     }
+    const handleRemoveStory = (id: string) => {
+        const updatedStories = stories.filter(story => story.storyId !== id);
+        setStories(updatedStories)
+        setSelectedStep(0)
+    }
     return (
         <ThemedView style={{ padding: 5, paddingBottom: 30, borderBottomWidth: 1, borderColor: 'rgba(252, 252, 252, 0.2)' }}>
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ padding: 30, alignItems: 'center' }}
-            >
-                {/* Card 1: Social & Empathy Lessons */}
-                <ThemedView style={{ width: 228, height: 220, backgroundColor: '#003b4f', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', overflow: 'hidden', zIndex: -1 }}>
-                    <ThemedView style={{ padding: 12 }}>
-                        <ThemedText style={{ color: 'rgba(248, 236, 174, 1)', fontSize: 20, fontWeight: '700', marginBottom: 12 }}>
-                            {pathwayMode?.name}
-                        </ThemedText>
-                        <ThemedText style={{ color: '#9ec7d3', fontSize: 20, marginTop: 5 }}>3 Series</ThemedText>
-                        <ThemedText style={{ color: '#9ec7d3', fontSize: 20, marginTop: 5 }}>{pathwayMode?.stories?.length} Stories</ThemedText>
-                    </ThemedView>
-                    <Image
-                        source={require('@/assets/images/kid/series-back-1.png')}
-                        style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-                    />
-                </ThemedView>
+            {
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ padding: 30, alignItems: 'center' }}
+                >
+                    {/* Card 1: Social & Empathy Lessons */}
+                    {(stories && stories.length > 0 || mode === "edit") &&
+                        <ThemedView style={{ width: 228, height: 220, backgroundColor: '#003b4f', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', overflow: 'hidden', zIndex: -1 }}>
+                            <ThemedView style={{ padding: 12 }}>
+                                <ThemedText style={{ color: 'rgba(248, 236, 174, 1)', fontSize: 20, fontWeight: '700', marginBottom: 12 }}>
+                                    {pathwayMode?.name}
+                                </ThemedText>
+                                {/* <ThemedText style={{ color: '#9ec7d3', fontSize: 20, marginTop: 5 }}>3 Series</ThemedText> */}
+                                <ThemedText style={{ color: '#9ec7d3', fontSize: 20, marginTop: 5 }}>{stories?.length} Stories</ThemedText>
+                            </ThemedView>
+                            <Image
+                                source={require('@/assets/images/kid/series-back-1.png')}
+                                style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+                            />
+                        </ThemedView>}
 
-                {/* Connector */}
-                <ThemedView style={{ width: 80, alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                    <ThemedView style={{ width: 10, height: 10, left: 0, transform: [{ translateX: -5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
-                    <ThemedView style={{ position: 'absolute', left: 0, width: '100%', height: 1, backgroundColor: 'rgba(248, 236, 174, 1)', zIndex: 1 }} />
-                    <ThemedView style={{ width: 10, height: 10, right: 0, transform: [{ translateX: 5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
-                </ThemedView>
-
-                {/* Card 2: Story */}
-                {
-                    pathwayMode?.stories && pathwayMode.stories.length > 0 && pathwayMode.stories.map((story: any, index: number) => (
-                        <ThemedView style={{ flexDirection: "row", alignItems: "center" }}>
-                            {
-                                selectedStep != index + 1
-                                    ?
+                    {/* Card 2: Story */}
+                    {
+                        stories && stories.length > 0 && stories.map((story: Story, index: number) => (
+                            <ThemedView key={index} style={{ flexDirection: "row", alignItems: "center" }}>
+                                {/* Connector */}
+                                <ThemedView style={{ width: 80, alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                                    <ThemedView style={{ width: 10, height: 10, left: 0, transform: [{ translateX: -5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
+                                    <ThemedView style={{ position: 'absolute', left: 0, width: '100%', height: 1, backgroundColor: 'rgba(248, 236, 174, 1)', zIndex: 1 }} />
+                                    <ThemedView style={{ width: 10, height: 10, right: 0, transform: [{ translateX: 5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
+                                </ThemedView>
+                                {
+                                    (mode != "edit" || (selectedStep != index + 1 && mode === "edit"))
+                                    &&
                                     <TouchableOpacity onPress={() => setSelectedStep(index + 1)}>
                                         <ThemedView style={{ width: 320, height: 220, backgroundColor: '#003b4f', borderRadius: 12, borderWidth: 1, borderColor: '#add7da42', overflow: 'hidden', flexDirection: 'row', zIndex: -1 }}>
                                             <Image
-                                                source={story.featuredIllustration ? story.featuredIllustration : require('@/assets/images/kid/series-back-2.png')}
+                                                source={story.featuredIllustration ? { uri: story.featuredIllustration } : require('@/assets/images/kid/series-back-2.png')}
                                                 style={{ width: 80, height: '100%', resizeMode: 'cover' }}
                                             />
                                             <ThemedView style={{ padding: 12, width: '70%' }}>
                                                 <ThemedView style={{ backgroundColor: '#003b4f', borderColor: '#fcfcfc2f', borderWidth: 1, borderRadius: 20, padding: 10, alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginBottom: 4 }}>
-                                                    <IconStep width={24} height={24} />
+                                                    <IconStepGradient width={24} height={24} />
                                                     <ThemedText style={{ color: '#fcfcfc2f' }}>|</ThemedText>
                                                     <ThemedText style={{ color: '#ffffffff', fontSize: 18, fontWeight: 'bold' }}>{index + 1}</ThemedText>
                                                 </ThemedView>
@@ -75,21 +87,24 @@ export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
                                             </ThemedView>
                                         </ThemedView>
                                     </TouchableOpacity>
-                                    :
+                                }
+                                {selectedStep === index + 1 && mode === "edit"
+                                    &&
                                     <TouchableOpacity onPress={() => setSelectedStep(0)}>
                                         <ThemedView style={[{ width: 320, height: 220, backgroundColor: '#003b4f', borderRadius: 12, borderWidth: 1, borderColor: '#add7da42', overflow: 'hidden', flexDirection: 'row', zIndex: -1 }, { transform: [{ rotate: '-8deg' }], borderColor: '#F4A672', borderWidth: 2, boxShadow: '0 4px 40px 0 rgba(252,252,252,0.1)' }]}>
                                             <Image
-                                                source={story.featuredIllustration ? story.featuredIllustration : require('@/assets/images/kid/series-back-2.png')}
+                                                source={story.featuredIllustration ? { uri: story.featuredIllustration } : require('@/assets/images/kid/series-back-2.png')}
                                                 style={{ width: 80, height: '100%', resizeMode: 'cover' }}
                                             />
                                             <ThemedView style={{ padding: 12, width: '70%' }}>
                                                 <ThemedView style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                     <ThemedView style={{ backgroundColor: '#003b4f', borderColor: '#fcfcfc2f', borderWidth: 1, borderRadius: 20, padding: 10, alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginBottom: 4 }}>
-                                                        <IconStep width={24} height={24} />
+                                                        <IconStepGradient width={24} height={24} />
                                                         <ThemedText style={{ color: '#fcfcfc2f' }}>|</ThemedText>
                                                         <ThemedText style={{ color: '#ffffffff', fontSize: 18, fontWeight: 'bold' }}>{index + 1}</ThemedText>
                                                     </ThemedView>
-                                                    <TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        onPress={() => handleRemoveStory(story.storyId)} >
                                                         <ThemedView style={{ backgroundColor: '#003b4f', borderColor: '#fcfcfc2f', borderWidth: 1, borderRadius: 20, padding: 10, alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginBottom: 4 }}>
                                                             <IconCancel width={18} height={18} color={"#7AC1C6"} />
                                                         </ThemedView>
@@ -104,37 +119,39 @@ export default function PathwayStories({ pathwayMode }: { pathwayMode: any }) {
                                             </ThemedView>
                                         </ThemedView>
                                     </TouchableOpacity>
-                            }
+                                }
 
-                            {/* Connector */}
-                            {index != pathwayMode.stories.length - 1 &&
-                                <ThemedView style={{ width: 80, alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                                    <ThemedView style={{ width: 10, height: 10, left: 0, transform: [{ translateX: -5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
-                                    <ThemedView style={{ position: 'absolute', left: 0, width: '100%', height: 1, backgroundColor: 'rgba(248, 236, 174, 1)', zIndex: 1 }} />
-                                    <ThemedView style={{ width: 10, height: 10, right: 0, transform: [{ translateX: 5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
+                            </ThemedView>
+                        ))
+                    }
+                    {mode === "edit" &&
+                        <ThemedView style={{ width: 80, alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                            <ThemedView style={{ width: 10, height: 10, left: 0, transform: [{ translateX: -5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
+                            <ThemedView style={{ position: 'absolute', left: 0, width: '100%', height: 1, backgroundColor: 'rgba(248, 236, 174, 1)', zIndex: 1 }} />
+                            <ThemedView style={{ width: 10, height: 10, right: 0, transform: [{ translateX: 5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
+                        </ThemedView>
+                    }
+
+                    {/* Add New Card */}
+                    {mode === "edit" &&
+                        <TouchableOpacity
+                            onPress={() => handleAddStory()}>
+                            <ThemedView style={[{ width: 320, height: 220, backgroundColor: '#003b4f', borderRadius: 12, borderWidth: 1, borderColor: '#add7da42', overflow: 'hidden', flexDirection: 'row', zIndex: -1 }, { borderStyle: 'dashed', borderWidth: 3 }]}>
+                                <ThemedView style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 10 }}>
+                                    <IconPlus width={24} height={24} color={"#2AEBEB"} />
+                                    <GradientText text="Add New Story" style={{ fontSize: 24, fontWeight: 'bold' }} />
                                 </ThemedView>
-                            }
-                        </ThemedView>
-                    ))
-                }
-
-                <ThemedView style={{ width: 80, alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                    <ThemedView style={{ width: 10, height: 10, left: 0, transform: [{ translateX: -5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
-                    <ThemedView style={{ position: 'absolute', left: 0, width: '100%', height: 1, backgroundColor: 'rgba(248, 236, 174, 1)', zIndex: 1 }} />
-                    <ThemedView style={{ width: 10, height: 10, right: 0, transform: [{ translateX: 5 }], position: 'absolute', borderRadius: 5, backgroundColor: 'rgba(5, 59, 74, 1)', borderWidth: 1, borderColor: 'rgba(248, 236, 174, 1)', zIndex: 2 }} />
+                            </ThemedView>
+                        </TouchableOpacity>
+                    }
+                </ScrollView>
+            }
+            {
+                (!stories || stories.length === 0) && mode != "edit" &&
+                <ThemedView style={{ padding: 20, alignItems: 'center', justifyContent: 'center' }}>
+                    <ThemedText style={{ color: '#7AC1C6', fontSize: 16, marginBottom: 12, textAlign: 'center' }}>No stories added to this pathway yet.</ThemedText>
                 </ThemedView>
-
-                {/* Add New Card */}
-                <TouchableOpacity
-                    onPress={() => handleAddStory()}>
-                    <ThemedView style={[{ width: 320, height: 220, backgroundColor: '#003b4f', borderRadius: 12, borderWidth: 1, borderColor: '#add7da42', overflow: 'hidden', flexDirection: 'row', zIndex: -1 }, { borderStyle: 'dashed', borderWidth: 3 }]}>
-                        <ThemedView style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 10 }}>
-                            <IconPlus width={24} height={24} color={"#2AEBEB"} />
-                            <GradientText text="Add New Story" style={{ fontSize: 24, fontWeight: 'bold' }} />
-                        </ThemedView>
-                    </ThemedView>
-                </TouchableOpacity>
-            </ScrollView>
+            }
         </ThemedView>
     );
 }

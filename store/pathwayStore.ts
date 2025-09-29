@@ -15,9 +15,12 @@ export interface Pathway {
 }
 
 interface ParentKids {
-    id: string;
-    name: string;
-    avatar_url: string;
+    progress: number;
+    children: {
+        id: string;
+        name: string;
+        avatar_url: string;
+    }
 }
 interface ParentTargets {
     id: string;
